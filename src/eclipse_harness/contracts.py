@@ -11,6 +11,7 @@ from .constants import CONTRACT_SCHEMA_VERSION
 from .errors import ContractValidationError, ValidationIssue
 from .jsonutil import digest_json
 from .security import assess_command
+from .usage import UsageRecord
 
 _ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$")
 
@@ -114,26 +115,33 @@ TASK_FIELDS = {
 TASK_REQUIRED = TASK_FIELDS - {"parent_task_id", "metadata"}
 
 
-def _validate_context(v: _Validator, value: Any) -> None:
+def _validate_context(v: _Validator, value: Any, path: str = "$.context_manifest") -> None:
     context = v.object(
         value,
-        "$.context_manifest",
-        {"summary", "references", "trusted_sources"},
-        {"summary", "references", "trusted_sources"},
+        path,
+        {"schema_version", "summary", "references", "trusted_sources"},
+        {"schema_version", "summary", "references", "trusted_sources"},
     )
-    v.string(context.get("summary"), "$.context_manifest.summary", nonempty=False)
+    if context.get("schema_version") != CONTRACT_SCHEMA_VERSION:
+        v.issue(
+            f"{path}.schema_version",
+            f"must equal {CONTRACT_SCHEMA_VERSION!r}",
+            "version",
+        )
+    v.string(context.get("summary"), f"{path}.summary", nonempty=False)
     references = context.get("references")
     if not isinstance(references, list):
-        v.issue("$.context_manifest.references", "must be an array", "type")
+        v.issue(f"{path}.references", "must be an array", "type")
     else:
         for index, reference in enumerate(references):
             ref = v.object(
                 reference,
-                f"$.context_manifest.references[{index}]",
+                f"{path}.references[{index}]",
                 {"path", "purpose", "trust"},
                 {"path", "symbol", "purpose", "digest", "trust"},
             )
-            v.string(ref.get("path"), f"$.context_manifest.references[{index}].path")
+            v.string(ref.get("path"), f"{path}.references[{index}].path")
+            v.string(ref.get("purpose"), f"{path}.references[{index}].purpose")
             if ref.get("trust") not in {
                 "user",
                 "harness",
@@ -142,11 +150,19 @@ def _validate_context(v: _Validator, value: Any) -> None:
                 "external",
             }:
                 v.issue(
-                    f"$.context_manifest.references[{index}].trust",
+                    f"{path}.references[{index}].trust",
                     "has an invalid trust class",
                     "enum",
                 )
-    v.strings(context.get("trusted_sources"), "$.context_manifest.trusted_sources")
+    v.strings(context.get("trusted_sources"), f"{path}.trusted_sources")
+
+
+def validate_context_manifest_data(data: Mapping[str, Any]) -> None:
+    """Validate a standalone context manifest without requiring Python at runtime."""
+
+    v = _Validator()
+    _validate_context(v, data, "$")
+    v.finish()
 
 
 def _validate_scope(v: _Validator, value: Any) -> None:
@@ -380,10 +396,34 @@ def _validate_command_evidence(v: _Validator, value: Any) -> None:
         item = v.object(command, f"$.commands[{index}]", required, allowed)
         for field in ("command", "purpose", "summary"):
             v.string(item.get(field), f"$.commands[{index}].{field}", nonempty=field != "summary")
-        if item.get("exit_code") is not None and not isinstance(item.get("exit_code"), int):
+        exit_code = item.get("exit_code")
+        outcome = item.get("outcome")
+        if exit_code is not None and (
+            not isinstance(exit_code, int) or isinstance(exit_code, bool)
+        ):
             v.issue(f"$.commands[{index}].exit_code", "must be integer or null", "type")
-        if item.get("outcome") not in {"passed", "failed", "not-run"}:
+        if outcome not in {"passed", "failed", "not-run"}:
             v.issue(f"$.commands[{index}].outcome", "has an invalid outcome", "enum")
+        elif outcome == "passed" and exit_code != 0:
+            v.issue(
+                f"$.commands[{index}]",
+                "passed command evidence requires exit_code 0",
+                "inconsistent-command-evidence",
+            )
+        elif outcome == "failed" and (
+            not isinstance(exit_code, int) or isinstance(exit_code, bool) or exit_code == 0
+        ):
+            v.issue(
+                f"$.commands[{index}]",
+                "failed command evidence requires a non-zero exit_code",
+                "inconsistent-command-evidence",
+            )
+        elif outcome == "not-run" and exit_code is not None:
+            v.issue(
+                f"$.commands[{index}]",
+                "not-run command evidence requires a null exit_code",
+                "inconsistent-command-evidence",
+            )
 
 
 def _validate_criterion_evidence(v: _Validator, value: Any) -> None:
@@ -446,6 +486,11 @@ def validate_result_data(data: Mapping[str, Any]) -> None:
         v.string(git.get(field), f"$.git.{field}")
     if not isinstance(data.get("usage"), dict):
         v.issue("$.usage", "must be an object", "type")
+    else:
+        try:
+            UsageRecord.from_dict(data["usage"])
+        except (TypeError, ValueError) as error:
+            v.issue("$.usage", str(error), "invalid-usage")
     for field in ("started_at", "finished_at"):
         v.string(data.get(field), f"$.{field}")
     if data.get("metadata") is not None and not isinstance(data.get("metadata"), dict):
@@ -574,6 +619,20 @@ def validate_review_data(data: Mapping[str, Any]) -> None:
 
 
 @dataclass(frozen=True)
+class ContextManifest:
+    data: Mapping[str, Any]
+
+    @classmethod
+    def from_dict(cls, data: Mapping[str, Any]) -> "ContextManifest":
+        validate_context_manifest_data(data)
+        return cls(dict(data))
+
+    @property
+    def digest(self) -> str:
+        return digest_json(self.data)
+
+
+@dataclass(frozen=True)
 class TaskContract:
     data: Mapping[str, Any]
 
@@ -699,20 +758,27 @@ def validate_result_against_task(result: ResultContract, task: TaskContract) -> 
     assert isinstance(validations, Sequence)
     command_evidence = result.data["commands"]
     assert isinstance(command_evidence, Sequence)
-    declared_commands = {str(item["command"]) for item in validations}
     command_outcomes = {
         str(item["command"]): item.get("outcome") for item in command_evidence
     }
     if len(command_outcomes) != len(command_evidence):
         issues.append(ValidationIssue("$.commands", "command evidence must be unique", "duplicate"))
-    for command in sorted(set(command_outcomes) - declared_commands):
-        issues.append(
-            ValidationIssue(
-                "$.commands",
-                f"command was not declared by the task contract: {command}",
-                "unauthorized-command",
-            )
+    authorization = task.data["authorization"]
+    assert isinstance(authorization, Mapping)
+    for index, item in enumerate(command_evidence):
+        assessment = assess_command(
+            str(item["command"]),
+            network_authorized=authorization.get("network") is True,
+            destructive_authorized=authorization.get("destructive_actions") is True,
         )
+        for reason in assessment.reasons:
+            issues.append(
+                ValidationIssue(
+                    f"$.commands[{index}].command",
+                    reason,
+                    "unauthorized-command",
+                )
+            )
     if result.status is ResultStatus.COMPLETE:
         for criterion_id in task.acceptance_ids:
             record = evidence_by_id.get(criterion_id)

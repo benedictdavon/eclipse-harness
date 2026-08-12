@@ -12,6 +12,6 @@ mypy src
 python -m build
 ```
 
-When changing a schema, update the matching typed validator, examples, migration/compatibility notes, tests, and schema version when required. Generated Codex/Copilot files must be regenerated from `policies/sol-luna.json`; do not edit them by hand.
+When changing a schema, update the matching typed validator, examples, compatibility notes, tests, and schema version when required. Generated Codex/Copilot files must be regenerated from `policies/sol-luna.json`; do not edit them by hand.
 
-Pull requests should explain architecture impact, protocol compatibility, security impact, exact validation, and any known limitation. Do not include credentials, recorded private prompts, runtime `.eclipse/runs` data, or fabricated evaluation conclusions.
+Pull requests should explain architecture impact, protocol compatibility, security impact, exact validation, and any known limitation. Do not include credentials, recorded private prompts, host workflow state, or fabricated evaluation conclusions. Optional tools must not become prerequisites for the core skills.

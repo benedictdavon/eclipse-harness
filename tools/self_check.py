@@ -13,8 +13,9 @@ sys.path.insert(0, str(ROOT / "src"))
 
 from eclipse_harness.adapters import CodexAdapter, CopilotAdapter, install_artifacts
 from eclipse_harness.authorization import authorize_changed_files
-from eclipse_harness.concurrency import assert_parallel_safe
+from eclipse_harness.concurrency import assert_parallel_safe, execution_waves
 from eclipse_harness.contracts import (
+    ContextManifest,
     ResultContract,
     ReviewContract,
     TaskContract,
@@ -23,11 +24,8 @@ from eclipse_harness.contracts import (
 )
 from eclipse_harness.doctor import run_doctor
 from eclipse_harness.evaluation import RecordedHost, run_suite
-from eclipse_harness.migration import inspect_soluna_workflow, write_migration
-from eclipse_harness.render import render_active_plan, render_handoff
 from eclipse_harness.routing import Policy
-from eclipse_harness.state import TaskState
-from eclipse_harness.store import ReviewAttestation, RunStore
+from eclipse_harness.state import RunState, TaskLifecycle, TaskState
 
 
 def load(path: str) -> dict[str, object]:
@@ -37,6 +35,8 @@ def load(path: str) -> dict[str, object]:
 
 
 def main() -> None:
+    context = ContextManifest.from_dict(load("examples/contracts/context.json"))
+    assert context.digest.startswith("sha256:")
     task = TaskContract.from_dict(load("examples/contracts/task.json"))
     result_data = load("examples/contracts/result.json")
     result_data["task_contract_digest"] = task.digest
@@ -52,7 +52,16 @@ def main() -> None:
     disjoint_data = copy.deepcopy(task.data)
     disjoint_data["task_id"] = "T002"
     disjoint_data["scope"]["write_globs"] = ["src/independent/**"]
-    assert_parallel_safe([task, TaskContract.from_dict(disjoint_data)])
+    disjoint = TaskContract.from_dict(disjoint_data)
+    assert_parallel_safe([task, disjoint])
+    assert execution_waves([task, disjoint]) == (("T001", "T002"),)
+
+    lifecycle = RunState(
+        1,
+        "sha256:old",
+        {"T001": TaskLifecycle("T001", (), TaskState.BLOCKED)},
+    )
+    assert lifecycle.revise_plan("sha256:new").tasks["T001"].state is TaskState.SUPERSEDED
 
     policy = Policy.from_dict(load("policies/sol-luna.json"))
     codex = CodexAdapter().render(policy)
@@ -64,30 +73,6 @@ def main() -> None:
     with tempfile.TemporaryDirectory() as temporary:
         target = Path(temporary)
         install_artifacts(target, (*codex, *copilot))
-        store = RunStore(target)
-        store.create_run(
-            task.run_id,
-            "Example",
-            task.plan_digest,
-            str(task.data["provenance"]["base_revision"]),
-        )
-        state = store.add_task(task.run_id, task)
-        assert state.tasks[task.task_id].state is TaskState.READY
-        store.start_task(task.run_id, task.task_id)
-        store.ingest_result(
-            task.run_id, result, observed_files=result.data["files_changed"]
-        )
-        state = store.ingest_review(
-            task.run_id, review, attestation=ReviewAttestation.human("self-check")
-        )
-        assert state.tasks[task.task_id].state is TaskState.ACCEPTED
-        assert "accepted" in render_active_plan(state)
-        assert "final human completion" in render_handoff(state)
-
-        migration = inspect_soluna_workflow(ROOT / "tests/fixtures/legacy-soluna")
-        write_migration(ROOT / "tests/fixtures/legacy-soluna", target / "migration", migration)
-        assert (target / "migration/.eclipse/config.json").is_file()
-
         outcomes = load("examples/evaluation/recorded-outcomes.json")
         report = run_suite(
             ROOT / "examples/evaluation/suite.json",
@@ -95,6 +80,7 @@ def main() -> None:
             target / "evaluation.json",
         )
         assert report["conclusion"] is None
+        assert not (target / ".eclipse/runs").exists()
 
     for schema in (ROOT / "schemas").glob("*.json"):
         assert isinstance(json.loads(schema.read_text(encoding="utf-8")), dict)

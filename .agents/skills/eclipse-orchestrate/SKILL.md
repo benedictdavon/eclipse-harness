@@ -13,8 +13,8 @@ Convert the user's requirement into a plan revision and one or more machine-read
 4. Create tasks tied to the current `run_id`, `plan_revision`, `plan_digest`, and base revision.
 5. Give each task explicit write globs, forbidden globs, interface ownership, exclusive resources, isolation, acceptance criteria, validation, expected evidence, budgets, and stop conditions.
 6. Select roles through the configured routing policy. Never embed provider identity in core semantics or treat a requested model as effective.
-7. Check the dependency DAG and concurrency with `eclipse check-concurrency`. Use at most the configured writer limit; the Sol/Luna default is two.
-8. Persist canonical state through the Eclipse CLI. Do not make Markdown the source of truth.
-9. Stop after returning the execution contracts, dependency order, risk summary, routing assumptions, and human boundaries.
+7. Build dependency-safe execution waves. When the optional CLI is available, use `eclipse check-concurrency`; otherwise apply the same ownership rules manually. The host schedules and isolates execution.
+8. Mark every contract with its approved plan revision and supersede all obsolete nonterminal tasks when that plan changes. The host or user owns any workflow state.
+9. Stop after returning the task contracts, execution waves, risk summary, routing assumptions, and human boundaries.
 
-Use `schemas/task-contract.schema.json` as the wire format. Read [contracts.md](references/contracts.md) when constructing a packet, [routing.md](references/routing.md) when selecting or escalating a role, and [concurrency-security.md](references/concurrency-security.md) before authorizing parallel writes or sensitive work.
+Use `schemas/task-contract.schema.json` as the wire format; Python validation is optional. Read [contracts.md](references/contracts.md) when constructing a packet, [routing.md](references/routing.md) when selecting or escalating a role, and [concurrency-security.md](references/concurrency-security.md) before authorizing parallel writes or sensitive work.

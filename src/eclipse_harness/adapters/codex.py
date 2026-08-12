@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 from typing import Mapping
 
+from ..errors import AdapterError
 from ..routing import Policy, RouteProfile
 from .base import AdapterArtifact, GENERATED_MARKER
 
@@ -13,6 +14,12 @@ class CodexAdapter:
     host = "codex"
 
     def render(self, policy: Policy, *, max_concurrency: int = 2) -> tuple[AdapterArtifact, ...]:
+        if (
+            not isinstance(max_concurrency, int)
+            or isinstance(max_concurrency, bool)
+            or not 1 <= max_concurrency <= 16
+        ):
+            raise AdapterError("max_concurrency must be an integer from 1 to 16")
         roles = {
             "eclipse_architect": policy.profiles["architect"],
             "eclipse_worker": policy.profiles["worker"],
@@ -70,7 +77,8 @@ class CodexAdapter:
             instructions.extend(
                 [
                     "Do not implement production code or modify repository files.",
-                    "Return structured task contracts; the root owns run state.",
+                    "Return structured task contracts to the invoking host or user.",
+                    "Do not create Eclipse-owned workflow state or schedule execution.",
                 ]
             )
         elif profile.role.value == "reviewer":
@@ -84,7 +92,8 @@ class CodexAdapter:
             instructions.extend(
                 [
                     "Execute exactly one valid task contract within its write scope.",
-                    "Never modify .eclipse/runs; return one result contract.",
+                    "The host owns filesystem, git, sandbox, and process execution.",
+                    "Return one result contract; do not create Eclipse workflow state.",
                 ]
             )
         lines = [

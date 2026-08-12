@@ -1,16 +1,14 @@
 # Known limitations
 
-- Eclipse v0.1 is not an autonomous multi-provider runtime. It prepares and validates contracts; the host or human runs agents.
-- Effective model, reasoning, permission, and sandbox attestation depends on trustworthy host metadata. Configuration and self-report remain unverified.
-- Codex app/CLI and Copilot surfaces may apply runtime overrides or differ in available features.
-- Copilot profiles inherit host model selection and do not offer claimed Sol/Luna parity.
-- Glob overlap detection is conservative and cannot prove arbitrary semantic independence; planners must declare shared interfaces/resources.
-- Command recognition cannot prove the effects of arbitrary shell scripts or encoded/interpreter-based commands; host sandboxing and human authorization remain required.
-- Runtime state and evidence use strict parsing, atomic writes, and digests, but are not cryptographically signed against an actor who can directly rewrite `.eclipse/runs` despite the worker write prohibition.
-- Existing symlink escapes are rejected, but portable path checks cannot eliminate a same-account attacker replacing a parent directory between check and open; host filesystem isolation remains the control for that race.
-- Worktree preparation exists, but automatic multi-branch integration and rollback orchestration are outside v0.1.
+- Eclipse v0.1 is guidance, contracts, adapters, evals, and optional validators—not an agent or workflow runtime.
+- The host or user must store the current plan revision and workflow status.
+- Effective model, reasoning, permission, and sandbox attestation depends on trustworthy host metadata; configuration and self-report remain unverified.
+- Codex and Copilot surfaces may differ or apply runtime overrides.
+- Copilot profiles inherit host model selection and do not claim Sol/Luna parity.
+- Glob overlap detection is conservative and cannot prove arbitrary semantic independence.
+- Command recognition cannot prove the effects of scripts, interpreters, encoded commands, or unreported commands.
 - Secret scanning is pattern based and cannot replace host secret isolation.
-- JSON Schema covers structural interoperability; Python validators add cross-field semantics.
-- Legacy Markdown plans are preserved for semantic human conversion rather than guessed automatically.
-- Evaluation infrastructure ships representative cases and recorded fixtures, not live benchmark results or cost-saving claims.
-- No external providers, provider credentials, billing probes, MCP routing, GUI, autopilot, or arbitrary agent marketplace is included.
+- JSON Schema covers structural interoperability; Python validators add cross-contract and command semantics.
+- The optional doctor inspects requested configuration but cannot manufacture effective-runtime evidence.
+- No canonical run database, lock manager, event journal, recovery engine, worktree manager, migration runtime, autonomous provider execution, billing probe, GUI, or marketplace is included.
+- Evaluation infrastructure ships recorded fixtures and methodology, not live benchmark conclusions or savings claims.

@@ -1,9 +1,7 @@
-# ADR 0002: Machine-readable canonical state
+# ADR 0002: Eclipse-owned canonical run state
 
-Status: accepted for v0.1
+Status: superseded by ADR 0004 before v0.1 release
 
-The prior workflow used multiple mutable Markdown files for task state and handoff. That created drift and required probabilistic agents to maintain deterministic bookkeeping.
+The initial implementation made `.eclipse/runs/<id>/run.json` canonical and added state transitions, locks, journals, evidence ingestion, rendered views, recovery, and git/worktree support.
 
-Eclipse uses versioned JSON contracts and `.eclipse/runs/<id>/run.json` as canonical state. Markdown plans/handoffs are generated projections. State transitions, plan revisions, evidence completeness, ownership, and digests are validated by code.
-
-The cost is a formal schema and migration obligation. The benefit is deterministic stale-work rejection, recovery, interoperability, and no contradictory canonical views.
+PR review found that this made the optional Python package a workflow engine and contradicted the skills-first product boundary. The persistence design, schema, CLI commands, and runtime modules were removed before release. Contract digests and plan revisions remain portable protocol semantics; the host owns current workflow state.

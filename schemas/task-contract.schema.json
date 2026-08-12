@@ -24,8 +24,9 @@
     "rationale": {"type": "string", "maxLength": 4000},
     "context_manifest": {
       "type": "object", "additionalProperties": false,
-      "required": ["summary", "references", "trusted_sources"],
+      "required": ["schema_version", "summary", "references", "trusted_sources"],
       "properties": {
+        "schema_version": {"const": "1.0"},
         "summary": {"type": "string", "maxLength": 8000},
         "references": {
           "type": "array", "maxItems": 50,

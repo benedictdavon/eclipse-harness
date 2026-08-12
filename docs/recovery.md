@@ -1,19 +1,18 @@
-# Failure and recovery
+# Host-owned failure handling
 
-Failures are classified rather than retried uniformly.
+Eclipse classifies failures so the host or user can choose the correct action. It does not retry, resume, or persist recovery state.
 
-| Failure | Default response |
+| Failure | Guidance |
 |---|---|
-| Worker crash/incomplete result | Resume or start another attempt within budget. |
-| Invalid/incomplete evidence | Reject result; worker corrects within scope. |
-| Validation failure | Worker repairs within attempt budget. |
-| Stale plan/result | Reject and re-plan; do not integrate old work. |
-| Missing dependency | Keep task planned/blocked until dependency accepts. |
-| Merge conflict | Stop integration; resolve deterministically or re-plan. |
-| Review finding | Bounded correction, architect escalation, or human boundary by type. |
-| Budget exhausted | Architect decides decomposition/route/human action. |
-| Requested model unavailable | Fallback only as configured and explicitly labelled. |
-| Host capability unavailable | Policy-only/manual mode or fail closed. |
-| Corrupt state/digest mismatch | Stop and reconstruct only from immutable trusted artifacts. |
+| Worker crash or incomplete result | Host retries within the task budget or delegates again. |
+| Invalid or incomplete evidence | Return a bounded correction request. |
+| Validation failure | Worker repairs within scope and attempt budget. |
+| Stale plan or result | Reject it and issue a task from the current plan revision. |
+| Missing dependency | Keep the task undispatched until dependencies complete. |
+| Merge conflict | Host stops integration and resolves or re-plans. |
+| Bounded review finding | Return a correction contract to a worker. |
+| Architecture or scope conflict | Return to the architect. |
+| New credentials, destructive action, or external authority | Require a human decision. |
+| Requested model/capability unavailable | Use a documented fallback or manual mode; never claim parity. |
 
-The CLI never silently converts a failure into retry or model upgrade. Resume uses the canonical state, immutable contract files, attempt numbers, digests, and event history. Never edit generated plan/handoff files as a recovery mechanism.
+Hosts may store their own status, attempts, and artifacts. Eclipse requires only that the current task/result/review bindings remain explicit and that obsolete nonterminal tasks are not executed after a plan revision.

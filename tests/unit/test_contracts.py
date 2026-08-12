@@ -70,21 +70,57 @@ def test_task_rejects_unauthorized_network_command(task_data: dict[str, Any]) ->
         TaskContract.from_dict(task_data)
 
 
-def test_result_rejects_undeclared_command(
+def test_result_allows_bounded_undeclared_exploration_command(
     task: TaskContract, result_data: dict[str, Any]
 ) -> None:
     result_data["commands"].append(
         {
-            "command": "python unexpected.py",
-            "purpose": "Undeclared work",
+            "command": "rg greet tests/fixtures/simple-python",
+            "purpose": "Bounded read-only exploration",
             "exit_code": 0,
             "outcome": "passed",
-            "summary": "ran",
+            "summary": "Located the fixture symbol.",
         }
     )
     result = ResultContract.from_dict(result_data)
-    with pytest.raises(ContractValidationError, match="not declared"):
+    validate_result_against_task(result, task)
+
+
+def test_result_rejects_unauthorized_effectful_undeclared_command(
+    task: TaskContract, result_data: dict[str, Any]
+) -> None:
+    result_data["commands"].append(
+        {
+            "command": "pip install unexpected-package",
+            "purpose": "Unauthorized dependency change",
+            "exit_code": 0,
+            "outcome": "passed",
+            "summary": "installed",
+        }
+    )
+    result = ResultContract.from_dict(result_data)
+    with pytest.raises(ContractValidationError, match="network.*not authorized"):
         validate_result_against_task(result, task)
+
+
+@pytest.mark.parametrize(
+    ("outcome", "exit_code"),
+    [
+        ("passed", 1),
+        ("passed", None),
+        ("failed", 0),
+        ("failed", None),
+        ("not-run", 0),
+        ("not-run", 1),
+    ],
+)
+def test_command_evidence_rejects_contradictory_outcome_and_exit_code(
+    result_data: dict[str, Any], outcome: str, exit_code: int | None
+) -> None:
+    result_data["commands"][0]["outcome"] = outcome
+    result_data["commands"][0]["exit_code"] = exit_code
+    with pytest.raises(ContractValidationError, match="exit_code"):
+        ResultContract.from_dict(result_data)
 
 
 def test_stale_result_is_rejected(task: TaskContract, result_data: dict[str, Any]) -> None:

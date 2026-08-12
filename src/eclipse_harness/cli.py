@@ -1,4 +1,4 @@
-"""Professional, cross-platform Eclipse Harness command line."""
+"""Optional validation, adapter, diagnostic, and evaluation CLI."""
 
 from __future__ import annotations
 
@@ -12,99 +12,56 @@ from typing import Any, Mapping, Sequence
 
 from .adapters import AdapterArtifact, CodexAdapter, CopilotAdapter, install_artifacts
 from .authorization import ensure_repository_bounded
-from .concurrency import assert_parallel_safe, execution_waves
-from .config import load_config, write_default_config
-from .contracts import ResultContract, ReviewContract, TaskContract
+from .concurrency import execution_waves
+from .contracts import (
+    ContextManifest,
+    ResultContract,
+    ReviewContract,
+    TaskContract,
+    validate_result_against_task,
+    validate_review_against_result,
+)
 from .doctor import run_doctor, write_snapshot
 from .errors import EclipseError
 from .evaluation import RecordedHost, run_suite
-from .gitops import GitRepository, WorktreeSpec
 from .jsonutil import load_json
-from .migration import inspect_soluna_workflow, write_migration
-from .render import write_views
 from .routing import Policy
 from .security import scan_for_secrets
-from .store import ReviewAttestation, RunStore
 
 
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="eclipse",
-        description="Portable architect-worker-reviewer contracts and validation.",
+        description="Optional validators and adapters for the Eclipse skills and contracts.",
     )
     parser.add_argument("--root", type=Path, default=Path.cwd(), help="repository root")
     parser.add_argument("--json", action="store_true", help="emit machine-readable JSON")
     sub = parser.add_subparsers(dest="command", required=True)
 
-    init = sub.add_parser("init", help="initialize non-destructive Eclipse project state")
+    init = sub.add_parser("init", help="copy packaged Eclipse skills without overwriting files")
     init.add_argument("--dry-run", action="store_true")
 
-    validate = sub.add_parser("validate", help="validate a contract or Eclipse configuration")
+    validate = sub.add_parser("validate", help="validate an Eclipse protocol contract")
     validate.add_argument("file", type=Path)
     validate.add_argument(
-        "--kind", choices=("auto", "task", "result", "review", "config"), default="auto"
+        "--kind",
+        choices=("auto", "context", "task", "result", "review"),
+        default="auto",
     )
-    validate.add_argument("--task", type=Path, help="task contract for semantic result validation")
+    validate.add_argument("--task", type=Path, help="governing task for semantic validation")
+    validate.add_argument("--result", type=Path, help="worker result for review validation")
 
-    inspect = sub.add_parser("inspect", help="inspect a validated contract")
+    inspect = sub.add_parser("inspect", help="report contract kind, version, and digest")
     inspect.add_argument("file", type=Path)
 
-    plan = sub.add_parser("plan", help="create, revise, or populate canonical run state")
-    plan_sub = plan.add_subparsers(dest="plan_command", required=True)
-    plan_create = plan_sub.add_parser("create", help="create a run and plan revision 1")
-    plan_create.add_argument("--run-id", required=True)
-    plan_create.add_argument("--objective", required=True)
-    plan_create.add_argument("--plan-digest", required=True)
-    plan_create.add_argument("--base-revision", required=True)
-    plan_add = plan_sub.add_parser("add-task", help="add a validated task contract")
-    plan_add.add_argument("--run-id", required=True)
-    plan_add.add_argument("contract", type=Path)
-    plan_revise = plan_sub.add_parser("revise", help="supersede active tasks with a new plan")
-    plan_revise.add_argument("--run-id", required=True)
-    plan_revise.add_argument("--plan-digest", required=True)
-    plan_revise.add_argument("--base-revision", required=True)
-
-    task = sub.add_parser("task", help="advance task execution state")
-    task_sub = task.add_subparsers(dest="task_command", required=True)
-    task_start = task_sub.add_parser("start", help="start a ready task attempt")
-    task_start.add_argument("--run-id", required=True)
-    task_start.add_argument("--task-id", required=True)
-
-    result = sub.add_parser("result", help="ingest structured worker evidence")
-    result_sub = result.add_subparsers(dest="result_command", required=True)
-    result_ingest = result_sub.add_parser("ingest", help="validate and ingest one result")
-    result_ingest.add_argument("--run-id", required=True)
-    result_ingest.add_argument(
-        "--observed-file",
-        action="append",
-        help="trusted changed path; repeat outside a Git worktree",
+    concurrency = sub.add_parser(
+        "check-concurrency",
+        help="validate a task DAG and serialize it into ownership-safe execution waves",
     )
-    result_ingest.add_argument("file", type=Path)
-
-    review = sub.add_parser("review", help="ingest independent structured review")
-    review_sub = review.add_subparsers(dest="review_command", required=True)
-    review_ingest = review_sub.add_parser("ingest", help="validate and ingest one review")
-    review_ingest.add_argument("--run-id", required=True)
-    review_ingest.add_argument(
-        "--human-approval",
-        action="store_true",
-        help="explicitly attest that a human approved this review evidence",
-    )
-    review_ingest.add_argument("--principal", help="human principal recording approval")
-    review_ingest.add_argument("file", type=Path)
-
-    status = sub.add_parser("status", help="show canonical run status")
-    status.add_argument("run_id")
-
-    render = sub.add_parser("render", help="render ACTIVE_PLAN and HANDOFF from run.json")
-    render.add_argument("run_id")
-    render.add_argument("--output", type=Path, default=Path("plans"))
-
-    concurrency = sub.add_parser("check-concurrency", help="check DAG and write ownership")
     concurrency.add_argument("contracts", nargs="+", type=Path)
     concurrency.add_argument("--max-writers", type=int, default=2)
 
-    doctor = sub.add_parser("doctor", help="diagnose host, routes, permissions, and adapters")
+    doctor = sub.add_parser("doctor", help="diagnose host-specific routes and permissions")
     doctor.add_argument("--observations", type=Path)
     doctor.add_argument(
         "--trust-observations",
@@ -113,30 +70,21 @@ def _parser() -> argparse.ArgumentParser:
     )
     doctor.add_argument("--write-snapshot", action="store_true")
 
-    adapters = sub.add_parser("adapters", help="generate current host-specific wrappers")
+    adapters = sub.add_parser("adapters", help="generate host-specific skill wrappers")
     adapters_sub = adapters.add_subparsers(dest="adapters_command", required=True)
     generate = adapters_sub.add_parser("generate", help="generate Codex/Copilot profiles")
     generate.add_argument("--host", choices=("codex", "copilot", "all"), default="all")
     generate.add_argument("--output", type=Path)
+    generate.add_argument(
+        "--max-concurrency",
+        type=int,
+        help="Codex-only maximum concurrent agent threads (default: 2)",
+    )
     generate.add_argument("--dry-run", action="store_true")
 
-    migrate = sub.add_parser("migrate", help="migrate recognizable prior workflow state")
-    migrate_sub = migrate.add_subparsers(dest="migrate_command", required=True)
-    soluna = migrate_sub.add_parser("soluna-workflow", help="migrate from soluna-workflow")
-    soluna.add_argument("source", type=Path)
-    soluna.add_argument("--output", type=Path)
-    soluna.add_argument("--dry-run", action="store_true")
-
-    worktree = sub.add_parser("worktree", help="prepare task git isolation")
-    worktree_sub = worktree.add_subparsers(dest="worktree_command", required=True)
-    prepare = worktree_sub.add_parser("prepare", help="create an isolated branch and worktree")
-    prepare.add_argument("contract", type=Path)
-    prepare.add_argument("--path", required=True, type=Path)
-    prepare.add_argument("--branch", required=True)
-
-    evaluate = sub.add_parser("eval", help="run deterministic or live evaluation suites")
+    evaluate = sub.add_parser("eval", help="run deterministic evaluation cases")
     eval_sub = evaluate.add_subparsers(dest="eval_command", required=True)
-    eval_run = eval_sub.add_parser("run", help="run a suite with recorded CI outcomes")
+    eval_run = eval_sub.add_parser("run", help="run a suite with recorded outcomes")
     eval_run.add_argument("suite", type=Path)
     eval_run.add_argument("--outcomes", required=True, type=Path)
     eval_run.add_argument("--output", required=True, type=Path)
@@ -173,30 +121,43 @@ def _emit(value: Any, *, json_output: bool) -> None:
         print(value)
 
 
-def _validate(path: Path, kind: str, task_path: Path | None) -> Mapping[str, Any]:
+def _contract_kind(data: Mapping[str, Any]) -> str:
+    if "task_contract_digest" in data and "outcome" in data:
+        return "review"
+    if "task_contract_digest" in data:
+        return "result"
+    if "task_id" in data:
+        return "task"
+    if set(data) == {"schema_version", "summary", "references", "trusted_sources"}:
+        return "context"
+    raise ValueError("could not infer contract kind; pass --kind")
+
+
+def _validate(
+    path: Path,
+    kind: str,
+    task_path: Path | None,
+    result_path: Path | None,
+) -> Mapping[str, Any]:
     data = _mapping(path)
     if kind == "auto":
-        if "task_contract_digest" in data and "outcome" in data:
-            kind = "review"
-        elif "task_contract_digest" in data:
-            kind = "result"
-        elif "task_id" in data:
-            kind = "task"
-        else:
-            kind = "config"
-    if kind == "task":
-        contract: Any = TaskContract.from_dict(data)
+        kind = _contract_kind(data)
+    if kind == "context":
+        contract: Any = ContextManifest.from_dict(data)
+    elif kind == "task":
+        contract = TaskContract.from_dict(data)
     elif kind == "result":
         contract = ResultContract.from_dict(data)
         if task_path is not None:
-            from .contracts import validate_result_against_task
-
             validate_result_against_task(contract, TaskContract.from_dict(_mapping(task_path)))
-    elif kind == "review":
-        contract = ReviewContract.from_dict(data)
     else:
-        contract = load_config(path)
-        return {"valid": True, "kind": "config", "schema_version": data["schema_version"]}
+        contract = ReviewContract.from_dict(data)
+        if (task_path is None) != (result_path is None):
+            raise ValueError("review semantic validation requires both --task and --result")
+        if task_path is not None and result_path is not None:
+            task = TaskContract.from_dict(_mapping(task_path))
+            result = ResultContract.from_dict(_mapping(result_path))
+            validate_review_against_result(contract, result, task)
     findings = scan_for_secrets(data)
     if findings:
         raise ValueError(
@@ -206,89 +167,50 @@ def _validate(path: Path, kind: str, task_path: Path | None) -> Mapping[str, Any
     return {
         "valid": True,
         "kind": kind,
-        "schema_version": data["schema_version"],
+        "schema_version": data.get("schema_version", "embedded"),
         "digest": contract.digest,
     }
 
 
 def _init(root: Path, *, dry_run: bool) -> Mapping[str, Any]:
-    config_path = ensure_repository_bounded(root, ".eclipse/config.json")
-    if config_path.exists():
-        load_config(config_path)
-        config_action = "unchanged"
-    else:
-        config_action = "create"
-        if not dry_run:
-            write_default_config(config_path)
-    skill_source = root / ".agents" / "skills"
-    if not skill_source.is_dir():
-        skill_source = _installed_share() / "skills"
-    installed: list[str] = []
-    if skill_source.is_dir() and skill_source.resolve() != (root / ".agents" / "skills").resolve():
-        for source in sorted(skill_source.iterdir()):
-            target = ensure_repository_bounded(root, f".agents/skills/{source.name}")
-            if target.exists():
-                continue
-            installed.append(source.name)
-            if not dry_run:
-                target.parent.mkdir(parents=True, exist_ok=True)
-                shutil.copytree(source, target)
-    return {"config": config_action, "skills_installed": installed, "dry_run": dry_run}
+    source_root = _installed_share() / "skills"
+    target_root = ensure_repository_bounded(root, ".agents/skills")
+    if not source_root.is_dir():
+        if target_root.is_dir():
+            return {
+                "skills": "already present in repository",
+                "installed": [],
+                "dry_run": dry_run,
+            }
+        raise ValueError("packaged Eclipse skills are unavailable; copy .agents/skills manually")
+    actions: list[dict[str, str]] = []
+    for source in sorted(source_root.iterdir()):
+        target = target_root / source.name
+        action = "unchanged" if target.exists() else "create"
+        actions.append({"skill": source.name, "action": action})
+        if action == "create" and not dry_run:
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copytree(source, target)
+    return {"skills": "checked", "actions": actions, "dry_run": dry_run}
 
 
 def _run(arguments: argparse.Namespace) -> tuple[int, Any]:
     root = arguments.root.resolve()
-    store = RunStore(root)
     if arguments.command == "init":
         return 0, _init(root, dry_run=arguments.dry_run)
     if arguments.command == "validate":
-        return 0, _validate(arguments.file, arguments.kind, arguments.task)
+        return 0, _validate(
+            arguments.file,
+            arguments.kind,
+            arguments.task,
+            arguments.result,
+        )
     if arguments.command == "inspect":
-        return 0, _validate(arguments.file, "auto", None)
-    if arguments.command == "plan":
-        if arguments.plan_command == "create":
-            state = store.create_run(
-                arguments.run_id,
-                arguments.objective,
-                arguments.plan_digest,
-                arguments.base_revision,
-            )
-        elif arguments.plan_command == "add-task":
-            state = store.add_task(
-                arguments.run_id, TaskContract.from_dict(_mapping(arguments.contract))
-            )
-        else:
-            state = store.revise_plan(
-                arguments.run_id, arguments.plan_digest, arguments.base_revision
-            )
-        return 0, state.to_dict()
-    if arguments.command == "task":
-        return 0, store.start_task(arguments.run_id, arguments.task_id).to_dict()
-    if arguments.command == "result":
-        result = ResultContract.from_dict(_mapping(arguments.file))
-        return 0, store.ingest_result(
-            arguments.run_id, result, observed_files=arguments.observed_file
-        ).to_dict()
-    if arguments.command == "review":
-        if not arguments.human_approval or not arguments.principal:
-            raise ValueError("review ingestion requires --human-approval and --principal")
-        review = ReviewContract.from_dict(_mapping(arguments.file))
-        return 0, store.ingest_review(
-            arguments.run_id,
-            review,
-            attestation=ReviewAttestation.human(arguments.principal),
-        ).to_dict()
-    if arguments.command == "status":
-        return 0, store.load(arguments.run_id).to_dict()
-    if arguments.command == "render":
-        output = ensure_repository_bounded(root, arguments.output.as_posix())
-        paths = write_views(store.load(arguments.run_id), output)
-        return 0, {"active_plan": str(paths[0]), "handoff": str(paths[1])}
+        return 0, _validate(arguments.file, "auto", None, None)
     if arguments.command == "check-concurrency":
         tasks = [TaskContract.from_dict(_mapping(path)) for path in arguments.contracts]
-        assert_parallel_safe(tasks)
         waves = execution_waves(tasks, max_parallel_writers=arguments.max_writers)
-        return 0, {"safe": True, "waves": waves}
+        return 0, {"dag_valid": True, "waves": waves}
     if arguments.command == "doctor":
         snapshot = run_doctor(
             root,
@@ -303,42 +225,19 @@ def _run(arguments: argparse.Namespace) -> tuple[int, Any]:
         return (0 if snapshot.healthy else 3), snapshot.to_dict()
     if arguments.command == "adapters":
         policy = _policy(root)
-        config_path = root / ".eclipse" / "config.json"
-        config = load_config(config_path) if config_path.is_file() else None
-        max_concurrency = config.max_parallel_writers if config else 2
+        if arguments.host == "copilot" and arguments.max_concurrency is not None:
+            raise ValueError("--max-concurrency applies only to the Codex adapter")
         hosts = ("codex", "copilot") if arguments.host == "all" else (arguments.host,)
         artifacts: list[AdapterArtifact] = []
         for host in hosts:
-            adapter = CodexAdapter() if host == "codex" else CopilotAdapter()
-            artifacts.extend(adapter.render(policy, max_concurrency=max_concurrency))
+            if host == "codex":
+                maximum = 2 if arguments.max_concurrency is None else arguments.max_concurrency
+                artifacts.extend(CodexAdapter().render(policy, max_concurrency=maximum))
+            else:
+                artifacts.extend(CopilotAdapter().render(policy))
         output = (arguments.output or root).resolve()
         actions = install_artifacts(output, artifacts, dry_run=arguments.dry_run)
         return 0, {"actions": [item.__dict__ for item in actions], "output": str(output)}
-    if arguments.command == "migrate":
-        output = (arguments.output or root).resolve()
-        migration = inspect_soluna_workflow(arguments.source)
-        files = write_migration(
-            arguments.source, output, migration, dry_run=arguments.dry_run
-        )
-        return 0, {**migration.to_dict(), "files": files, "dry_run": arguments.dry_run}
-    if arguments.command == "worktree":
-        supplied = TaskContract.from_dict(_mapping(arguments.contract))
-        task = store.load_task(supplied.run_id, supplied.task_id)
-        if task.digest != supplied.digest:
-            raise ValueError("worktree contract does not match canonical run record")
-        state = store.load(task.run_id)
-        repository = GitRepository(root)
-        base = str(task.data["provenance"]["base_revision"])
-        if base != state.base_revision:
-            raise ValueError("task base revision does not match canonical run state")
-        repository.verify_base(base)
-        scope = task.scope
-        if scope["isolation"] != "worktree":
-            raise ValueError("task contract must request worktree isolation")
-        command_result = repository.prepare_worktree(
-            WorktreeSpec(task.task_id, base, arguments.branch, arguments.path.resolve())
-        )
-        return 0, {"command": command_result.command, "path": str(arguments.path.resolve())}
     if arguments.command == "eval":
         outcomes = _mapping(arguments.outcomes)
         report = run_suite(arguments.suite, RecordedHost(outcomes), arguments.output)

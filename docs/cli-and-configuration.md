@@ -1,42 +1,37 @@
-# CLI and configuration
+# Optional CLI, policies, and adapters
 
-## Commands
+The CLI supports the skills; it is not an orchestrator.
 
 | Command | Purpose |
 |---|---|
-| `eclipse init` | Create strict default configuration without overwriting existing state. |
-| `eclipse validate` | Validate config/task/result/review syntax and semantics. |
-| `eclipse inspect` | Report contract kind, version, and canonical digest. |
-| `eclipse plan create/add-task/revise` | Create and version canonical run plans. |
-| `eclipse task start` | Start one ready attempt within budget. |
-| `eclipse result ingest` | Verify worker evidence against an observed Git diff and persist it. |
-| `eclipse review ingest` | Persist review evidence with explicit human/host approval attestation. |
-| `eclipse status` | Show canonical run state. |
-| `eclipse render` | Generate plan/handoff views from state. |
-| `eclipse check-concurrency` | Validate DAG/ownership and calculate safe waves. |
-| `eclipse doctor` | Diagnose host, routes, permissions, profiles, and git. |
-| `eclipse adapters generate` | Generate idempotent host profiles; supports dry-run. |
-| `eclipse migrate soluna-workflow` | Inspect and conservatively migrate recognizable legacy state. |
-| `eclipse worktree prepare` | Create task branch/worktree at an explicit base commit. |
-| `eclipse eval run` | Execute a recorded deterministic evaluation suite. |
+| `eclipse init` | Copy packaged skills without overwriting existing directories. |
+| `eclipse validate` | Validate context/task/result/review contracts and optional cross-contract semantics. |
+| `eclipse inspect` | Report contract kind, version, and digest. |
+| `eclipse check-concurrency` | Validate a dependency DAG and produce ownership-safe execution waves. |
+| `eclipse doctor` | Report host-specific profiles, permissions, routes, and degradation. |
+| `eclipse adapters generate` | Generate idempotent Codex/Copilot wrappers; supports dry-run. |
+| `eclipse eval run` | Aggregate deterministic recorded evaluation outcomes. |
 
-Global `--json` precedes the subcommand, for example `eclipse --json doctor`. Stable exit codes are `0` for success, `2` for invalid input/operation, and `3` when doctor finds an error-level diagnostic.
+Stable exit codes are `0` for success, `2` for invalid input/operation, and `3` when doctor finds an error-level diagnostic. The global `--json` flag precedes the subcommand.
 
-## Configuration
+## Deliberately absent commands
 
-`.eclipse/config.json` is strict and rejects unknown fields. It separates:
+v0.1 has no commands for plan persistence, task dispatch, result/review ingestion, status, render/handoff state, recovery, worktrees, or legacy workflow migration. Those responsibilities belong to the host or user.
 
-- policy and human-interaction profile;
-- host adapter selection;
-- unverified-route fallback behavior;
-- writer/reader concurrency;
-- attempt/review budgets;
-- git isolation and clean-base rules;
-- evidence/staleness validation;
-- network, repository trust, secret, and run-state security defaults.
+## Configuration surface
 
-Profiles are `strict`, `standard`, and `fast`; all retain human authority for credentials, destructive actions, target changes, and external side effects. In strict routing, unverified effective models fail closed. Standard defaults to policy-only; manual produces packets without native spawning assumptions.
+There is no versioned `.eclipse/config.json` in v0.1. The previous broad configuration implied runtime behavior that Eclipse did not own.
 
-## Adapter installation
+The retained inputs each have a direct consumer:
 
-Generation refuses to overwrite a file that lacks the Eclipse generated marker. Existing generated content is updated idempotently; identical files are unchanged. Use `--output` for staging and `--dry-run` before installing into an existing project.
+- `policies/sol-luna.json` is consumed by routing and adapter generation;
+- `--max-concurrency` controls the generated Codex concurrency request and is rejected for a Copilot-only invocation;
+- `--max-writers` controls only deterministic execution-wave calculation;
+- `--host`, `--output`, and `--dry-run` control adapter generation;
+- trusted doctor observations control only route attestation.
+
+Attempt/review budgets and authorization belong to each task contract. The host applies them while executing the workflow.
+
+## Safe adapter generation
+
+Generation refuses to overwrite a file that lacks the Eclipse generated marker. Identical files are unchanged; generated files can be updated idempotently. Use `--output` and `--dry-run` before writing into an existing project.

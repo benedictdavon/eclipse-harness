@@ -9,9 +9,6 @@ from typing import Iterable, Mapping
 from .contracts import ResultContract, TaskContract
 from .errors import AuthorizationError
 
-_RUN_STATE_PATTERNS = (".eclipse/runs", ".eclipse/runs/**")
-
-
 def normalize_repo_path(value: str) -> str:
     normalized = value.replace("\\", "/")
     candidate = PurePosixPath(normalized)
@@ -57,7 +54,7 @@ def authorize_changed_files(task: TaskContract, changed_files: Iterable[str]) ->
     for path in changed_files:
         item = normalize_repo_path(path)
         normalized.append(item)
-        if any(glob_matches(item, pattern) for pattern in (*forbidden, *_RUN_STATE_PATTERNS)):
+        if any(glob_matches(item, pattern) for pattern in forbidden):
             violations.append(f"{item}: explicitly forbidden")
         elif not any(glob_matches(item, pattern) for pattern in write_globs):
             violations.append(f"{item}: outside authorized write_globs")

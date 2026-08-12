@@ -21,7 +21,7 @@ def test_changed_files_are_authorized(task) -> None:  # type: ignore[no-untyped-
     assert files == ("tests/fixtures/simple-python/src/simple/greeting.py",)
 
 
-def test_run_state_write_is_forbidden(task) -> None:  # type: ignore[no-untyped-def]
+def test_task_declared_forbidden_path_is_rejected(task) -> None:  # type: ignore[no-untyped-def]
     with pytest.raises(AuthorizationError, match="forbidden"):
         authorize_changed_files(task, [".eclipse/runs/example/run.json"])
 
@@ -33,9 +33,7 @@ def test_path_traversal_is_rejected(path: str) -> None:
 
 
 def test_leading_dot_path_is_preserved() -> None:
-    assert normalize_repo_path("./.eclipse/runs/example/run.json") == (
-        ".eclipse/runs/example/run.json"
-    )
+    assert normalize_repo_path("./.github/agents/worker.md") == ".github/agents/worker.md"
 
 
 def test_symlink_escape_is_rejected(tmp_path: Path) -> None:

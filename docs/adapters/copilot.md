@@ -10,6 +10,8 @@ Generated profiles use current portable tool aliases:
 
 They set `disable-model-invocation: true` so the user/host selects them deliberately and omit `model`. Available model strings, selection, reasoning support, and account access vary across Copilot CLI, cloud agent, app, and IDE surfaces. Omitting the model is an honest host-default fallback rather than a false Sol/Luna claim.
 
+The adapter exposes no portable Copilot concurrency setting. A Copilot-only generation command rejects `--max-concurrency` instead of accepting a field that would not control behavior.
+
 The tool list expresses desired capability. Unrecognized tools may be ignored, and exact enforcement varies by surface. Copilot supports native/custom agent invocation and may delegate, but Eclipse does not assume deterministic automatic topology, per-role reasoning parity, or worktree isolation.
 
 Use:
@@ -19,4 +21,4 @@ eclipse adapters generate --host copilot --dry-run
 eclipse adapters generate --host copilot
 ```
 
-The portable contract/manual workflow remains fully usable if native orchestration is unavailable: give a task JSON to a selected worker, validate its result, then give the task/result/diff packet to the reviewer.
+The portable contract/manual workflow remains fully usable if native orchestration is unavailable: give a task JSON to a selected worker, then give the requirement/task/result/diff/evidence packet to the reviewer. Copilot owns execution, tools, filesystem changes, git, and scheduling; Eclipse wrappers express role intent only.

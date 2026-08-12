@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/benedictdavon/eclipse-harness/schemas/context-manifest.schema.json",
+  "title": "Eclipse Context Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "summary", "references", "trusted_sources"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "summary": {"type": "string", "maxLength": 8000},
+    "references": {
+      "type": "array",
+      "maxItems": 50,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "purpose", "trust"],
+        "properties": {
+          "path": {"type": "string", "minLength": 1},
+          "symbol": {"type": ["string", "null"]},
+          "purpose": {"type": "string", "minLength": 1},
+          "digest": {"type": ["string", "null"]},
+          "trust": {
+            "enum": ["user", "harness", "project-config", "repository", "external"]
+          }
+        }
+      }
+    },
+    "trusted_sources": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1}
+    }
+  }
+}

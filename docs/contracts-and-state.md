@@ -1,43 +1,43 @@
-# Contracts and state
+# Contracts and host-owned state
 
-## Task contract
+The normative contract documents live under [`protocol/`](../protocol). JSON is the machine-readable interchange format; Markdown may present a human view but is not parsed as protocol state.
 
-The task contract binds one executable objective to an approved plan revision and base commit. It carries decisions, context references and trust classes, invariants, non-goals, capabilities, routing intent, write/forbidden scope, interface/resources, isolation, criteria, validation, evidence expectations, stop conditions, risk/complexity, budgets, authorization, and provenance.
+## Contract set
 
-JSON is canonical. Markdown is never parsed as the protocol. Validate with:
+- A **Context Manifest** provides the smallest sufficient context and classifies each source's trust.
+- A **Task Contract** binds one objective to a plan revision, dependencies, scope, policy intent, acceptance, validation, authorization, and stop conditions.
+- A **Result Contract** reports changed files, implementation summary, acceptance evidence, validation commands, blockers, risks, and escalation.
+- A **Review Contract** binds to the exact task and result digests and reports independent verdicts, findings, outcome, and residual risk.
+
+Validate with the optional CLI when available:
 
 ```bash
+eclipse validate context.json --kind context
 eclipse validate task.json --kind task
+eclipse validate result.json --kind result --task task.json
+eclipse validate review.json --kind review --task task.json --result result.json
 ```
 
-## Result contract
+The skills remain usable when these commands are unavailable.
 
-A worker result records exact changed files, implementation summary, local decisions, commands/exits/outcomes, criterion evidence, blockers, deviations, risks, escalation, git identifiers, timestamps, and usage quality.
+## Plan revisions and stale work
 
-A `complete` result is rejected unless every acceptance criterion has satisfied evidence and every required validation command has passing evidence. It is also rejected for stale plan/task digests or unauthorized files.
+The host or user decides which plan revision is current. Every task, result, and review carries revision and digest bindings. When architecture changes, the architect creates a new revision and marks every obsolete nonterminal task superseded. That includes blocked, escalated, changes-requested, and ready-for-correction work.
 
-Requested, configured, and effective model identity are separate. Worker/reviewer JSON cannot
-self-attest `host-observed`; trusted host identity belongs in a separate authenticated envelope.
+Old results are rejected by comparing their bindings to the current task packet. Eclipse does not persist a canonical run record or recover host workflow state.
 
-## Review contract
+## Command evidence
 
-Review binds to the same task and the exact result digest. It records desired/effective permission status, criterion verdicts, validation analysis, structured findings, outcome, and residual risk.
+Task `validation` lists commands that contribute to acceptance. Result `commands` must include every required validation and may also disclose bounded exploratory/debugging commands. Undeclared commands are not automatically invalid, but all recorded commands remain subject to task authorization.
 
-An accepted review requires no findings and a satisfied verdict for every criterion. Findings are classified as bounded correction, architecture escalation, invalid contract, insufficient evidence, acceptance failure, security concern, or unauthorized change.
+Cross-field semantics are strict:
 
-## Revision and recovery
+- `passed` requires `exit_code: 0`;
+- `failed` requires a non-zero integer exit code;
+- `not-run` requires `exit_code: null`.
 
-Every task, result, and review carries the plan revision/digest. Revising the plan increments the revision and supersedes active old tasks. An obsolete result is rejected even if its prose says it is complete.
+Sensitive or effectful commands—network, dependency installation, credentials, destructive actions, mutations, or external effects—must be authorized and disclosed. Ordinary read-only exploration may be summarized rather than logged command by command.
 
-State writes are atomic. Loading validates schema, task map identity, dependency references, and contract digests. Events append to `events.jsonl` with secret redaction. Corrupted or incomplete state fails closed; repair it from immutable contracts/evidence or require human intervention rather than guessing.
+## Compatibility
 
-Every state transition is serialized with a per-run interprocess lock. Contracts, results, reviews,
-and approval attestations use create-only evidence files. Result ingestion derives changed paths
-from the task's full Git base revision (or requires an explicit trusted root observation outside a
-Git worktree) and requires exact equality with the worker report. Accepted review ingestion is a
-separate root-authority action requiring an explicit human or authenticated-host attestation;
-review JSON cannot attest itself.
-
-## Schema compatibility
-
-Package, configuration, contract, state, capability, policy, and evaluation versions are explicit. Patch releases do not break existing schemas. Optional fields may be introduced in compatible minor evolution; required/semantic breakage requires a major schema migration.
+Contract, capability, policy, and evaluation versions are explicit. Breaking field semantics require a schema version change and a documented old-to-new mapping. Eclipse does not ship a general migration engine.

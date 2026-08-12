@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "eclipse-harness"
 version = "0.1.0"
-description = "Portable contracts and tooling for architect-worker-reviewer coding workflows"
+description = "Skills-first contracts and adapters for architect-worker-reviewer coding workflows"
 readme = "README.md"
 requires-python = ">=3.10"
 license = "MIT"
@@ -54,14 +54,20 @@ eclipse_harness = ["py.typed"]
 [tool.setuptools.data-files]
 "share/eclipse-harness" = ["policies/sol-luna.json"]
 "share/eclipse-harness/schemas" = [
+  "schemas/context-manifest.schema.json",
   "schemas/task-contract.schema.json",
   "schemas/result-contract.schema.json",
   "schemas/review-contract.schema.json",
-  "schemas/run-state.schema.json",
-  "schemas/config.schema.json",
   "schemas/capability-snapshot.schema.json",
   "schemas/evaluation-suite.schema.json",
   "schemas/role-policy.schema.json",
+]
+"share/eclipse-harness/protocol" = [
+  "protocol/context-manifest.md",
+  "protocol/task-contract.md",
+  "protocol/result-contract.md",
+  "protocol/review-contract.md",
+  "protocol/routing-policy.md",
 ]
 "share/eclipse-harness/skills/eclipse-orchestrate" = [".agents/skills/eclipse-orchestrate/SKILL.md"]
 "share/eclipse-harness/skills/eclipse-orchestrate/references" = [
@@ -84,6 +90,11 @@ eclipse_harness = ["py.typed"]
 "share/eclipse-harness/skills/eclipse-doctor/references" = [
   ".agents/skills/eclipse-doctor/references/capabilities.md",
   ".agents/skills/eclipse-doctor/references/host-probes.md",
+]
+"share/eclipse-harness/skills/eclipse-bootstrap" = [".agents/skills/eclipse-bootstrap/SKILL.md"]
+"share/eclipse-harness/skills/eclipse-bootstrap/references" = [
+  ".agents/skills/eclipse-bootstrap/references/installation.md",
+  ".agents/skills/eclipse-bootstrap/references/capability-modes.md",
 ]
 
 [tool.pytest.ini_options]

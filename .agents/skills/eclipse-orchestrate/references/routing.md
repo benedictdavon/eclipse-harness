@@ -12,6 +12,6 @@ The Sol/Luna reference ladder is:
 
 Do not buy more reasoning for missing context, broken tools, environment failures, unavailable credentials, permissions, or oversized logs. Repair the actual condition.
 
-Distinguish requested, configured, effective, and verified model identity. In strict mode, fail closed when the effective route is not host-observed. In standard/manual modes, label the route policy-only or manual; never claim a cost guarantee.
+Distinguish requested, configured, effective, and verified model identity. If a task requires verified routing, do not dispatch until the host provides trusted observation; otherwise label the route policy-only or manual. Never claim a cost guarantee from configuration or agent self-report.
 
 Keep review/fix loops within `max_review_rounds`. Convert bounded findings into correction contracts for the worker. Return architectural findings to the architect.

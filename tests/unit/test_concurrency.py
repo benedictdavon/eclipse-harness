@@ -10,10 +10,17 @@ from eclipse_harness.contracts import TaskContract
 from eclipse_harness.errors import ConcurrencyError
 
 
-def _task(data: dict[str, Any], task_id: str, write: str) -> TaskContract:
+def _task(
+    data: dict[str, Any],
+    task_id: str,
+    write: str,
+    *,
+    dependencies: list[str] | None = None,
+) -> TaskContract:
     value = copy.deepcopy(data)
     value["task_id"] = task_id
     value["scope"]["write_globs"] = [write]
+    value["dependencies"] = dependencies or []
     return TaskContract.from_dict(value)
 
 
@@ -69,3 +76,38 @@ def test_duplicate_task_identifiers_are_rejected(task_data: dict[str, Any]) -> N
     task = _task(task_data, "T001", "src/a/**")
     with pytest.raises(ConcurrencyError, match="unique"):
         validate_dag([task, task])
+
+
+def test_dependency_dag_serializes_into_waves(task_data: dict[str, Any]) -> None:
+    first = _task(task_data, "T001", "src/a/**")
+    second = _task(
+        task_data,
+        "T002",
+        "src/b/**",
+        dependencies=["T001"],
+    )
+    assert execution_waves([first, second]) == (("T001",), ("T002",))
+
+
+def test_parallel_siblings_and_downstream_dependencies_form_mixed_waves(
+    task_data: dict[str, Any],
+) -> None:
+    first = _task(task_data, "T001", "src/a/**")
+    sibling = _task(task_data, "T002", "src/b/**")
+    downstream = _task(
+        task_data,
+        "T003",
+        "src/c/**",
+        dependencies=["T001", "T002"],
+    )
+    final = _task(
+        task_data,
+        "T004",
+        "src/d/**",
+        dependencies=["T003"],
+    )
+    assert execution_waves([first, sibling, downstream, final]) == (
+        ("T001", "T002"),
+        ("T003",),
+        ("T004",),
+    )

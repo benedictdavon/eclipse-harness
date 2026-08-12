@@ -33,6 +33,17 @@ def test_codex_adapter_uses_current_fields() -> None:
     assert 'sandbox_mode = "read-only"' in reviewer
 
 
+def test_codex_concurrency_input_controls_generated_field() -> None:
+    config = CodexAdapter().render(_policy(), max_concurrency=7)[0].content
+    assert "max_concurrent_threads_per_session = 7" in config
+
+
+@pytest.mark.parametrize("value", [0, 17, True])
+def test_codex_rejects_invalid_concurrency(value: object) -> None:
+    with pytest.raises(AdapterError, match="max_concurrency"):
+        CodexAdapter().render(_policy(), max_concurrency=value)  # type: ignore[arg-type]
+
+
 def test_copilot_adapter_degrades_without_model_claim() -> None:
     artifacts = CopilotAdapter().render(_policy())
     worker = next(item.content for item in artifacts if "worker" in item.relative_path)

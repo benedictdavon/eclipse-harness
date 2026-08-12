@@ -9,9 +9,5 @@ __pycache__/
 .venv/
 build/
 dist/
-.eclipse/runs/
 .eclipse/capabilities.json
-.eclipse/migration/
-plans/ACTIVE_PLAN.md
-plans/HANDOFF.md
 evaluation-results/

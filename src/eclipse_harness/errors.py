@@ -36,20 +36,12 @@ class StateTransitionError(EclipseError):
     """A requested lifecycle transition is invalid."""
 
 
-class StaleWorkError(EclipseError):
-    """A task or result belongs to an obsolete plan revision."""
-
-
 class AuthorizationError(EclipseError):
     """Requested writes or effects exceed the task authorization."""
 
 
 class ConcurrencyError(EclipseError):
     """Tasks cannot safely execute concurrently."""
-
-
-class RecoveryError(EclipseError):
-    """Persisted run state is incomplete or corrupted."""
 
 
 class AdapterError(EclipseError):

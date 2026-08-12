@@ -72,7 +72,13 @@ jobs:
           wheel = next(pathlib.Path("dist").glob("*.whl"))
           with zipfile.ZipFile(wheel) as archive:
               names = archive.namelist()
-          required = ("task-contract.schema.json", "eclipse-orchestrate/SKILL.md")
+          required = (
+              "context-manifest.schema.json",
+              "task-contract.schema.json",
+              "protocol/task-contract.md",
+              "eclipse-orchestrate/SKILL.md",
+              "eclipse-bootstrap/SKILL.md",
+          )
           missing = [name for name in required if not any(item.endswith(name) for item in names)]
           if missing:
               raise SystemExit(f"missing wheel resources: {missing}")

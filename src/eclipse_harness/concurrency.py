@@ -76,10 +76,6 @@ def pair_conflicts(left: TaskContract, right: TaskContract) -> tuple[Conflict, .
         conflicts.append(
             Conflict(left.task_id, right.task_id, "exclusive-resource", str(resource))
         )
-    if left.task_id in right.dependencies or right.task_id in left.dependencies:
-        conflicts.append(
-            Conflict(left.task_id, right.task_id, "dependency", "tasks have an ordering dependency")
-        )
     if left_scope["isolation"] == "shared-readonly" or right_scope["isolation"] == "shared-readonly":
         conflicts.append(
             Conflict(left.task_id, right.task_id, "isolation", "write task requests read-only isolation")
@@ -88,12 +84,24 @@ def pair_conflicts(left: TaskContract, right: TaskContract) -> tuple[Conflict, .
 
 
 def assert_parallel_safe(tasks: Sequence[TaskContract]) -> None:
+    task_ids = {task.task_id for task in tasks}
     conflicts = [
         conflict
         for index, left in enumerate(tasks)
         for right in tasks[index + 1 :]
         for conflict in pair_conflicts(left, right)
     ]
+    conflicts.extend(
+        Conflict(
+            task.task_id,
+            dependency,
+            "same-wave-dependency",
+            "dependency tasks must execute in an earlier wave",
+        )
+        for task in tasks
+        for dependency in task.dependencies
+        if dependency in task_ids
+    )
     if conflicts:
         details = "; ".join(
             f"{item.left_task}/{item.right_task} {item.kind}: {item.detail}" for item in conflicts

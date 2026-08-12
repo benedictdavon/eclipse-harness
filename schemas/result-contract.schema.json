@@ -27,7 +27,12 @@
       "items": {
         "type": "object", "additionalProperties": false,
         "required": ["command", "purpose", "exit_code", "outcome", "summary"],
-        "properties": {"command": {"type": "string", "minLength": 1}, "purpose": {"type": "string", "minLength": 1}, "exit_code": {"type": ["integer", "null"]}, "outcome": {"enum": ["passed", "failed", "not-run"]}, "summary": {"type": "string"}, "duration_ms": {"type": "integer", "minimum": 0}}
+        "properties": {"command": {"type": "string", "minLength": 1}, "purpose": {"type": "string", "minLength": 1}, "exit_code": {"type": ["integer", "null"]}, "outcome": {"enum": ["passed", "failed", "not-run"]}, "summary": {"type": "string"}, "duration_ms": {"type": "integer", "minimum": 0}},
+        "allOf": [
+          {"if": {"properties": {"outcome": {"const": "passed"}}}, "then": {"properties": {"exit_code": {"const": 0}}}},
+          {"if": {"properties": {"outcome": {"const": "failed"}}}, "then": {"properties": {"exit_code": {"type": "integer", "not": {"const": 0}}}}},
+          {"if": {"properties": {"outcome": {"const": "not-run"}}}, "then": {"properties": {"exit_code": {"type": "null"}}}}
+        ]
       }
     },
     "criteria_evidence": {
@@ -56,7 +61,19 @@
         "changed_files_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
       }
     },
-    "usage": {"type": "object"},
+    "usage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["quality", "source"],
+      "properties": {
+        "quality": {"enum": ["measured", "estimated", "unavailable"]},
+        "input_tokens": {"type": ["integer", "null"], "minimum": 0},
+        "output_tokens": {"type": ["integer", "null"], "minimum": 0},
+        "cost": {"type": ["number", "null"], "minimum": 0},
+        "currency": {"type": ["string", "null"]},
+        "source": {"type": "string", "minLength": 1}
+      }
+    },
     "started_at": {"type": "string", "minLength": 1},
     "finished_at": {"type": "string", "minLength": 1},
     "metadata": {"type": "object"}

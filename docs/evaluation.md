@@ -1,6 +1,6 @@
 # Evaluation methodology
 
-Eclipse provides a result format and runner for comparing workflow strategies without manufacturing conclusions.
+Eclipse provides evaluation contracts and an optional recorded-outcome runner for comparing workflow strategies without manufacturing conclusions or taking over host execution.
 
 Representative strategies include:
 
@@ -20,4 +20,4 @@ eclipse eval run examples/evaluation/suite.json \
   --output evaluation-results/example.json
 ```
 
-The example outcomes exercise the data pipeline; they are fixtures, not benchmark evidence. Live evaluation requires a separate host integration, credentials supplied outside repository state, reproducible model/settings, and the same case suite. Reports deliberately leave `conclusion` null so analysis is based on observed runs.
+The example outcomes exercise the data pipeline; they are fixtures, not benchmark evidence. Live evaluation requires a separate host integration, credentials supplied outside Eclipse artifacts, reproducible model/settings, and the same frozen case suite. The host records invocation and usage evidence. Reports deliberately leave `conclusion` null so analysis is based on observed runs.

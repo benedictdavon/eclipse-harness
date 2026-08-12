@@ -9,8 +9,8 @@ from .base import AdapterArtifact, GENERATED_MARKER
 class CopilotAdapter:
     host = "copilot"
 
-    def render(self, policy: Policy, *, max_concurrency: int = 2) -> tuple[AdapterArtifact, ...]:
-        del policy, max_concurrency
+    def render(self, policy: Policy) -> tuple[AdapterArtifact, ...]:
+        del policy
         # Copilot model identifiers are account/runtime-discovered. The generated profiles
         # deliberately inherit the host model rather than claim Sol/Luna availability.
         profiles = (
@@ -20,7 +20,7 @@ class CopilotAdapter:
                 "Create bounded Eclipse task contracts and dependency plans.",
                 ["read", "search"],
                 "eclipse-orchestrate",
-                "Do not edit files. Return task contracts for the root or user to persist.",
+                "Do not edit files. Return task contracts to the invoking host or user.",
             ),
             (
                 "eclipse-worker",
@@ -28,7 +28,7 @@ class CopilotAdapter:
                 "Execute exactly one bounded Eclipse task contract.",
                 ["read", "search", "edit", "execute"],
                 "eclipse-execute",
-                "Do not invoke other agents. Return one structured result contract.",
+                "Do not invoke other agents. The host owns execution and git; return one result contract.",
             ),
             (
                 "eclipse-reviewer",

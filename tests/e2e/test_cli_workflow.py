@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from copy import deepcopy
 from pathlib import Path
 
 from eclipse_harness.cli import main
@@ -17,29 +18,70 @@ def test_cli_validate_and_adapter_dry_run(capsys, tmp_path: Path) -> None:  # ty
     assert not any(tmp_path.iterdir())
 
 
-def test_cli_run_lifecycle(
-    capsys,
-    tmp_path: Path,
-    task_data,
-    result_data,
-    review_data,
-) -> None:  # type: ignore[no-untyped-def]
-    task_file = tmp_path / "task.json"
-    result_file = tmp_path / "result.json"
-    review_file = tmp_path / "review.json"
-    for path, value in ((task_file, task_data), (result_file, result_data), (review_file, review_data)):
+def test_cli_validates_context_without_creating_runtime_state(capsys, tmp_path: Path) -> None:  # type: ignore[no-untyped-def]
+    root = Path(__file__).parents[2]
+    assert main(
+        [
+            "--root",
+            str(tmp_path),
+            "--json",
+            "validate",
+            str(root / "examples/contracts/context.json"),
+            "--kind",
+            "context",
+        ]
+    ) == 0
+    validated = json.loads(capsys.readouterr().out)
+    assert validated["valid"] and validated["kind"] == "context"
+    assert not (tmp_path / ".eclipse/runs").exists()
+
+
+def test_cli_serializes_valid_dependency_dag_into_waves(capsys, tmp_path: Path) -> None:  # type: ignore[no-untyped-def]
+    root = Path(__file__).parents[2]
+    template = json.loads((root / "examples/contracts/task.json").read_text(encoding="utf-8"))
+    paths: list[Path] = []
+    for task_id, dependencies, write_glob in (
+        ("a", [], "src/a.py"),
+        ("b", [], "src/b.py"),
+        ("c", ["a", "b"], "src/c.py"),
+    ):
+        value = deepcopy(template)
+        value["task_id"] = task_id
+        value["dependencies"] = dependencies
+        value["scope"]["write_globs"] = [write_glob]
+        path = tmp_path / f"{task_id}.json"
         path.write_text(json.dumps(value), encoding="utf-8")
-    base = task_data["provenance"]["base_revision"]
-    commands = (
-        ["--root", str(tmp_path), "plan", "create", "--run-id", "example-run", "--objective", "Example", "--plan-digest", "sha256:example-plan-v1", "--base-revision", base],
-        ["--root", str(tmp_path), "plan", "add-task", "--run-id", "example-run", str(task_file)],
-        ["--root", str(tmp_path), "task", "start", "--run-id", "example-run", "--task-id", "T001"],
-        ["--root", str(tmp_path), "result", "ingest", "--run-id", "example-run", "--observed-file", "tests/fixtures/simple-python/src/simple/greeting.py", "--observed-file", "tests/fixtures/simple-python/tests/test_greeting.py", str(result_file)],
-        ["--root", str(tmp_path), "review", "ingest", "--run-id", "example-run", "--human-approval", "--principal", "test-reviewer", str(review_file)],
-        ["--root", str(tmp_path), "render", "example-run"],
-    )
-    for command in commands:
-        assert main(command) == 0
-        capsys.readouterr()
-    assert (tmp_path / "plans/ACTIVE_PLAN.md").is_file()
-    assert "`accepted`" in (tmp_path / "plans/ACTIVE_PLAN.md").read_text(encoding="utf-8")
+        paths.append(path)
+
+    assert main(
+        [
+            "--root",
+            str(root),
+            "--json",
+            "check-concurrency",
+            *(str(path) for path in paths),
+        ]
+    ) == 0
+    report = json.loads(capsys.readouterr().out)
+    assert report == {"dag_valid": True, "waves": [["a", "b"], ["c"]]}
+
+
+def test_cli_rejects_decorative_copilot_concurrency_flag(capsys, tmp_path: Path) -> None:  # type: ignore[no-untyped-def]
+    root = Path(__file__).parents[2]
+    assert main(
+        [
+            "--root",
+            str(root),
+            "--json",
+            "adapters",
+            "generate",
+            "--host",
+            "copilot",
+            "--max-concurrency",
+            "3",
+            "--output",
+            str(tmp_path),
+        ]
+    ) == 2
+    error = json.loads(capsys.readouterr().err)
+    assert "applies only to the Codex adapter" in error["message"]

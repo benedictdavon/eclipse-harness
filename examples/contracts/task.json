@@ -9,6 +9,7 @@
   "objective": "Add a deterministic greeting function and focused tests.",
   "rationale": "Demonstrate a small bounded task with direct acceptance evidence.",
   "context_manifest": {
+    "schema_version": "1.0",
     "summary": "The fixture package exposes small pure functions.",
     "references": [
       {
