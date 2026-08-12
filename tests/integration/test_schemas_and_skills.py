@@ -7,6 +7,9 @@ from pathlib import Path
 import jsonschema
 import pytest
 
+from eclipse_harness.contracts import ResultContract
+from eclipse_harness.errors import ContractValidationError
+
 
 ROOT = Path(__file__).parents[2]
 
@@ -57,6 +60,28 @@ def test_result_schema_rejects_inconsistent_command_evidence(
     )
     with pytest.raises(jsonschema.ValidationError):
         jsonschema.Draft202012Validator(schema).validate(value)
+
+
+@pytest.mark.parametrize(
+    "usage",
+    [
+        {"quality": "measured", "cost": -0.01, "currency": "USD", "source": "host"},
+        {"quality": "measured", "source": "host", "provider_request_id": "request-123"},
+    ],
+)
+def test_result_usage_python_and_schema_reject_the_same_invalid_records(
+    usage: dict[str, object],
+) -> None:
+    value = json.loads((ROOT / "examples/contracts/result.json").read_text(encoding="utf-8"))
+    value["usage"] = usage
+    schema = json.loads(
+        (ROOT / "schemas/result-contract.schema.json").read_text(encoding="utf-8")
+    )
+
+    with pytest.raises(jsonschema.ValidationError):
+        jsonschema.Draft202012Validator(schema).validate(value)
+    with pytest.raises(ContractValidationError, match="usage"):
+        ResultContract.from_dict(value)
 
 
 def test_skill_structure_and_references() -> None:

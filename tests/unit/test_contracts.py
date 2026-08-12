@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from copy import deepcopy
 from typing import Any
 
 import pytest
@@ -12,6 +13,7 @@ from eclipse_harness.contracts import (
     validate_review_against_result,
 )
 from eclipse_harness.errors import ContractValidationError
+from eclipse_harness.jsonutil import digest_json
 
 
 def test_task_rejects_missing_objective(task_data: dict[str, Any]) -> None:
@@ -100,6 +102,32 @@ def test_result_rejects_unauthorized_effectful_undeclared_command(
     )
     result = ResultContract.from_dict(result_data)
     with pytest.raises(ContractValidationError, match="network.*not authorized"):
+        validate_result_against_task(result, task)
+
+
+@pytest.mark.parametrize(
+    ("reported_path", "expected_error"),
+    [
+        ("README.md", "outside authorized write_globs"),
+        (".eclipse/runs/example/result.json", "explicitly forbidden"),
+    ],
+)
+def test_result_rejects_reported_files_outside_task_write_scope(
+    task_data: dict[str, Any],
+    result_data: dict[str, Any],
+    reported_path: str,
+    expected_error: str,
+) -> None:
+    task_value = deepcopy(task_data)
+    task_value["scope"]["write_globs"] = ["src/foo/**"]
+    task = TaskContract.from_dict(task_value)
+    result_value = deepcopy(result_data)
+    result_value["task_contract_digest"] = task.digest
+    result_value["files_changed"] = [reported_path]
+    result_value["git"]["changed_files_digest"] = digest_json([reported_path])
+    result = ResultContract.from_dict(result_value)
+
+    with pytest.raises(ContractValidationError, match=expected_error):
         validate_result_against_task(result, task)
 
 

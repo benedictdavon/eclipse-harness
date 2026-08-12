@@ -4,10 +4,12 @@ from __future__ import annotations
 
 import fnmatch
 from pathlib import Path, PurePosixPath
-from typing import Iterable, Mapping
+from typing import TYPE_CHECKING, Iterable, Mapping
 
-from .contracts import ResultContract, TaskContract
 from .errors import AuthorizationError
+
+if TYPE_CHECKING:
+    from .contracts import ResultContract, TaskContract
 
 def normalize_repo_path(value: str) -> str:
     normalized = value.replace("\\", "/")

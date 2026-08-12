@@ -5,6 +5,8 @@ from copy import deepcopy
 from pathlib import Path
 
 from eclipse_harness.cli import main
+from eclipse_harness.contracts import TaskContract
+from eclipse_harness.jsonutil import digest_json
 
 
 def test_cli_validate_and_adapter_dry_run(capsys, tmp_path: Path) -> None:  # type: ignore[no-untyped-def]
@@ -34,6 +36,42 @@ def test_cli_validates_context_without_creating_runtime_state(capsys, tmp_path: 
     validated = json.loads(capsys.readouterr().out)
     assert validated["valid"] and validated["kind"] == "context"
     assert not (tmp_path / ".eclipse/runs").exists()
+
+
+def test_cli_rejects_correctly_digested_result_outside_task_write_scope(
+    capsys, tmp_path: Path  # type: ignore[no-untyped-def]
+) -> None:
+    root = Path(__file__).parents[2]
+    task_value = json.loads(
+        (root / "examples/contracts/task.json").read_text(encoding="utf-8")
+    )
+    task_value["scope"]["write_globs"] = ["src/foo/**"]
+    task = TaskContract.from_dict(task_value)
+    result_value = json.loads(
+        (root / "examples/contracts/result.json").read_text(encoding="utf-8")
+    )
+    result_value["task_contract_digest"] = task.digest
+    result_value["files_changed"] = ["README.md"]
+    result_value["git"]["changed_files_digest"] = digest_json(["README.md"])
+    task_path = tmp_path / "task.json"
+    result_path = tmp_path / "result.json"
+    task_path.write_text(json.dumps(task_value), encoding="utf-8")
+    result_path.write_text(json.dumps(result_value), encoding="utf-8")
+
+    assert main(
+        [
+            "--root",
+            str(root),
+            "--json",
+            "validate",
+            str(result_path),
+            "--task",
+            str(task_path),
+        ]
+    ) == 2
+    error = json.loads(capsys.readouterr().err)
+    assert "outside authorized write_globs" in error["message"]
+    assert "digest-mismatch" not in error["message"]
 
 
 def test_cli_serializes_valid_dependency_dag_into_waves(capsys, tmp_path: Path) -> None:  # type: ignore[no-untyped-def]

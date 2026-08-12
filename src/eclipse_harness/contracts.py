@@ -7,8 +7,9 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Any, Iterable, Mapping, Sequence
 
+from .authorization import authorize_changed_files
 from .constants import CONTRACT_SCHEMA_VERSION
-from .errors import ContractValidationError, ValidationIssue
+from .errors import AuthorizationError, ContractValidationError, ValidationIssue
 from .jsonutil import digest_json
 from .security import assess_command
 from .usage import UsageRecord
@@ -743,6 +744,12 @@ def validate_result_against_task(result: ResultContract, task: TaskContract) -> 
             ValidationIssue("$.git.base_revision", "must match task provenance", "stale")
         )
     reported_files = tuple(sorted(str(item) for item in result.data["files_changed"]))
+    try:
+        authorize_changed_files(task, reported_files)
+    except AuthorizationError as error:
+        issues.append(
+            ValidationIssue("$.files_changed", str(error), "unauthorized-scope")
+        )
     if git.get("changed_files_digest") != digest_json(list(reported_files)):
         issues.append(
             ValidationIssue(
