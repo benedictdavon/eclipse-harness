@@ -1,0 +1,31 @@
+{
+  "schema_version": "1.0",
+  "run_id": "example-run",
+  "plan_revision": 1,
+  "plan_digest": "sha256:example-plan-v1",
+  "task_id": "T001",
+  "task_contract_digest": "sha256:98c443bf08d48ef98ae28ed108af72b355cbe9b256d30cd1d515e631cacc48c4",
+  "result_digest": "sha256:cdf4c7ccbb6443b9c03512be9e68edd8e7155d4917bced0102d6d54838447b5f",
+  "review_round": 1,
+  "outcome": "accepted",
+  "reviewer_identity": {
+    "role": "reviewer",
+    "requested_model": "gpt-5.6-sol",
+    "effective_model": null,
+    "verification": "unverified"
+  },
+  "permissions": {
+    "desired": "read-only",
+    "effective": "unverified",
+    "enforcement": "host-conditional"
+  },
+  "findings": [],
+  "criteria_verdicts": [
+    {"criterion_id": "AC-1", "status": "satisfied", "evidence": "Actual diff and focused test establish the exact return value."}
+  ],
+  "validation_summary": "The focused command is recorded passing; no broader validation was required by this bounded fixture.",
+  "residual_risk": ["Effective reviewer model and read-only enforcement were not host-observed in this example."],
+  "started_at": "2026-08-12T00:03:00Z",
+  "finished_at": "2026-08-12T00:04:00Z",
+  "metadata": {"example": true}
+}

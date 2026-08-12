@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/benedictdavon/eclipse-harness/schemas/review-contract.schema.json",
+  "title": "Eclipse Review Contract",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "run_id", "plan_revision", "plan_digest", "task_id", "task_contract_digest", "result_digest", "review_round", "outcome", "reviewer_identity", "permissions", "findings", "criteria_verdicts", "validation_summary", "residual_risk", "started_at", "finished_at"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "run_id": {"$ref": "#/$defs/id"},
+    "plan_revision": {"type": "integer", "minimum": 1},
+    "plan_digest": {"type": "string", "minLength": 1},
+    "task_id": {"$ref": "#/$defs/id"},
+    "task_contract_digest": {"type": "string", "minLength": 1},
+    "result_digest": {"type": "string", "minLength": 1},
+    "review_round": {"type": "integer", "minimum": 1},
+    "outcome": {"enum": ["accepted", "changes_requested", "escalated", "rejected"]},
+    "reviewer_identity": {
+      "type": "object", "additionalProperties": false,
+      "required": ["role", "requested_model", "effective_model", "verification"],
+      "properties": {"role": {"type": "string", "minLength": 1}, "requested_model": {"type": ["string", "null"]}, "effective_model": {"type": ["string", "null"]}, "verification": {"enum": ["host-observed", "unverified", "unavailable"]}}
+    },
+    "permissions": {
+      "type": "object", "additionalProperties": false,
+      "required": ["desired", "effective", "enforcement"],
+      "properties": {"desired": {"const": "read-only"}, "effective": {"type": "string", "minLength": 1}, "enforcement": {"type": "string", "minLength": 1}}
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["id", "severity", "type", "path", "evidence", "impact", "correction", "disposition"],
+        "properties": {"id": {"$ref": "#/$defs/id"}, "severity": {"enum": ["low", "medium", "high", "critical"]}, "type": {"enum": ["bounded-correction", "architecture-escalation", "invalid-contract", "insufficient-evidence", "acceptance-failure", "security-concern", "unauthorized-change"]}, "path": {"type": "string", "minLength": 1}, "symbol": {"type": ["string", "null"]}, "criterion_id": {"type": ["string", "null"]}, "evidence": {"type": "string", "minLength": 1}, "impact": {"type": "string", "minLength": 1}, "correction": {"type": "string", "minLength": 1}, "disposition": {"enum": ["worker", "architect", "human"]}}
+      }
+    },
+    "criteria_verdicts": {
+      "type": "array",
+      "items": {"type": "object", "additionalProperties": false, "required": ["criterion_id", "status", "evidence"], "properties": {"criterion_id": {"$ref": "#/$defs/id"}, "status": {"enum": ["satisfied", "unsatisfied", "unverified"]}, "evidence": {"type": "string", "minLength": 1}}}
+    },
+    "validation_summary": {"type": "string", "minLength": 1},
+    "residual_risk": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "started_at": {"type": "string", "minLength": 1},
+    "finished_at": {"type": "string", "minLength": 1},
+    "metadata": {"type": "object"}
+  },
+  "$defs": {"id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"}}
+}

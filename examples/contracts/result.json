@@ -1,0 +1,46 @@
+{
+  "schema_version": "1.0",
+  "run_id": "example-run",
+  "plan_revision": 1,
+  "plan_digest": "sha256:example-plan-v1",
+  "task_id": "T001",
+  "task_contract_digest": "sha256:98c443bf08d48ef98ae28ed108af72b355cbe9b256d30cd1d515e631cacc48c4",
+  "attempt": 1,
+  "status": "complete",
+  "worker_identity": {
+    "role": "executor",
+    "requested_model": "gpt-5.6-luna",
+    "configured_model": "gpt-5.6-luna",
+    "effective_model": null,
+    "verification": "unverified"
+  },
+  "files_changed": [
+    "tests/fixtures/simple-python/src/simple/greeting.py",
+    "tests/fixtures/simple-python/tests/test_greeting.py"
+  ],
+  "implementation_summary": "Added a pure greeting function and focused test.",
+  "decisions": [],
+  "commands": [
+    {
+      "command": "python -m pytest tests/fixtures/simple-python/tests -q",
+      "purpose": "Run focused fixture tests",
+      "exit_code": 0,
+      "outcome": "passed",
+      "summary": "2 tests passed",
+      "duration_ms": 120
+    }
+  ],
+  "criteria_evidence": [
+    {"criterion_id": "AC-1", "status": "satisfied", "evidence": "Focused test asserts the exact greeting and passed."}
+  ],
+  "unresolved_issues": [],
+  "blockers": [],
+  "deviations": [],
+  "observed_risks": [],
+  "requested_escalation": null,
+  "git": {"base_revision": "0123456789abcdef0123456789abcdef01234567", "changed_files_digest": "sha256:e78b5b534b89afc776f4b961e38cd6ff5fbf54318a08281fa10f9c6b5e7a5009"},
+  "usage": {"quality": "unavailable", "source": "example fixture"},
+  "started_at": "2026-08-12T00:01:00Z",
+  "finished_at": "2026-08-12T00:02:00Z",
+  "metadata": {"example": true}
+}

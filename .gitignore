@@ -1,0 +1,17 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.coverage
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+.tox/
+.venv/
+build/
+dist/
+.eclipse/runs/
+.eclipse/capabilities.json
+.eclipse/migration/
+plans/ACTIVE_PLAN.md
+plans/HANDOFF.md
+evaluation-results/

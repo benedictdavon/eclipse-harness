@@ -1,0 +1,89 @@
+{
+  "schema_version": "1.0",
+  "run_id": "example-run",
+  "plan_revision": 1,
+  "plan_digest": "sha256:example-plan-v1",
+  "task_id": "T001",
+  "parent_task_id": null,
+  "dependencies": [],
+  "objective": "Add a deterministic greeting function and focused tests.",
+  "rationale": "Demonstrate a small bounded task with direct acceptance evidence.",
+  "context_manifest": {
+    "summary": "The fixture package exposes small pure functions.",
+    "references": [
+      {
+        "path": "tests/fixtures/simple-python/src/simple/greeting.py",
+        "symbol": null,
+        "purpose": "Implementation target",
+        "digest": null,
+        "trust": "repository"
+      }
+    ],
+    "trusted_sources": ["user requirement", "Eclipse task contract"]
+  },
+  "decisions": {
+    "fixed": ["Use a pure Python function.", "Do not add dependencies."],
+    "assumptions": ["Names are non-empty strings."]
+  },
+  "invariants": ["Existing fixture behavior remains unchanged."],
+  "non_goals": ["Localization", "Command-line integration"],
+  "scope": {
+    "write_globs": [
+      "tests/fixtures/simple-python/src/simple/greeting.py",
+      "tests/fixtures/simple-python/tests/test_greeting.py"
+    ],
+    "read_globs": ["tests/fixtures/simple-python/**"],
+    "forbidden_globs": [".eclipse/**"],
+    "shared_interfaces": [],
+    "exclusive_resources": [],
+    "parallel_safe": true,
+    "isolation": "worktree"
+  },
+  "required_capabilities": ["repository-read", "scoped-write", "test-execution"],
+  "execution_profile": {
+    "role": "executor",
+    "capability_tier": "bounded-routine",
+    "cost_tier": "low",
+    "reasoning_effort": "medium",
+    "preferred_model": "gpt-5.6-luna",
+    "fallback_profiles": ["worker"]
+  },
+  "implementation_instructions": [
+    "Implement greet(name) returning Hello, {name}!.",
+    "Add focused success-path tests."
+  ],
+  "acceptance_criteria": [
+    {
+      "id": "AC-1",
+      "statement": "greet('Davon') returns 'Hello, Davon!'.",
+      "evidence_required": "Focused pytest passes."
+    }
+  ],
+  "validation": [
+    {
+      "command": "python -m pytest tests/fixtures/simple-python/tests -q",
+      "purpose": "Run focused fixture tests",
+      "mutating": false,
+      "required": true
+    }
+  ],
+  "expected_evidence": ["Changed-file list", "Focused pytest exit code", "AC-1 mapping"],
+  "stop_conditions": ["Completion requires files outside write_globs.", "A dependency must be added."],
+  "risk": {"level": "low", "flags": []},
+  "complexity": "trivial",
+  "budgets": {"max_attempts": 2, "max_review_rounds": 2},
+  "authorization": {
+    "network": false,
+    "credentials": false,
+    "external_side_effects": false,
+    "destructive_actions": false,
+    "targets": []
+  },
+  "provenance": {
+    "base_revision": "0123456789abcdef0123456789abcdef01234567",
+    "created_by": "eclipse-architect",
+    "created_at": "2026-08-12T00:00:00Z",
+    "source_requirement_digest": "sha256:example-requirement"
+  },
+  "metadata": {"example": true}
+}

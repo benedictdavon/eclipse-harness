@@ -1,0 +1,55 @@
+{
+  "schema_version": "1.0",
+  "name": "sol-luna",
+  "description": "Reference policy that reserves expensive reasoning for decisions and review while delegating bounded execution to economical workers.",
+  "profiles": {
+    "architect": {
+      "role": "architect",
+      "capability_tier": "frontier-judgment",
+      "cost_tier": "high",
+      "reasoning_effort": "high",
+      "preferred_model": "gpt-5.6-sol",
+      "desired_permissions": ["repository-read", "search", "planning"]
+    },
+    "worker-lite": {
+      "role": "executor",
+      "capability_tier": "bounded-routine",
+      "cost_tier": "low",
+      "reasoning_effort": "medium",
+      "preferred_model": "gpt-5.6-luna",
+      "desired_permissions": ["repository-read", "scoped-write", "test-execution"]
+    },
+    "worker": {
+      "role": "executor",
+      "capability_tier": "bounded-complex",
+      "cost_tier": "low",
+      "reasoning_effort": "high",
+      "preferred_model": "gpt-5.6-luna",
+      "desired_permissions": ["repository-read", "scoped-write", "test-execution"]
+    },
+    "escalation-worker": {
+      "role": "executor",
+      "capability_tier": "bounded-difficult",
+      "cost_tier": "low",
+      "reasoning_effort": "max",
+      "preferred_model": "gpt-5.6-luna",
+      "desired_permissions": ["repository-read", "scoped-write", "test-execution"]
+    },
+    "reviewer": {
+      "role": "reviewer",
+      "capability_tier": "frontier-verification",
+      "cost_tier": "high",
+      "reasoning_effort": "high",
+      "preferred_model": "gpt-5.6-sol",
+      "desired_permissions": ["repository-read", "diff-read", "evidence-read"]
+    },
+    "doctor": {
+      "role": "doctor",
+      "capability_tier": "deterministic-diagnostics",
+      "cost_tier": "none",
+      "reasoning_effort": "none",
+      "preferred_model": null,
+      "desired_permissions": ["configuration-read", "environment-inspection"]
+    }
+  }
+}
