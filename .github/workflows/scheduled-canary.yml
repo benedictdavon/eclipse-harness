@@ -1,0 +1,27 @@
+name: Codex compatibility canary
+
+on:
+  schedule:
+    - cron: "17 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  latest-codex:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # v5.4.0
+        with:
+          python-version: "3.12"
+      - run: python -m pip install -e .
+      - name: Install current Codex CLI
+        run: npm install --global @openai/codex@latest
+      - name: Structural compatibility
+        run: |
+          codex --version
+          eclipse adapters generate --host codex
+          eclipse --json doctor

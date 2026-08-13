@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/benedictdavon/eclipse-harness/schemas/role-policy.schema.json",
+  "title": "Eclipse Routing Policy",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "name", "description", "profiles"],
+  "properties": {
+    "schema_version": {"const": "1.0"}, "name": {"type": "string"}, "description": {"type": "string"},
+    "profiles": {"type": "object", "additionalProperties": {"type": "object", "additionalProperties": false, "required": ["role", "capability_tier", "cost_tier", "reasoning_effort", "preferred_model", "desired_permissions"], "properties": {"role": {"enum": ["architect", "executor", "reviewer", "doctor"]}, "capability_tier": {"type": "string"}, "cost_tier": {"type": "string"}, "reasoning_effort": {"enum": ["none", "low", "medium", "high", "xhigh", "max", "ultra"]}, "preferred_model": {"oneOf": [{"type": "null"}, {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._/-]{0,127}$"}]}, "desired_permissions": {"type": "array", "items": {"type": "string"}}}}}
+  }
+}

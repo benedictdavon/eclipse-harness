@@ -1,0 +1,14 @@
+{
+  "schema_version": "1.0",
+  "summary": "The fixture package exposes small pure functions.",
+  "references": [
+    {
+      "path": "tests/fixtures/simple-python/src/simple/greeting.py",
+      "symbol": null,
+      "purpose": "Implementation target",
+      "digest": null,
+      "trust": "repository"
+    }
+  ],
+  "trusted_sources": ["user requirement", "Eclipse task contract"]
+}

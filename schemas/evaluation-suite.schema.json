@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/benedictdavon/eclipse-harness/schemas/evaluation-suite.schema.json",
+  "title": "Eclipse Evaluation Suite",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "name", "strategies", "cases"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "name": {"type": "string", "minLength": 1},
+    "strategies": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "cases": {"type": "array", "minItems": 1, "items": {"type": "object", "additionalProperties": false, "required": ["case_id", "fixture", "objective", "acceptance_ids", "forbidden_paths"], "properties": {"case_id": {"type": "string", "minLength": 1}, "fixture": {"type": "string", "minLength": 1}, "objective": {"type": "string", "minLength": 1}, "acceptance_ids": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}}, "forbidden_paths": {"type": "array", "items": {"type": "string", "minLength": 1}}}}}
+  }
+}

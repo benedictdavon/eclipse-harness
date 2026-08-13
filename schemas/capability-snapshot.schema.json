@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/benedictdavon/eclipse-harness/schemas/capability-snapshot.schema.json",
+  "title": "Eclipse Capability Snapshot",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "eclipse_version", "host", "skills", "agents", "concurrency", "permissions", "git", "routes", "diagnostics"],
+  "properties": {
+    "schema_version": {"const": "1.0"}, "eclipse_version": {"type": "string"},
+    "host": {"type": "object"}, "skills": {"type": "object"}, "agents": {"type": "object"}, "concurrency": {"type": "object"}, "permissions": {"type": "object"}, "git": {"type": "object"},
+    "routes": {"type": "object", "additionalProperties": {"type": "object", "required": ["requested_model", "configured_model", "effective_model", "verification", "status"], "properties": {"requested_model": {"type": ["string", "null"]}, "configured_model": {"type": ["string", "null"]}, "effective_model": {"type": ["string", "null"]}, "verification": {"enum": ["host-observed", "unverified", "unavailable"]}, "status": {"enum": ["verified", "broken", "unverified", "unavailable"]}}}},
+    "diagnostics": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["check", "level", "message"], "properties": {"check": {"type": "string"}, "level": {"enum": ["pass", "warning", "error"]}, "message": {"type": "string"}}}}
+  }
+}

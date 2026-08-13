@@ -1,0 +1,125 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/benedictdavon/eclipse-harness/schemas/task-contract.schema.json",
+  "title": "Eclipse Task Contract",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "run_id", "plan_revision", "plan_digest", "task_id",
+    "dependencies", "objective", "rationale", "context_manifest", "decisions",
+    "invariants", "non_goals", "scope", "required_capabilities", "execution_profile",
+    "implementation_instructions", "acceptance_criteria", "validation",
+    "expected_evidence", "stop_conditions", "risk", "complexity", "budgets",
+    "authorization", "provenance"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "run_id": {"$ref": "#/$defs/id"},
+    "plan_revision": {"type": "integer", "minimum": 1},
+    "plan_digest": {"type": "string", "minLength": 1},
+    "task_id": {"$ref": "#/$defs/id"},
+    "parent_task_id": {"oneOf": [{"$ref": "#/$defs/id"}, {"type": "null"}]},
+    "dependencies": {"$ref": "#/$defs/stringArray"},
+    "objective": {"type": "string", "minLength": 1, "maxLength": 4000},
+    "rationale": {"type": "string", "maxLength": 4000},
+    "context_manifest": {
+      "type": "object", "additionalProperties": false,
+      "required": ["schema_version", "summary", "references", "trusted_sources"],
+      "properties": {
+        "schema_version": {"const": "1.0"},
+        "summary": {"type": "string", "maxLength": 8000},
+        "references": {
+          "type": "array", "maxItems": 50,
+          "items": {
+            "type": "object", "additionalProperties": false,
+            "required": ["path", "purpose", "trust"],
+            "properties": {
+              "path": {"type": "string", "minLength": 1},
+              "symbol": {"type": ["string", "null"]},
+              "purpose": {"type": "string", "minLength": 1},
+              "digest": {"type": ["string", "null"]},
+              "trust": {"enum": ["user", "harness", "project-config", "repository", "external"]}
+            }
+          }
+        },
+        "trusted_sources": {"$ref": "#/$defs/stringArray"}
+      }
+    },
+    "decisions": {
+      "type": "object", "additionalProperties": false,
+      "required": ["fixed", "assumptions"],
+      "properties": {"fixed": {"$ref": "#/$defs/stringArray"}, "assumptions": {"$ref": "#/$defs/stringArray"}}
+    },
+    "invariants": {"$ref": "#/$defs/stringArray"},
+    "non_goals": {"$ref": "#/$defs/stringArray"},
+    "scope": {
+      "type": "object", "additionalProperties": false,
+      "required": ["write_globs", "read_globs", "forbidden_globs", "shared_interfaces", "exclusive_resources", "parallel_safe", "isolation"],
+      "properties": {
+        "write_globs": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "read_globs": {"$ref": "#/$defs/stringArray"},
+        "forbidden_globs": {"$ref": "#/$defs/stringArray"},
+        "shared_interfaces": {"$ref": "#/$defs/stringArray"},
+        "exclusive_resources": {"$ref": "#/$defs/stringArray"},
+        "parallel_safe": {"type": "boolean"},
+        "isolation": {"enum": ["shared-readonly", "branch", "worktree", "manual"]}
+      }
+    },
+    "required_capabilities": {"$ref": "#/$defs/stringArray"},
+    "execution_profile": {
+      "type": "object", "additionalProperties": false,
+      "required": ["role", "capability_tier", "cost_tier", "reasoning_effort", "fallback_profiles"],
+      "properties": {
+        "role": {"type": "string", "minLength": 1},
+        "capability_tier": {"type": "string", "minLength": 1},
+        "cost_tier": {"type": "string", "minLength": 1},
+        "reasoning_effort": {"type": "string", "minLength": 1},
+        "preferred_model": {"type": ["string", "null"]},
+        "fallback_profiles": {"$ref": "#/$defs/stringArray"}
+      }
+    },
+    "implementation_instructions": {"$ref": "#/$defs/stringArray"},
+    "acceptance_criteria": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["id", "statement", "evidence_required"],
+        "properties": {"id": {"$ref": "#/$defs/id"}, "statement": {"type": "string", "minLength": 1}, "evidence_required": {"type": "string", "minLength": 1}}
+      }
+    },
+    "validation": {
+      "type": "array",
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["command", "purpose", "mutating", "required"],
+        "properties": {"command": {"type": "string", "minLength": 1}, "purpose": {"type": "string", "minLength": 1}, "mutating": {"type": "boolean"}, "required": {"type": "boolean"}}
+      }
+    },
+    "expected_evidence": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+    "stop_conditions": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+    "risk": {
+      "type": "object", "additionalProperties": false, "required": ["level", "flags"],
+      "properties": {"level": {"enum": ["low", "medium", "high", "critical"]}, "flags": {"$ref": "#/$defs/stringArray"}}
+    },
+    "complexity": {"enum": ["trivial", "bounded", "complex", "architectural"]},
+    "budgets": {
+      "type": "object", "additionalProperties": false, "required": ["max_attempts", "max_review_rounds"],
+      "properties": {"max_attempts": {"type": "integer", "minimum": 0, "maximum": 10}, "max_review_rounds": {"type": "integer", "minimum": 0, "maximum": 10}}
+    },
+    "authorization": {
+      "type": "object", "additionalProperties": false,
+      "required": ["network", "credentials", "external_side_effects", "destructive_actions", "targets"],
+      "properties": {"network": {"type": "boolean"}, "credentials": {"type": "boolean"}, "external_side_effects": {"type": "boolean"}, "destructive_actions": {"type": "boolean"}, "targets": {"$ref": "#/$defs/stringArray"}}
+    },
+    "provenance": {
+      "type": "object", "additionalProperties": false,
+      "required": ["base_revision", "created_by", "created_at"],
+      "properties": {"base_revision": {"type": "string", "pattern": "^[0-9a-fA-F]{40,64}$"}, "created_by": {"type": "string", "minLength": 1}, "created_at": {"type": "string", "minLength": 1}, "source_requirement_digest": {"type": "string"}}
+    },
+    "metadata": {"type": "object"}
+  },
+  "$defs": {
+    "id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"},
+    "stringArray": {"type": "array", "items": {"type": "string", "minLength": 1}}
+  }
+}

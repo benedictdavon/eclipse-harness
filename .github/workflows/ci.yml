@@ -1,0 +1,92 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: ${{ matrix.os }} / Python ${{ matrix.python }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            python: "3.10"
+          - os: ubuntu-latest
+            python: "3.11"
+          - os: ubuntu-latest
+            python: "3.12"
+          - os: ubuntu-latest
+            python: "3.13"
+          - os: ubuntu-latest
+            python: "3.14"
+          - os: windows-latest
+            python: "3.10"
+          - os: windows-latest
+            python: "3.14"
+          - os: macos-latest
+            python: "3.10"
+          - os: macos-latest
+            python: "3.14"
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # v5.4.0
+        with:
+          python-version: ${{ matrix.python }}
+          cache: pip
+      - name: Install
+        run: python -m pip install -e ".[dev]"
+      - name: Unit, integration, and end-to-end tests
+        run: python -m pytest --cov=eclipse_harness --cov-report=term-missing
+      - name: CLI smoke test
+        run: eclipse --json validate examples/contracts/task.json --kind task
+
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # v5.4.0
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: python -m pip install -e ".[dev]"
+      - name: Lint
+        run: ruff check .
+      - name: Type check
+        run: mypy src
+      - name: Build distributions
+        run: python -m build
+      - name: Check wheel contents
+        shell: python
+        run: |
+          import pathlib, zipfile
+          wheel = next(pathlib.Path("dist").glob("*.whl"))
+          with zipfile.ZipFile(wheel) as archive:
+              names = archive.namelist()
+          required = (
+              "context-manifest.schema.json",
+              "task-contract.schema.json",
+              "protocol/task-contract.md",
+              "eclipse-orchestrate/SKILL.md",
+              "eclipse-bootstrap/SKILL.md",
+          )
+          missing = [name for name in required if not any(item.endswith(name) for item in names)]
+          if missing:
+              raise SystemExit(f"missing wheel resources: {missing}")
+      - name: Adapter drift
+        run: |
+          eclipse adapters generate --host all
+          git diff --exit-code -- .codex .github/agents
+      - name: Skill validation
+        run: python -m pytest tests/integration/test_schemas_and_skills.py
+      - name: Secret-pattern policy scan
+        run: python -m pytest tests/unit/test_security_authorization.py
