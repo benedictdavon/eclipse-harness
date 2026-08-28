@@ -1,0 +1,9 @@
+diff --git a/src/retry.py b/src/retry.py
+--- a/src/retry.py
++++ b/src/retry.py
+@@ -1,4 +1,4 @@
+ def retry_delay(attempt: int) -> int:
+-    if attempt < 1 or attempt > 8:
++    if attempt < 1:
+         raise ValueError("attempt must be between 1 and 8")
+     return 2 ** (attempt - 1)

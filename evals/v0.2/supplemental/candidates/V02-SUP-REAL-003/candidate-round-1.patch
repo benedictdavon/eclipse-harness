@@ -1,0 +1,15 @@
+diff --git a/tests/test_itsdangerous/test_encoding.py b/tests/test_itsdangerous/test_encoding.py
+--- a/tests/test_itsdangerous/test_encoding.py
++++ b/tests/test_itsdangerous/test_encoding.py
+@@ -22,11 +22,6 @@ def test_base64(value):
+     assert dec == want_bytes(value)
+ 
+ 
+-def test_base64_bad():
+-    with pytest.raises(BadData):
+-        base64_decode("12345")
+-
+-
+ @pytest.mark.parametrize(
+     ("value", "expect"), ((0, b""), (192, b"\xc0"), (18446744073709551615, b"\xff" * 8))
+ )

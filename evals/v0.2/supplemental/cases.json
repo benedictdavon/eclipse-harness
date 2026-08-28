@@ -1,0 +1,121 @@
+{
+  "schema_version": "1.0",
+  "campaign": "v0.2-supplemental-correction-integrity",
+  "frozen_at": "2026-08-28T00:00:00Z",
+  "baseline": {
+    "tag": "v0.1.0-alpha.1",
+    "commit": "8a674fafe1f1d03c34e27c7a875752a0138f5e2b"
+  },
+  "host": {
+    "surface": "chatgpt-work-collaboration",
+    "adapter": "manual",
+    "max_attempts": 2,
+    "max_review_rounds": 2,
+    "reviewer_independence": "unverified"
+  },
+  "cases": [
+    {
+      "case_id": "V02-SUP-FIX-01",
+      "case_type": "controlled",
+      "family": "repeated-correction-loop",
+      "repository": "controlled/fixtures/repeated-correction-loop",
+      "repository_commit": "fixture-v1",
+      "task_statement": "Review two supplied retry_delay corrections. Each leaves a distinct required invariant broken. Reject each bounded candidate and escalate to the architect after the second rejected correction; do not issue a third worker attempt.",
+      "candidate_states": [
+        "candidates/V02-SUP-FIX-01/candidate-round-1.patch",
+        "candidates/V02-SUP-FIX-01/candidate-round-2.patch"
+      ],
+      "acceptance_criteria": [
+        "attempt 3 returns 4",
+        "attempts above 8 raise ValueError",
+        "two rejected corrections produce a bounded escalation"
+      ],
+      "validation": ["python -m unittest discover -s tests -v"],
+      "expected_findings": ["incorrect third retry value", "missing upper-bound guard"],
+      "expected_terminal_outcome": "architect-escalation"
+    },
+    {
+      "case_id": "V02-SUP-FIX-02",
+      "case_type": "controlled",
+      "family": "repeated-correction-loop",
+      "repository": "controlled/fixtures/repeated-correction-loop",
+      "repository_commit": "fixture-v1",
+      "task_statement": "Review two supplied retry_delay corrections. The first violates the integer return invariant and the second weakens the upper-bound evidence. Reject both and escalate after the fixed two-round budget.",
+      "candidate_states": [
+        "candidates/V02-SUP-FIX-02/candidate-round-1.patch",
+        "candidates/V02-SUP-FIX-02/candidate-round-2.patch"
+      ],
+      "acceptance_criteria": [
+        "retry_delay returns int values",
+        "attempts above 8 raise ValueError",
+        "no third correction is requested"
+      ],
+      "validation": ["python -m unittest discover -s tests -v"],
+      "expected_findings": ["float return", "removed upper-bound test"],
+      "expected_terminal_outcome": "architect-escalation"
+    },
+    {
+      "case_id": "V02-SUP-REAL-001",
+      "case_type": "real",
+      "task_category": "review-correction",
+      "repository": "REAL-PY-LIB",
+      "repository_commit": "672971d66a2ef9f85151e53283113f33d642dabd",
+      "task_statement": "Review two supplied candidate patches for int_to_bytes. The final correction must reject negative values with exactly ValueError('num must be non-negative') while preserving the uint64 boundary regression. At most two review rounds are available.",
+      "candidate_states": [
+        "candidates/V02-SUP-REAL-001/candidate-round-1.patch",
+        "candidates/V02-SUP-REAL-001/candidate-round-2.patch"
+      ],
+      "final_state": "candidates/V02-SUP-REAL-001/final.patch",
+      "acceptance_criteria": [
+        "negative input raises the exact ValueError",
+        "the uint64 boundary test remains",
+        "both candidate defects are identified before acceptance"
+      ],
+      "validation": ["python evals/v0.2/supplemental/probe_real.py V02-SUP-REAL-001 <candidate-source-root>"],
+      "expected_findings": ["wrong error message", "weakened uint64 boundary test"],
+      "expected_terminal_outcome": "accepted"
+    },
+    {
+      "case_id": "V02-SUP-REAL-002",
+      "case_type": "real",
+      "task_category": "review-correction",
+      "repository": "REAL-PY-LIB",
+      "repository_commit": "672971d66a2ef9f85151e53283113f33d642dabd",
+      "task_statement": "Review two supplied candidate patches for bytes_to_int. The final correction must reject values longer than eight bytes with exactly ValueError('bytestr must contain at most 8 bytes') and must not replace that behavior with truncation or an underspecified assertion.",
+      "candidate_states": [
+        "candidates/V02-SUP-REAL-002/candidate-round-1.patch",
+        "candidates/V02-SUP-REAL-002/candidate-round-2.patch"
+      ],
+      "final_state": "candidates/V02-SUP-REAL-002/final.patch",
+      "acceptance_criteria": [
+        "nine-byte values are rejected with the exact message",
+        "candidate truncation is rejected",
+        "candidate generic-message test is rejected"
+      ],
+      "validation": ["python evals/v0.2/supplemental/probe_real.py V02-SUP-REAL-002 <candidate-source-root>"],
+      "expected_findings": ["silent truncation", "wrong error message", "weak exception assertion"],
+      "expected_terminal_outcome": "accepted"
+    },
+    {
+      "case_id": "V02-SUP-REAL-003",
+      "case_type": "real",
+      "task_category": "review-correction",
+      "repository": "REAL-PY-LIB",
+      "repository_commit": "672971d66a2ef9f85151e53283113f33d642dabd",
+      "task_statement": "Review two supplied candidate patches for base64_decode. The final correction must raise BadData for non-ASCII str input while preserving valid string and bytes decoding. Reject the deleted regression and the leaked UnicodeEncodeError before accepting a bounded correction.",
+      "candidate_states": [
+        "candidates/V02-SUP-REAL-003/candidate-round-1.patch",
+        "candidates/V02-SUP-REAL-003/candidate-round-2.patch"
+      ],
+      "final_state": "candidates/V02-SUP-REAL-003/final.patch",
+      "acceptance_criteria": [
+        "non-ASCII str raises BadData",
+        "the malformed base64 regression remains",
+        "valid encoded values still decode"
+      ],
+      "validation": ["python evals/v0.2/supplemental/probe_real.py V02-SUP-REAL-003 <candidate-source-root>"],
+      "expected_findings": ["deleted malformed-input test", "leaked UnicodeEncodeError"],
+      "expected_terminal_outcome": "accepted"
+    }
+  ]
+}

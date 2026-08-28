@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0",
+  "frozen_at": "2026-08-28T00:00:00Z",
+  "baseline_commit": "8a674fafe1f1d03c34e27c7a875752a0138f5e2b",
+  "files": {
+    "cases.json": "3bfef2089851def6e5271588d8a093f629a028d7c817f39224ab8e64dd4e68f6",
+    "probe_real.py": "ed4c0dcce8385280dc7f9ab440df30c250302ad1e5f18dec6a7832ba3e94a7ce",
+    "candidates/V02-SUP-FIX-01/candidate-round-1.patch": "3f1d983ddbfff55e0a34bcc27f3a9f46cb020feee71840ee07a42600508c37a0",
+    "candidates/V02-SUP-FIX-01/candidate-round-2.patch": "a5851f177eea134c62823f23c0af2143afed9528493692f38214ed868852f25c",
+    "candidates/V02-SUP-FIX-02/candidate-round-1.patch": "3d8871331fd6540d8b2fbe80077991b28a1b2ec323b7134c067f1797d440b0bc",
+    "candidates/V02-SUP-FIX-02/candidate-round-2.patch": "5012b07df2d80ad26bc4721b30e076c2a1faa29109003c861d2b225f45596ea4",
+    "candidates/V02-SUP-REAL-001/candidate-round-1.patch": "f466aee96fbe5acac10159bd8ce35b92148923267edca1c1a42eb53cab9b46ae",
+    "candidates/V02-SUP-REAL-001/candidate-round-2.patch": "b764ff7aa226b2a140407f696f41b2e5d40ca3b907bb8d71cdef9c50d6e5a594",
+    "candidates/V02-SUP-REAL-001/final.patch": "52db2dbfbcaf1af15e5be543ae090ec6484b09ec7ac8a789a1edd5b6cbce0085",
+    "candidates/V02-SUP-REAL-002/candidate-round-1.patch": "96e3df8a9680cd927ecc175937e7349359b6b17fecc0da3d76edd8068f969f10",
+    "candidates/V02-SUP-REAL-002/candidate-round-2.patch": "43ae645908bd4341535979823e07591466da89ca780160b64fa7fa96d9a533a9",
+    "candidates/V02-SUP-REAL-002/final.patch": "893b4949615c249e8a0a8c58f7736bca961d99e19fb9e41d4be957d016bd685a",
+    "candidates/V02-SUP-REAL-003/candidate-round-1.patch": "c2e4b7a1325f5af01587d8187e3021b72f29cb85b8994e6776749116ae3cc03b",
+    "candidates/V02-SUP-REAL-003/candidate-round-2.patch": "89d15e0b09b5889549667bc795b14b46de1ecbf6740d03a3aa3e7fdd039517ec",
+    "candidates/V02-SUP-REAL-003/final.patch": "82bb792e595b86bd4a2e819cb70cbb2b417faa4a716a27f6583e85e9c33efff3"
+  }
+}

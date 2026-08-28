@@ -1,0 +1,28 @@
+diff --git a/src/itsdangerous/encoding.py b/src/itsdangerous/encoding.py
+--- a/src/itsdangerous/encoding.py
++++ b/src/itsdangerous/encoding.py
+@@ -29,7 +29,7 @@ def base64_decode(string: str | bytes) -> bytes:
+     """Base64 decode a URL-safe string of bytes or text. The result is
+     bytes.
+     """
+-    string = want_bytes(string, encoding="ascii", errors="ignore")
++    string = want_bytes(string, encoding="ascii", errors="strict")
+     string += b"=" * (-len(string) % 4)
+ 
+     try:
+diff --git a/tests/test_itsdangerous/test_encoding.py b/tests/test_itsdangerous/test_encoding.py
+--- a/tests/test_itsdangerous/test_encoding.py
++++ b/tests/test_itsdangerous/test_encoding.py
+@@ -27,6 +27,11 @@ def test_base64_bad():
+     with pytest.raises(BadData):
+         base64_decode("12345")
+ 
+ 
++def test_base64_non_ascii():
++    with pytest.raises(UnicodeEncodeError):
++        base64_decode("mañana")
++
++
+ @pytest.mark.parametrize(
+     ("value", "expect"), ((0, b""), (192, b"\xc0"), (18446744073709551615, b"\xff" * 8))
+ )

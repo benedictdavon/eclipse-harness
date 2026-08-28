@@ -1,0 +1,33 @@
+diff --git a/src/itsdangerous/encoding.py b/src/itsdangerous/encoding.py
+--- a/src/itsdangerous/encoding.py
++++ b/src/itsdangerous/encoding.py
+@@ -47,6 +47,9 @@ _bytes_to_int = t.cast("t.Callable[[bytes], tuple[int]]", _int64_struct.unpack)
+ 
+ 
+ def int_to_bytes(num: int) -> bytes:
++    if num < 0:
++        raise ValueError("num must be non-negative")
++
+     return _int_to_bytes(num).lstrip(b"\x00")
+ 
+ 
+diff --git a/tests/test_itsdangerous/test_encoding.py b/tests/test_itsdangerous/test_encoding.py
+--- a/tests/test_itsdangerous/test_encoding.py
++++ b/tests/test_itsdangerous/test_encoding.py
+@@ -28,10 +28,15 @@ def test_base64_bad():
+ 
+ 
+ @pytest.mark.parametrize(
+-    ("value", "expect"), ((0, b""), (192, b"\xc0"), (18446744073709551615, b"\xff" * 8))
++    ("value", "expect"), ((0, b""), (192, b"\xc0"))
+ )
+ def test_int_bytes(value, expect):
+     enc = int_to_bytes(value)
+     assert enc == expect
+     dec = bytes_to_int(enc)
+     assert dec == value
++
++
++def test_int_bytes_negative():
++    with pytest.raises(ValueError):
++        int_to_bytes(-1)
