@@ -1,0 +1,208 @@
+{
+  "schema_version": "1.0",
+  "run_id": "V02-REAL-001-baseline",
+  "plan_revision": 1,
+  "plan_digest": "sha256:755deb9a1e14a53a8a49aed42e0d58db1131ee06659b24c0a0fbcf205119df53",
+  "task_id": "T001",
+  "parent_task_id": null,
+  "dependencies": [],
+  "objective": "Make int_to_bytes reject every negative integer before calling the uint64 struct packer by raising ValueError('num must be non-negative'), and add focused regression coverage while preserving all existing non-negative behavior.",
+  "rationale": "struct.Struct('>Q').pack currently rejects negative values itself, but its exception contract is not the required public behavior. A direct precondition at the function boundary provides the specified stable exception and message without changing successful conversions.",
+  "context_manifest": {
+    "schema_version": "1.0",
+    "summary": "This is a tiny deterministic change to one pure conversion function and its focused tests. int_to_bytes currently calls a cached struct pack function and strips leading zero bytes. Existing focused tests already cover 0, 192, and the maximum uint64 value.",
+    "references": [
+      {
+        "path": "src/itsdangerous/encoding.py",
+        "symbol": "int_to_bytes",
+        "purpose": "Only production implementation target; contains the cached uint64 packer and conversion function.",
+        "digest": "sha256:c304f3e6aff7ccb71a01dba793afef4a84adc06a9859edf4ed997f53ceda4453",
+        "trust": "repository"
+      },
+      {
+        "path": "tests/test_itsdangerous/test_encoding.py",
+        "symbol": "test_int_bytes",
+        "purpose": "Only test target; contains existing non-negative round-trip and boundary coverage.",
+        "digest": "sha256:af71dbee0825fc8ae947b6c789b05f2331afe60efae2aee5145727446385c3f0",
+        "trust": "repository"
+      },
+      {
+        "path": "pyproject.toml",
+        "symbol": "tool.pytest.ini_options",
+        "purpose": "Read-only test configuration and dependency boundary.",
+        "digest": "sha256:201c20759a79bd30b8fcb38ce5539ed1dc28ff2b39d4f9742a6a54d696033a79",
+        "trust": "project-config"
+      }
+    ],
+    "trusted_sources": [
+      "V02-REAL-001 requirement and acceptance packet",
+      "frozen architect prompt",
+      "Eclipse v0.1 orchestration skill and task-contract schema",
+      "sol-luna-v0.1 routing policy"
+    ]
+  },
+  "decisions": {
+    "fixed": [
+      "Perform an explicit num < 0 check inside int_to_bytes before _int_to_bytes is invoked.",
+      "Raise ValueError with the exact message 'num must be non-negative'.",
+      "Add focused pytest coverage for int_to_bytes(-1) and retain the existing 0 and maximum uint64 assertions.",
+      "Do not change public exports, dependency declarations, or behavior for any non-negative input."
+    ],
+    "assumptions": [
+      "The existing accepted input type remains int; broadening or otherwise redefining input types is out of scope.",
+      "Existing struct-packer behavior for values greater than the maximum uint64 is intentionally unchanged.",
+      "The host will execute this contract against the exact pinned base revision in an isolated checkout."
+    ]
+  },
+  "invariants": [
+    "int_to_bytes(0) returns b''.",
+    "int_to_bytes(18446744073709551615) returns eight 0xff bytes.",
+    "All existing non-negative conversion and bytes_to_int round-trip behavior remains unchanged.",
+    "No public export or dependency metadata changes.",
+    "No write occurs outside the two exact write_globs."
+  ],
+  "non_goals": [
+    "Changing bytes_to_int.",
+    "Changing handling of values above uint64 maximum or of non-int runtime inputs.",
+    "Refactoring encoding helpers or struct aliases.",
+    "Updating documentation, changelog, public exports, packaging, or dependencies.",
+    "Running the full repository test suite."
+  ],
+  "scope": {
+    "write_globs": [
+      "src/itsdangerous/encoding.py",
+      "tests/test_itsdangerous/test_encoding.py"
+    ],
+    "read_globs": [
+      "src/itsdangerous/encoding.py",
+      "tests/test_itsdangerous/test_encoding.py",
+      "pyproject.toml"
+    ],
+    "forbidden_globs": [
+      "src/itsdangerous/__init__.py",
+      "pyproject.toml",
+      "uv.lock",
+      "docs/**",
+      ".github/**",
+      ".git/**"
+    ],
+    "shared_interfaces": [
+      "itsdangerous.encoding.int_to_bytes behavior"
+    ],
+    "exclusive_resources": [
+      "src/itsdangerous/encoding.py",
+      "tests/test_itsdangerous/test_encoding.py"
+    ],
+    "parallel_safe": false,
+    "isolation": "worktree"
+  },
+  "required_capabilities": [
+    "repository-read",
+    "scoped-write",
+    "test-execution"
+  ],
+  "execution_profile": {
+    "role": "executor",
+    "capability_tier": "bounded-routine",
+    "cost_tier": "low",
+    "reasoning_effort": "medium",
+    "preferred_model": "gpt-5.6-luna",
+    "fallback_profiles": [
+      "worker"
+    ]
+  },
+  "implementation_instructions": [
+    "Confirm HEAD is exactly 672971d66a2ef9f85151e53283113f33d642dabd and stop if it is not.",
+    "In int_to_bytes, add the smallest explicit negative-value guard immediately before the call to _int_to_bytes; raise ValueError('num must be non-negative').",
+    "Do not catch or rewrite errors from _int_to_bytes for any other input.",
+    "In the focused encoding test module, add a test that passes -1 and asserts ValueError with the exact full message.",
+    "Keep the existing parameterized assertions for 0 and 18446744073709551615 intact so the required non-negative boundaries remain directly exercised.",
+    "Do not edit public exports, dependencies, lockfiles, or any file outside write_globs.",
+    "Run every required validation command and report criterion-level evidence without making commits or performing external effects."
+  ],
+  "acceptance_criteria": [
+    {
+      "id": "AC-1",
+      "statement": "int_to_bytes(-1) raises ValueError whose message is exactly 'num must be non-negative'.",
+      "evidence_required": "A focused assertion in tests/test_itsdangerous/test_encoding.py and a passing focused pytest command covering it."
+    },
+    {
+      "id": "AC-2",
+      "statement": "The negative guard is evaluated before _int_to_bytes, so struct packing is not invoked for -1.",
+      "evidence_required": "Diff evidence showing the explicit guard precedes the existing _int_to_bytes call; no struct-packer exception handling is substituted for the guard."
+    },
+    {
+      "id": "AC-3",
+      "statement": "int_to_bytes(0) still returns b'' and the maximum uint64 still returns eight 0xff bytes, with their bytes_to_int round trips unchanged.",
+      "evidence_required": "The existing boundary cases remain in test_int_bytes and pass in the required focused pytest run."
+    },
+    {
+      "id": "AC-4",
+      "statement": "Only the two authorized files change; public exports and dependency declarations remain unchanged.",
+      "evidence_required": "Changed-file list contains only src/itsdangerous/encoding.py and tests/test_itsdangerous/test_encoding.py, and the scoped diff contains no export or dependency edits."
+    }
+  ],
+  "validation": [
+    {
+      "command": "git diff --check -- src/itsdangerous/encoding.py tests/test_itsdangerous/test_encoding.py",
+      "purpose": "Reject whitespace errors in the authorized diff.",
+      "mutating": false,
+      "required": true
+    },
+    {
+      "command": "PYTHONPATH=src python -m pytest tests/test_itsdangerous/test_encoding.py -q",
+      "purpose": "Verify the focused negative regression and all existing encoding behavior, including 0 and maximum uint64 boundaries.",
+      "mutating": false,
+      "required": true
+    }
+  ],
+  "expected_evidence": [
+    "Observed HEAD revision.",
+    "Final changed-file list relative to 672971d66a2ef9f85151e53283113f33d642dabd.",
+    "Scoped production and test diff.",
+    "Exit status and concise output for each required validation command.",
+    "Explicit AC-1 through AC-4 evidence mapping.",
+    "Statement that no network, credentials, external side effects, destructive actions, commits, or out-of-scope writes occurred."
+  ],
+  "stop_conditions": [
+    "HEAD or the task contract plan/base identifiers do not match the authorized revision.",
+    "The checkout has pre-existing changes in either authorized write target that cannot be safely preserved.",
+    "Completion appears to require any file outside write_globs, a public export change, or a dependency/lockfile change.",
+    "Completion appears to require network access, credentials, an external side effect, a destructive action, or a commit.",
+    "The focused test command cannot run because required tooling is unavailable; report the environment blocker rather than installing dependencies.",
+    "The requested behavior conflicts with existing tests or reveals an architecture, interface, security, or scope decision not frozen by this contract.",
+    "A required validation command fails after two bounded implementation attempts; return evidence and escalate without expanding scope."
+  ],
+  "risk": {
+    "level": "low",
+    "flags": [
+      "public-behavior error contract",
+      "uint64 boundary preservation"
+    ]
+  },
+  "complexity": "trivial",
+  "budgets": {
+    "max_attempts": 2,
+    "max_review_rounds": 1
+  },
+  "authorization": {
+    "network": false,
+    "credentials": false,
+    "external_side_effects": false,
+    "destructive_actions": false,
+    "targets": []
+  },
+  "provenance": {
+    "base_revision": "672971d66a2ef9f85151e53283113f33d642dabd",
+    "created_by": "eclipse-architect",
+    "created_at": "2026-08-13T02:52:31Z",
+    "source_requirement_digest": "sha256:562d5852694e43a801bee883ed8dcef09cd4cbe2a454aa2f813f8aa96380695c"
+  },
+  "metadata": {
+    "case_id": "V02-REAL-001",
+    "case_type": "real",
+    "policy": "sol-luna-v0.1",
+    "route_status": "policy-only-unverified",
+    "plan_digest_basis": "sha256 of the canonical plan identity string recorded in architect.md"
+  }
+}

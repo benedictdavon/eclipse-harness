@@ -1,0 +1,16 @@
+diff --git a/dashboard/starter-example/app/lib/utils.ts b/dashboard/starter-example/app/lib/utils.ts
+index b7f7cff..d8feb05 100644
+--- a/dashboard/starter-example/app/lib/utils.ts
++++ b/dashboard/starter-example/app/lib/utils.ts
+@@ -22,6 +22,10 @@ export const formatDateToLocal = (
+ };
+ 
+ export const generateYAxis = (revenue: Revenue[]) => {
++  if (revenue.length === 0) {
++    return { yAxisLabels: ['$0K'], topLabel: 0 };
++  }
++
+   // Calculate what labels we need to display on the y-axis
+   // based on highest record and in 1000s
+   const yAxisLabels = [];
+

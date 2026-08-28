@@ -1,0 +1,25 @@
+{
+  "case_id": "V02-REAL-014",
+  "case_type": "real",
+  "repository": "REAL-TS-NODE",
+  "repository_commit": "3419113b48e034fdcf8fa6bd3be3da7b3d0d758f",
+  "host": "chatgpt-work-collaboration",
+  "adapter": "manual",
+  "task_category": "multi-file-feature",
+  "task_statement": "Add an optional retry.minimumDelayMs number, normalize it to a non-negative value, apply it as a lower bound to the default retry delay, update the RetryOptions type, and add focused tests. Do not change maxRetryAfter or jitter semantics.",
+  "expected_write_scope": [
+    "source/types/retry.ts",
+    "source/utils/normalize.ts",
+    "test/retry.ts"
+  ],
+  "acceptance_criteria": [
+    "type exposes the optional field",
+    "normalization rejects negative values",
+    "default delay respects the lower bound",
+    "unrelated retry semantics remain unchanged"
+  ],
+  "validation": [
+    "node -e \"const fs=require('fs'); for (const p of ['source/types/retry.ts','source/utils/normalize.ts','test/retry.ts']) { if (!fs.readFileSync(p,'utf8').trim()) process.exit(1) }\""
+  ],
+  "policy": "sol-luna-v0.1"
+}

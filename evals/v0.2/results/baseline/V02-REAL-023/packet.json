@@ -1,0 +1,24 @@
+{
+  "case_id": "V02-REAL-023",
+  "case_type": "real",
+  "repository": "REAL-NEXT",
+  "repository_commit": "bb2558441a6673ab76c89914c25018bffa27a2ba",
+  "host": "chatgpt-work-collaboration",
+  "adapter": "manual",
+  "task_category": "parallelization-candidate",
+  "task_statement": "Plan two independent changes in separate examples: add empty-input coverage for dashboard/starter-example/app/lib/utils.ts, and add an explicit time element with dateTime in basics/typescript-final/components/date.tsx. Define disjoint ownership and per-example validation before parallelizing.",
+  "expected_write_scope": [
+    "dashboard/starter-example/app/lib/utils.test.ts",
+    "basics/typescript-final/components/date.tsx",
+    "basics/typescript-final/components/date.test.tsx"
+  ],
+  "acceptance_criteria": [
+    "contracts own different example trees",
+    "parallel execution is explicitly justified",
+    "integration validation remains per example"
+  ],
+  "validation": [
+    "node -e \"const fs=require('fs'); for (const p of ['dashboard/starter-example/app/lib/utils.test.ts','basics/typescript-final/components/date.tsx']) { if (!fs.readFileSync(p,'utf8').trim()) process.exit(1) }\""
+  ],
+  "policy": "sol-luna-v0.1"
+}

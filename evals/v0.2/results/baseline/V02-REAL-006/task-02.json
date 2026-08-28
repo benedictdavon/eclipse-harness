@@ -1,0 +1,231 @@
+{
+  "schema_version": "1.0",
+  "run_id": "V02-REAL-006",
+  "plan_revision": 1,
+  "plan_digest": "sha256:9ad88fd343a14118432e21b09a2364a152913c6f292f43adf647c99d3fc79d5b",
+  "task_id": "V02-REAL-006-T02",
+  "parent_task_id": null,
+  "dependencies": [],
+  "objective": "Clarify the URL-safe Base64 alphabet paragraph in docs/encoding.rst without changing code behavior.",
+  "rationale": "The encoding utility page currently lists base64_encode and base64_decode without explaining which characters make the encoding URL-safe or how omitted padding is handled. A short paragraph can distinguish the 64-character alphabet from '=' padding and accurately describe the existing encoder/decoder behavior.",
+  "context_manifest": {
+    "schema_version": "1.0",
+    "summary": "At base revision 672971d66a2ef9f85151e53283113f33d642dabd, docs/encoding.rst contains the Encoding Utilities title followed immediately by the two Base64 autofunction directives. The implementation uses Python's URL-safe Base64 codec, strips trailing '=' during encoding, and adds the required '=' padding before decoding. Add one concise explanatory paragraph near the top of this page; runtime code and Sphinx directives are frozen.",
+    "references": [
+      {
+        "path": "/workspace/scratch/473866e9940e/repo/evals/v0.2/results/baseline/V02-REAL-006/packet.json",
+        "symbol": null,
+        "purpose": "Authoritative case requirement, allowed write scope, acceptance criteria, and final focused validation command.",
+        "digest": "sha256:5109ffc4a1c59980e30fc27a2ecf1613ad5fa5320a623d97e555251690c99952",
+        "trust": "harness"
+      },
+      {
+        "path": "/workspace/scratch/473866e9940e/repo/evals/v0.2/prompts/architect.md",
+        "symbol": null,
+        "purpose": "Frozen architect-role and read-only planning boundary.",
+        "digest": "sha256:a8e484e802d361e2236c7b7221ae84c40037fca40815cb6ae695b5897528e931",
+        "trust": "harness"
+      },
+      {
+        "path": "/workspace/scratch/473866e9940e/repo/AGENTS.md",
+        "symbol": null,
+        "purpose": "Applicable Eclipse workflow and repository validation policy.",
+        "digest": "sha256:a366165b64fd24fdb33cf4c95a557605ea0aed337ba97c9e9ed6821e294c6f77",
+        "trust": "project-config"
+      },
+      {
+        "path": "/workspace/scratch/473866e9940e/repo/policies/sol-luna.json",
+        "symbol": "profiles.worker-lite",
+        "purpose": "Configured policy preference for tiny deterministic execution tasks.",
+        "digest": "sha256:0748e68bb125b6aa8e3a36893b43966217953d01828c6c84306d6ed8caa7fcbf",
+        "trust": "project-config"
+      },
+      {
+        "path": "docs/encoding.rst",
+        "symbol": "Encoding Utilities",
+        "purpose": "Owned documentation page and insertion location for the clarification.",
+        "digest": "sha256:6ba9be2255834de862aa33ad234ba65f47c52e459c7b0ae8deee60924c923ff2",
+        "trust": "repository"
+      },
+      {
+        "path": "src/itsdangerous/encoding.py",
+        "symbol": "base64_encode; base64_decode; _base64_alphabet",
+        "purpose": "Read-only source of truth for alphabet substitutions and padding behavior.",
+        "digest": "sha256:c304f3e6aff7ccb71a01dba793afef4a84adc06a9859edf4ed997f53ceda4453",
+        "trust": "repository"
+      }
+    ],
+    "trusted_sources": [
+      "/workspace/scratch/473866e9940e/repo/evals/v0.2/results/baseline/V02-REAL-006/packet.json",
+      "/workspace/scratch/473866e9940e/repo/evals/v0.2/prompts/architect.md",
+      "/workspace/scratch/473866e9940e/repo/AGENTS.md",
+      "/workspace/scratch/473866e9940e/repo/policies/sol-luna.json"
+    ]
+  },
+  "decisions": {
+    "fixed": [
+      "Add one concise prose paragraph after the Encoding Utilities heading and before the autofunction directives.",
+      "Identify the RFC 4648 URL-safe 64-character alphabet as ASCII letters, digits, '-' and '_', with '-' and '_' replacing '+' and '/'.",
+      "Distinguish '=' as padding rather than one of the 64 alphabet characters.",
+      "State that base64_encode omits trailing '=' padding and base64_decode restores the padding needed for decoding.",
+      "Do not claim that base64_decode rejects every representation outside the documented emitted form.",
+      "Do not change runtime code, Sphinx directives, public APIs, or behavior.",
+      "This task owns only docs/encoding.rst and may share execution wave 1 with V02-REAL-006-T01 only in a separate host-provided worktree."
+    ],
+    "assumptions": [
+      "The executor starts from the exact base revision and the referenced documentation/source digests still match.",
+      "A plain reStructuredText paragraph requires no new directive or cross-reference.",
+      "Host integration preserves each task's scoped diff and performs the packet's focused pytest command after both tasks are integrated."
+    ]
+  },
+  "invariants": [
+    "src/itsdangerous/encoding.py and all runtime behavior remain unchanged.",
+    "The existing module directive, page heading, and both autofunction directives remain intact.",
+    "The text accurately separates the 64-character URL-safe alphabet from '=' padding.",
+    "No network, credentials, external effects, destructive actions, dependency changes, generated repository files, or unrelated reformatting are authorized.",
+    "Write ownership remains disjoint from V02-REAL-006-T01."
+  ],
+  "non_goals": [
+    "Changing Base64 encoding or decoding behavior.",
+    "Documenting the complete encoding module, integer conversion helpers, or serializer APIs.",
+    "Refactoring the documentation page or changing autodoc configuration.",
+    "Editing tests, source, configuration, dependencies, lockfiles, or changelogs.",
+    "Guaranteeing strict decoder rejection behavior not established by the current implementation."
+  ],
+  "scope": {
+    "write_globs": [
+      "docs/encoding.rst"
+    ],
+    "read_globs": [
+      "docs/encoding.rst",
+      "src/itsdangerous/encoding.py"
+    ],
+    "forbidden_globs": [
+      "tests/**",
+      "src/**",
+      "docs/conf.py",
+      "docs/_build/**",
+      "pyproject.toml",
+      "uv.lock",
+      "CHANGES.rst",
+      "README.md"
+    ],
+    "shared_interfaces": [],
+    "exclusive_resources": [],
+    "parallel_safe": true,
+    "isolation": "worktree"
+  },
+  "required_capabilities": [
+    "scoped text editing",
+    "concise reStructuredText technical writing",
+    "Base64 alphabet and padding semantics",
+    "git diff inspection without commit or push authority"
+  ],
+  "execution_profile": {
+    "role": "executor",
+    "capability_tier": "bounded-routine",
+    "cost_tier": "low",
+    "reasoning_effort": "medium",
+    "preferred_model": "gpt-5.6-luna",
+    "fallback_profiles": [
+      "worker: executor/bounded-complex/low/high",
+      "manual executor under the same contract"
+    ]
+  },
+  "implementation_instructions": [
+    "Before editing, verify HEAD is 672971d66a2ef9f85151e53283113f33d642dabd and verify that only the task-owned worktree is used.",
+    "Add one short paragraph between the Encoding Utilities heading and the first autofunction directive.",
+    "Explain that the URL-safe 64-character alphabet uses ASCII letters and digits plus '-' and '_' in place of '+' and '/'.",
+    "Explain separately that '=' is padding, base64_encode strips trailing padding, and base64_decode adds the required padding before decoding.",
+    "Keep wording scoped to the helpers' documented emitted form; do not invent a strict rejection guarantee.",
+    "Preserve all existing reStructuredText directives and do not edit any path other than docs/encoding.rst.",
+    "Run every required validation command and capture its command, exit status, and concise output.",
+    "Report the exact files changed and a focused diff; do not commit or push unless separately authorized by the host."
+  ],
+  "acceptance_criteria": [
+    {
+      "id": "T02-AC1",
+      "statement": "docs/encoding.rst clearly identifies the RFC 4648 URL-safe Base64 alphabet as ASCII letters and digits plus '-' and '_', replacing '+' and '/'.",
+      "evidence_required": "Focused documentation diff containing the accurate alphabet explanation."
+    },
+    {
+      "id": "T02-AC2",
+      "statement": "The paragraph distinguishes '=' padding from the 64-character alphabet and accurately says the encoder omits trailing padding while the decoder restores needed padding.",
+      "evidence_required": "Focused documentation diff cross-checked against the unchanged base64_encode and base64_decode implementations."
+    },
+    {
+      "id": "T02-AC3",
+      "statement": "The existing module/page/autofunction structure is preserved, the reStructuredText patch has no whitespace errors, and no code behavior or out-of-scope file changes occur.",
+      "evidence_required": "Passing git diff --check, repository-wide git diff --name-only listing only docs/encoding.rst, and the focused diff showing intact directives."
+    }
+  ],
+  "validation": [
+    {
+      "command": "git diff --check -- docs/encoding.rst",
+      "purpose": "Required syntax-adjacent and whitespace sanity check for the owned reStructuredText patch.",
+      "mutating": false,
+      "required": true
+    },
+    {
+      "command": "git diff --name-only",
+      "purpose": "Prove that the worker changed only its authorized file.",
+      "mutating": false,
+      "required": true
+    }
+  ],
+  "expected_evidence": [
+    "Base revision verification.",
+    "Exact files_changed list containing only docs/encoding.rst.",
+    "Focused patch showing one concise paragraph and intact directives.",
+    "Direct comparison of the alphabet and padding claims with unchanged src/itsdangerous/encoding.py.",
+    "Command, exit status, and concise output for every required validation command.",
+    "Criterion-by-criterion evidence mapped to T02-AC1 through T02-AC3.",
+    "Any deviations, blockers, or observed unrelated failures stated explicitly."
+  ],
+  "stop_conditions": [
+    "HEAD or any referenced owned/source digest does not match the approved base context.",
+    "Accurate wording would require a behavior, API, Sphinx directive, or architecture change.",
+    "Any source, test, dependency, lockfile, configuration, generated repository file, changelog, or other out-of-scope edit appears necessary.",
+    "A required validation command fails for a reason not caused by the authorized documentation paragraph.",
+    "Required tools are unavailable; report the environment blocker rather than installing or using the network.",
+    "Credentials, external effects, destructive actions, expanded permissions, or a verified model guarantee are requested.",
+    "An architectural, interface, scope, or concurrency decision must change; return to the architect for a new plan revision."
+  ],
+  "risk": {
+    "level": "low",
+    "flags": [
+      "documentation-only edit",
+      "semantic accuracy tied to current source",
+      "parallel dispatch conditional on isolated worktree"
+    ]
+  },
+  "complexity": "trivial",
+  "budgets": {
+    "max_attempts": 2,
+    "max_review_rounds": 1
+  },
+  "authorization": {
+    "network": false,
+    "credentials": false,
+    "external_side_effects": false,
+    "destructive_actions": false,
+    "targets": [
+      "docs/encoding.rst"
+    ]
+  },
+  "provenance": {
+    "base_revision": "672971d66a2ef9f85151e53283113f33d642dabd",
+    "created_by": "eclipse-architect",
+    "created_at": "2026-08-13T03:32:19Z",
+    "source_requirement_digest": "sha256:5109ffc4a1c59980e30fc27a2ecf1613ad5fa5320a623d97e555251690c99952"
+  },
+  "metadata": {
+    "policy": "sol-luna-v0.1",
+    "routing_status": "policy-only; requested/configured model identity, effective route, permissions, and cost are unverified",
+    "execution_wave": 1,
+    "integration_order": 2,
+    "concurrency_decision": "May run concurrently with V02-REAL-006-T01 only in separate host-provided worktrees; otherwise serialize T01 then T02.",
+    "plan_digest_algorithm": "SHA-256 over the exact UTF-8 bytes of metadata.plan_digest_input, with no trailing newline.",
+    "plan_digest_input": "{\"base_revision\":\"672971d66a2ef9f85151e53283113f33d642dabd\",\"fixed_decisions\":[\"add decimal 256 as the one-to-two-byte length boundary in the existing parametrized round-trip test\",\"document the RFC 4648 URL-safe alphabet and unpadded encoding behavior without changing runtime code\",\"use two disjoint contracts in one concurrent wave only with host-provided isolated worktrees\"],\"plan_revision\":1,\"run_id\":\"V02-REAL-006\",\"task_ids\":[\"V02-REAL-006-T01\",\"V02-REAL-006-T02\"],\"waves\":[[\"V02-REAL-006-T01\",\"V02-REAL-006-T02\"]]}"
+  }
+}

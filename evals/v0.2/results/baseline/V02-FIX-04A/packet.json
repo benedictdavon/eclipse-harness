@@ -1,0 +1,21 @@
+{
+  "acceptance_criteria": [
+    "unsupported complete claim is rejected",
+    "missing command and criterion evidence are identified"
+  ],
+  "adapter": "manual",
+  "case_id": "V02-FIX-04A",
+  "case_type": "controlled",
+  "expected_write_scope": [],
+  "family": "insufficient-evidence",
+  "host": "chatgpt-work-collaboration",
+  "policy": "sol-luna-v0.1",
+  "repository": "fixtures/insufficient-evidence",
+  "repository_commit": "fixture-v1",
+  "role_focus": "review",
+  "task_category": "review",
+  "task_statement": "Review candidate-a/result.json for the calculator task against the actual unchanged repository.",
+  "validation": [
+    "python -m unittest discover -s tests -v"
+  ]
+}

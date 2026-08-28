@@ -1,0 +1,23 @@
+{
+  "case_id": "V02-REAL-007",
+  "case_type": "real",
+  "repository": "REAL-PY-APP",
+  "repository_commit": "a975ef64864354867c88e0ed3a17ba7d17dca752",
+  "host": "chatgpt-work-collaboration",
+  "adapter": "manual",
+  "task_category": "bounded-feature",
+  "task_statement": "Make User.avatar reject non-positive sizes with ValueError('size must be positive') and add focused unittest coverage. Preserve the URL for valid sizes and do not change templates or database models.",
+  "expected_write_scope": [
+    "app/models.py",
+    "tests.py"
+  ],
+  "acceptance_criteria": [
+    "size 0 and -1 raise the specified ValueError",
+    "size 128 produces the existing URL",
+    "modified Python files compile"
+  ],
+  "validation": [
+    "python -m compileall -q app tests.py"
+  ],
+  "policy": "sol-luna-v0.1"
+}

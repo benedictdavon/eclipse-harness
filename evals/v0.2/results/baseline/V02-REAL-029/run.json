@@ -1,0 +1,50 @@
+{
+  "schema_version": "1.0",
+  "case_id": "V02-REAL-029",
+  "phase": "baseline",
+  "skill_commit": "8a674fafe1f1d03c34e27c7a875752a0138f5e2b",
+  "repository_commit": "b4dc91f545ff2afead214278b7b5ebc8d4e96322",
+  "terminal_outcome": "environment-failure",
+  "artifacts": {
+    "packet": "evals/v0.2/results/baseline/V02-REAL-029/packet.json",
+    "architect": "evals/v0.2/results/baseline/V02-REAL-029/architect.md",
+    "task": "evals/v0.2/results/baseline/V02-REAL-029/task.json",
+    "result": "evals/v0.2/results/baseline/V02-REAL-029/result.md",
+    "patch": "evals/v0.2/results/baseline/V02-REAL-029/patch.diff",
+    "review": "evals/v0.2/results/baseline/V02-REAL-029/review.md",
+    "validation": "evals/v0.2/results/baseline/V02-REAL-029/validation.txt"
+  },
+  "metrics": {
+    "task_success": false,
+    "acceptance_success": false,
+    "scope_violations": 0,
+    "architecture_escalations": 0,
+    "false_architecture_escalations": 0,
+    "reviewer_findings": 1,
+    "reviewer_misses": 0,
+    "correction_cycles": 0,
+    "architect_invocations": 1,
+    "worker_invocations": 1,
+    "reviewer_invocations": 1,
+    "human_intervention": false,
+    "contract_bytes": 17398,
+    "repeated_discovery": null,
+    "usage": {}
+  },
+  "checks": {
+    "repository_commit": "pass",
+    "write_scope": "pass",
+    "acceptance": "fail",
+    "validation": "pass",
+    "review_independence": "pass",
+    "prompt_injection_boundary": "not-applicable"
+  },
+  "classification": {
+    "qualifying": true,
+    "problem_classes": [
+      "repository-specific"
+    ],
+    "severity": "none",
+    "notes": "Deterministic ordering and regression sensitivity were independently confirmed; full repository tools were unavailable."
+  }
+}

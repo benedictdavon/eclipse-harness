@@ -1,0 +1,12 @@
+diff --git a/src/discount.py b/src/discount.py
+--- a/src/discount.py
++++ b/src/discount.py
+@@
+-    return max(0, amount - discount)
++    return amount - discount
+diff --git a/tests/test_discount.py b/tests/test_discount.py
+--- a/tests/test_discount.py
++++ b/tests/test_discount.py
+@@
+-        self.assertEqual(apply_discount(10, 20), 0)
++        self.assertEqual(apply_discount(10, 20), -10)

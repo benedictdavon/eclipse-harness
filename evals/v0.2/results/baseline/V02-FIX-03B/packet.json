@@ -1,0 +1,19 @@
+{
+  "acceptance_criteria": [
+    "a measurable performance target and representative input are required",
+    "behavior-preservation validation is defined before delegation"
+  ],
+  "adapter": "manual",
+  "case_id": "V02-FIX-03B",
+  "case_type": "controlled",
+  "expected_write_scope": [],
+  "family": "weak-requirement",
+  "host": "chatgpt-work-collaboration",
+  "policy": "sol-luna-v0.1",
+  "repository": "fixtures/weak-requirement",
+  "repository_commit": "fixture-v1",
+  "role_focus": "orchestrate",
+  "task_category": "planning",
+  "task_statement": "The CSV parser is slow; improve it without changing behavior.",
+  "validation": []
+}

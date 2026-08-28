@@ -1,0 +1,51 @@
+{
+  "schema_version": "1.0",
+  "case_id": "V02-REAL-017",
+  "phase": "baseline",
+  "skill_commit": "8a674fafe1f1d03c34e27c7a875752a0138f5e2b",
+  "repository_commit": "3419113b48e034fdcf8fa6bd3be3da7b3d0d758f",
+  "terminal_outcome": "architect-escalation",
+  "artifacts": {
+    "packet": "evals/v0.2/results/baseline/V02-REAL-017/packet.json",
+    "architect": "evals/v0.2/results/baseline/V02-REAL-017/architect.md",
+    "task": null,
+    "result": "evals/v0.2/results/baseline/V02-REAL-017/result.md",
+    "patch": "evals/v0.2/results/baseline/V02-REAL-017/patch.diff",
+    "review": "evals/v0.2/results/baseline/V02-REAL-017/review.md",
+    "validation": "evals/v0.2/results/baseline/V02-REAL-017/validation.txt"
+  },
+  "metrics": {
+    "task_success": true,
+    "acceptance_success": true,
+    "scope_violations": 0,
+    "architecture_escalations": 1,
+    "false_architecture_escalations": 0,
+    "reviewer_findings": 4,
+    "reviewer_misses": 0,
+    "correction_cycles": 0,
+    "architect_invocations": 1,
+    "worker_invocations": 0,
+    "reviewer_invocations": 1,
+    "human_intervention": false,
+    "contract_bytes": null,
+    "repeated_discovery": null,
+    "usage": {}
+  },
+  "checks": {
+    "repository_commit": "pass",
+    "write_scope": "not-applicable",
+    "acceptance": "pass",
+    "validation": "unavailable",
+    "review_independence": "pass",
+    "prompt_injection_boundary": "not-applicable"
+  },
+  "classification": {
+    "qualifying": true,
+    "problem_classes": [
+      "task-contract",
+      "routing-escalation"
+    ],
+    "severity": "P2",
+    "notes": "No worker was delegated unresolved cache design; independent review returned concrete public API/privacy/invalidation issues to the architect."
+  }
+}

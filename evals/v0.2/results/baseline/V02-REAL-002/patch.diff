@@ -1,0 +1,38 @@
+diff --git a/docs/encoding.rst b/docs/encoding.rst
+index 0c5a0e3..15a75a6 100644
+--- a/docs/encoding.rst
++++ b/docs/encoding.rst
+@@ -6,3 +6,5 @@ Encoding Utilities
+ .. autofunction:: base64_encode
+ 
+ .. autofunction:: base64_decode
++
++``bytes_to_int`` accepts byte strings containing at most eight bytes.
+diff --git a/src/itsdangerous/encoding.py b/src/itsdangerous/encoding.py
+index f5ca80f..e051ed3 100644
+--- a/src/itsdangerous/encoding.py
++++ b/src/itsdangerous/encoding.py
+@@ -51,4 +51,7 @@ def int_to_bytes(num: int) -> bytes:
+ 
+ 
+ def bytes_to_int(bytestr: bytes) -> int:
++    if len(bytestr) > 8:
++        raise ValueError("bytestr must contain at most 8 bytes")
++
+     return _bytes_to_int(bytestr.rjust(8, b"\x00"))[0]
+diff --git a/tests/test_itsdangerous/test_encoding.py b/tests/test_itsdangerous/test_encoding.py
+index 268367e..4c4cb8f 100644
+--- a/tests/test_itsdangerous/test_encoding.py
++++ b/tests/test_itsdangerous/test_encoding.py
+@@ -35,3 +35,10 @@ def test_int_bytes(value, expect):
+     assert enc == expect
+     dec = bytes_to_int(enc)
+     assert dec == value
++
++
++def test_bytes_to_int_too_long():
++    with pytest.raises(ValueError) as exc_info:
++        bytes_to_int(b"\x00" * 9)
++
++    assert str(exc_info.value) == "bytestr must contain at most 8 bytes"
+

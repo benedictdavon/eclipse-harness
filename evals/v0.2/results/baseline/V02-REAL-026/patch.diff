@@ -1,0 +1,52 @@
+diff --git a/packages/get-version-range-type/src/index.test.ts b/packages/get-version-range-type/src/index.test.ts
+index 84c84d4..6797d6f 100644
+--- a/packages/get-version-range-type/src/index.test.ts
++++ b/packages/get-version-range-type/src/index.test.ts
+@@ -1,5 +1,8 @@
+ import { expect, test } from "vitest";
+-import { getVersionRangeType } from "./index.ts";
++import getVersionRangeTypeDefault, {
++  getVersionRangeType,
++  isExactVersionRange,
++} from "./index.ts";
+ 
+ test.each([
+   ["^1.0.0", "^"],
+@@ -11,3 +14,21 @@ test.each([
+ ])('getVersionRangeType should return "%s" if passed "%s"', (input, output) => {
+   expect(getVersionRangeType(input)).toEqual(output);
+ });
++
++test("the default export remains an alias of getVersionRangeType", () => {
++  expect(getVersionRangeTypeDefault).toBe(getVersionRangeType);
++});
++
++test.each(["1.0.0", "1.2.3-beta.1"])(
++  'isExactVersionRange returns true for "%s"',
++  (versionRange) => {
++    expect(isExactVersionRange(versionRange)).toBe(true);
++  },
++);
++
++test.each(["", "^1.0.0", "~1.0.0", ">=1.0.0", "<=1.0.0", ">1.0.0"])(
++  'isExactVersionRange returns false for "%s"',
++  (versionRange) => {
++    expect(isExactVersionRange(versionRange)).toBe(false);
++  },
++);
+diff --git a/packages/get-version-range-type/src/index.ts b/packages/get-version-range-type/src/index.ts
+index 374664a..9f042a4 100644
+--- a/packages/get-version-range-type/src/index.ts
++++ b/packages/get-version-range-type/src/index.ts
+@@ -9,6 +9,10 @@ export function getVersionRangeType(
+   return "";
+ }
+ 
++export function isExactVersionRange(versionRange: string): boolean {
++  return versionRange !== "" && getVersionRangeType(versionRange) === "";
++}
++
+ /** @deprecated Use named export `getVersionRangeType` instead */
+ const getVersionRangeTypeDefault = getVersionRangeType;
+ export default getVersionRangeTypeDefault;
+

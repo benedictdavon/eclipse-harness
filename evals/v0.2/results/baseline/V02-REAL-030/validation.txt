@@ -1,0 +1,1 @@
+No validation executed: authentic candidate patch absent; task dispatch blocked before worker.

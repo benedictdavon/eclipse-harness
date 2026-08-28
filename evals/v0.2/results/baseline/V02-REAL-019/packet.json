@@ -1,0 +1,23 @@
+{
+  "case_id": "V02-REAL-019",
+  "case_type": "real",
+  "repository": "REAL-NEXT",
+  "repository_commit": "bb2558441a6673ab76c89914c25018bffa27a2ba",
+  "host": "chatgpt-work-collaboration",
+  "adapter": "manual",
+  "task_category": "bounded-feature",
+  "task_statement": "Make generatePagination return an empty array when totalPages is 0 and clamp currentPage into 1..totalPages for positive totals. Add focused tests in the dashboard starter without changing the exported function name or pagination shape for already-valid inputs.",
+  "expected_write_scope": [
+    "dashboard/starter-example/app/lib/utils.ts",
+    "dashboard/starter-example/app/lib/utils.test.ts"
+  ],
+  "acceptance_criteria": [
+    "zero pages returns []",
+    "out-of-range current pages are clamped",
+    "valid existing examples preserve their arrays"
+  ],
+  "validation": [
+    "node -e \"const fs=require('fs'); for (const p of ['dashboard/starter-example/app/lib/utils.ts','dashboard/starter-example/app/lib/utils.test.ts']) { if (!fs.readFileSync(p,'utf8').trim()) process.exit(1) }\""
+  ],
+  "policy": "sol-luna-v0.1"
+}

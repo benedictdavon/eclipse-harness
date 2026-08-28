@@ -1,0 +1,167 @@
+diff --git a/app/api/users.py b/app/api/users.py
+index 8a0b59e..bea9879 100644
+--- a/app/api/users.py
++++ b/app/api/users.py
+@@ -10,7 +10,8 @@ from app.api.errors import bad_request
+ @bp.route('/users/<int:id>', methods=['GET'])
+ @token_auth.login_required
+ def get_user(id):
+-    return db.get_or_404(User, id).to_dict()
++    return db.get_or_404(User, id).to_dict(
++        current_user=token_auth.current_user())
+ 
+ 
+ @bp.route('/users', methods=['GET'])
+@@ -19,7 +20,10 @@ def get_users():
+     page = request.args.get('page', 1, type=int)
+     per_page = min(request.args.get('per_page', 10, type=int), 100)
+     return User.to_collection_dict(sa.select(User), page, per_page,
+-                                   'api.get_users')
++                                   'api.get_users', serializer_options={
++                                       'current_user':
++                                           token_auth.current_user()
++                                   })
+ 
+ 
+ @bp.route('/users/<int:id>/followers', methods=['GET'])
+@@ -29,7 +33,10 @@ def get_followers(id):
+     page = request.args.get('page', 1, type=int)
+     per_page = min(request.args.get('per_page', 10, type=int), 100)
+     return User.to_collection_dict(user.followers.select(), page, per_page,
+-                                   'api.get_followers', id=id)
++                                   'api.get_followers', serializer_options={
++                                       'current_user':
++                                           token_auth.current_user()
++                                   }, id=id)
+ 
+ 
+ @bp.route('/users/<int:id>/following', methods=['GET'])
+@@ -39,7 +46,10 @@ def get_following(id):
+     page = request.args.get('page', 1, type=int)
+     per_page = min(request.args.get('per_page', 10, type=int), 100)
+     return User.to_collection_dict(user.following.select(), page, per_page,
+-                                   'api.get_following', id=id)
++                                   'api.get_following', serializer_options={
++                                       'current_user':
++                                           token_auth.current_user()
++                                   }, id=id)
+ 
+ 
+ @bp.route('/users', methods=['POST'])
+@@ -78,4 +88,4 @@ def update_user(id):
+         return bad_request('please use a different email address')
+     user.from_dict(data, new_user=False)
+     db.session.commit()
+-    return user.to_dict()
++    return user.to_dict(current_user=token_auth.current_user())
+diff --git a/app/models.py b/app/models.py
+index db447d8..456dfa2 100644
+--- a/app/models.py
++++ b/app/models.py
+@@ -62,11 +62,14 @@ db.event.listen(db.session, 'after_commit', SearchableMixin.after_commit)
+ 
+ class PaginatedAPIMixin(object):
+     @staticmethod
+-    def to_collection_dict(query, page, per_page, endpoint, **kwargs):
++    def to_collection_dict(query, page, per_page, endpoint,
++                           serializer_options=None, **kwargs):
+         resources = db.paginate(query, page=page, per_page=per_page,
+                                 error_out=False)
++        serializer_options = serializer_options or {}
+         data = {
+-            'items': [item.to_dict() for item in resources.items],
++            'items': [item.to_dict(**serializer_options)
++                      for item in resources.items],
+             '_meta': {
+                 'page': page,
+                 'per_page': per_page,
+@@ -228,7 +231,7 @@ class User(PaginatedAPIMixin, UserMixin, db.Model):
+             self.posts.select().subquery())
+         return db.session.scalar(query)
+ 
+-    def to_dict(self, include_email=False):
++    def to_dict(self, include_email=False, current_user=None):
+         data = {
+             'id': self.id,
+             'username': self.username,
+@@ -245,6 +248,8 @@ class User(PaginatedAPIMixin, UserMixin, db.Model):
+                 'avatar': self.avatar(128)
+             }
+         }
++        if current_user is not None and current_user.is_authenticated:
++            data['is_following'] = current_user.is_following(self)
+         if include_email:
+             data['email'] = self.email
+         return data
+diff --git a/tests.py b/tests.py
+index 4ef9098..260aec2 100755
+--- a/tests.py
++++ b/tests.py
+@@ -1,6 +1,7 @@
+ #!/usr/bin/env python
+ from datetime import datetime, timezone, timedelta
+ import unittest
++from flask_login import AnonymousUserMixin
+ from app import create_app, db
+ from app.models import User, Post
+ from config import Config
+@@ -63,6 +64,58 @@ class UserModelCase(unittest.TestCase):
+         self.assertEqual(u1.following_count(), 0)
+         self.assertEqual(u2.followers_count(), 0)
+ 
++    def test_to_dict_is_following(self):
++        viewer = User(username='john', email='john@example.com')
++        user = User(username='susan', email='susan@example.com')
++        db.session.add_all([viewer, user])
++        db.session.commit()
++
++        with self.app.test_request_context():
++            data = user.to_dict(include_email=True, current_user=viewer)
++            self.assertFalse(data['is_following'])
++            self.assertEqual(data['email'], user.email)
++
++            viewer.follow(user)
++            db.session.commit()
++            self.assertTrue(user.to_dict(
++                current_user=viewer)['is_following'])
++
++    def test_to_dict_anonymous(self):
++        user = User(username='susan', email='susan@example.com')
++        db.session.add(user)
++        db.session.commit()
++
++        with self.app.test_request_context():
++            self.assertNotIn('is_following', user.to_dict())
++            self.assertNotIn(
++                'is_following',
++                user.to_dict(current_user=AnonymousUserMixin()))
++
++    def test_authenticated_user_api_serialization(self):
++        viewer = User(username='john', email='john@example.com')
++        user = User(username='susan', email='susan@example.com')
++        db.session.add_all([viewer, user])
++        db.session.commit()
++        viewer.follow(user)
++        token = viewer.get_token()
++        db.session.commit()
++        headers = {'Authorization': f'Bearer {token}'}
++        client = self.app.test_client()
++
++        response = client.get(f'/api/users/{user.id}', headers=headers)
++        self.assertEqual(response.status_code, 200)
++        self.assertTrue(response.get_json()['is_following'])
++
++        response = client.get('/api/users?page=1&per_page=10',
++                              headers=headers)
++        self.assertEqual(response.status_code, 200)
++        data = response.get_json()
++        users = {item['id']: item for item in data['items']}
++        self.assertTrue(users[user.id]['is_following'])
++        self.assertEqual(data['_links']['self'],
++                         '/api/users?page=1&per_page=10')
++        self.assertNotIn('current_user', data['_links']['self'])
++
+     def test_follow_posts(self):
+         # create four users
+         u1 = User(username='john', email='john@example.com')
+

@@ -1,0 +1,24 @@
+{
+  "case_id": "V02-REAL-027",
+  "case_type": "real",
+  "repository": "REAL-MONOREPO",
+  "repository_commit": "b4dc91f545ff2afead214278b7b5ebc8d4e96322",
+  "host": "chatgpt-work-collaboration",
+  "adapter": "manual",
+  "task_category": "multi-file-feature",
+  "task_statement": "Add shouldSkipPackageReason beside shouldSkipPackage. Return 'ignored', 'private', 'missing-version', or null while preserving shouldSkipPackage as the boolean compatibility API. Add focused tests and a concise README section for the package.",
+  "expected_write_scope": [
+    "packages/should-skip-package/src/index.ts",
+    "packages/should-skip-package/src/index.test.ts",
+    "packages/should-skip-package/README.md"
+  ],
+  "acceptance_criteria": [
+    "all three reasons are distinguishable",
+    "boolean API preserves behavior",
+    "tests and package documentation cover the helper"
+  ],
+  "validation": [
+    "node -e \"const fs=require('fs'); for (const p of ['packages/should-skip-package/src/index.ts','packages/should-skip-package/src/index.test.ts','packages/should-skip-package/README.md']) { if (!fs.readFileSync(p,'utf8').trim()) process.exit(1) }\""
+  ],
+  "policy": "sol-luna-v0.1"
+}

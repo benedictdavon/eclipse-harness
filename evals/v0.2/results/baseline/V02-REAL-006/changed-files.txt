@@ -1,0 +1,6 @@
+docs/encoding.rst
+tests/test_itsdangerous/test_encoding.py
+ M docs/encoding.rst
+ M tests/test_itsdangerous/test_encoding.py
+?? result-task1.md
+

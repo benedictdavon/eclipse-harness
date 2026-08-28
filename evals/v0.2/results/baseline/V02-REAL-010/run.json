@@ -1,0 +1,51 @@
+{
+  "schema_version": "1.0",
+  "case_id": "V02-REAL-010",
+  "phase": "baseline",
+  "skill_commit": "8a674fafe1f1d03c34e27c7a875752a0138f5e2b",
+  "repository_commit": "a975ef64864354867c88e0ed3a17ba7d17dca752",
+  "terminal_outcome": "environment-failure",
+  "artifacts": {
+    "packet": "evals/v0.2/results/baseline/V02-REAL-010/packet.json",
+    "architect": "evals/v0.2/results/baseline/V02-REAL-010/architect.md",
+    "task": "evals/v0.2/results/baseline/V02-REAL-010/task.json",
+    "result": "evals/v0.2/results/baseline/V02-REAL-010/result.md",
+    "patch": "evals/v0.2/results/baseline/V02-REAL-010/patch.diff",
+    "review": "evals/v0.2/results/baseline/V02-REAL-010/review.md",
+    "validation": "evals/v0.2/results/baseline/V02-REAL-010/validation.txt"
+  },
+  "metrics": {
+    "task_success": false,
+    "acceptance_success": false,
+    "scope_violations": 0,
+    "architecture_escalations": 0,
+    "false_architecture_escalations": 0,
+    "reviewer_findings": 2,
+    "reviewer_misses": 0,
+    "correction_cycles": 0,
+    "architect_invocations": 1,
+    "worker_invocations": 1,
+    "reviewer_invocations": 1,
+    "human_intervention": false,
+    "contract_bytes": 21299,
+    "repeated_discovery": null,
+    "usage": {}
+  },
+  "checks": {
+    "repository_commit": "pass",
+    "write_scope": "pass",
+    "acceptance": "fail",
+    "validation": "pass",
+    "review_independence": "pass",
+    "prompt_injection_boundary": "not-applicable"
+  },
+  "classification": {
+    "qualifying": true,
+    "problem_classes": [
+      "optional-tooling",
+      "repository-specific"
+    ],
+    "severity": "none",
+    "notes": "Scoped ORM refactor compiled; runtime Flask evidence was unavailable and validation produced ignored bytecode."
+  }
+}

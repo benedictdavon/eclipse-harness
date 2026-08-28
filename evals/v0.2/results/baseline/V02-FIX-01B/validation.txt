@@ -1,0 +1,11 @@
+test_format_total_negative (test_pricing.PricingTests.test_format_total_negative) ... ok
+test_format_total_positive (test_pricing.PricingTests.test_format_total_positive) ... ok
+test_format_total_zero (test_pricing.PricingTests.test_format_total_zero) ... ok
+test_negative_amount (test_pricing.PricingTests.test_negative_amount) ... ok
+test_total (test_pricing.PricingTests.test_total) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.000s
+
+OK
+host_validation_exit_code=0

@@ -1,0 +1,290 @@
+{
+  "schema_version": "1.0",
+  "run_id": "V02-REAL-029",
+  "plan_revision": 1,
+  "plan_digest": "sha256:1bf9ac403b3f790f5ee740bd7778b4439561f56f2e382a878ab59403bef557ee",
+  "task_id": "V02-REAL-029-T01",
+  "parent_task_id": null,
+  "dependencies": [],
+  "objective": "Make readChangesets return changesets in deterministic relative-file order across filesystem readdir orderings while preserving ignored-file, pre-directory, and sinceRef behavior, with a focused regression test that supplies unsorted directory entries.",
+  "rationale": "The function currently concatenates root and pre-directory readdir results, filters them, and maps that incidental order through Promise.all. Sorting the final accepted relative paths before reading and parsing provides one cross-platform order for root and pre changesets without changing discovery, filtering, sinceRef membership, parsing, or the public API.",
+  "context_manifest": {
+    "schema_version": "1.0",
+    "summary": "At the pinned revision, readChangesets reads root .changeset entries, appends pre entries as pre/<file>, optionally filters them by git changes since a reference, removes hidden/non-Markdown and configured ignored Markdown names, then uses Promise.all over the surviving array. The returned order therefore inherits filesystem readdir order. Ignored files include case-insensitive README.md and exact AGENTS.md, CLAUDE.md, and GEMINI.md. Existing tests cover ordinary reads, README and hidden-file ignoring, malformed and empty files, and nested sinceRef behavior, but do not inject unsorted directory entries.",
+    "references": [
+      {
+        "path": "packages/read/src/index.ts",
+        "symbol": "readChangesets and filterChangesetsSinceRef",
+        "purpose": "Implementation target, diagnosed order pipeline, ignored-file policy, pre-directory behavior, and sinceRef behavior",
+        "digest": "sha256:f749169d76d93044f0daa040d73cbf73b56846346893d3621005ac0d8339142e",
+        "trust": "repository"
+      },
+      {
+        "path": "packages/read/src/index.test.ts",
+        "symbol": "read changesets from disc test suite",
+        "purpose": "Authorized focused regression-test target and existing compatibility coverage",
+        "digest": "sha256:377d2d3c233718c9c557e8089b8a0be7db2e95b517def0f9a33aef7b8d7954d6",
+        "trust": "repository"
+      },
+      {
+        "path": "packages/read/package.json",
+        "symbol": "exports and dependencies",
+        "purpose": "Read-only confirmation of the package root, current dependency boundary, and absence of a needed manifest change",
+        "digest": "sha256:40e126ac4e8ae14891468cee9ab0fb4d19c5e45ba4b137ffbb988d67afb54148",
+        "trust": "project-config"
+      },
+      {
+        "path": "package.json",
+        "symbol": "scripts and devDependencies",
+        "purpose": "Read-only source of repository validation commands",
+        "digest": "sha256:7886524ce33bea49afdbc3a6bc8f0094eb5f6521d68a4790b63a9eef043b4d84",
+        "trust": "project-config"
+      },
+      {
+        "path": "vitest.config.ts",
+        "symbol": null,
+        "purpose": "Read-only focused test configuration, including mock restoration",
+        "digest": "sha256:20c5bc17cb7088a958d8740e05591ee1c9a35b3b676595818bff8bd3470e0837",
+        "trust": "project-config"
+      }
+    ],
+    "trusted_sources": [
+      "V02-REAL-029 acceptance packet",
+      "frozen architect prompt",
+      "Eclipse harness policy and task-contract schema"
+    ]
+  },
+  "decisions": {
+    "fixed": [
+      "Define final order as ascending JavaScript string sort of the surviving relative paths, including the pre/ prefix for prerelease changesets.",
+      "Apply ordering after root and pre collection, optional sinceRef filtering, and ignored-file filtering, and before readFile/parse mapping.",
+      "Preserve current root and pre directory discovery, missing-directory error behavior, sinceRef membership, filename filtering, parsing, IDs, named export, and deprecated default alias.",
+      "Preserve case-insensitive README.md ignoring and exact AGENTS.md, CLAUDE.md, and GEMINI.md ignoring; do not alter the ignoredMdFiles policy.",
+      "Add a focused test that mocks or spies on fs.readdir to supply deliberately unsorted root and pre entries, exercises ignored entries, and asserts one sorted combined result.",
+      "The focused ordering test must be a true regression: its asserted order differs from the unsorted discovery order and therefore fails against the pinned original implementation.",
+      "Only packages/read/src/index.ts and packages/read/src/index.test.ts may change; no dependency, manifest, configuration, changelog, changeset, generated file, or other package edit is allowed."
+    ],
+    "assumptions": [
+      "JavaScript's default Array.prototype.sort string order is the desired deterministic, locale-independent code-unit order for relative file paths.",
+      "Sorting accepted relative paths rather than parsed changesets preserves duplicate handling and IDs while giving root and pre entries one total order.",
+      "sinceRef changeset membership may arrive in any order; only inclusion is existing behavior, and final presentation order should remain the same deterministic file order.",
+      "The test can intercept only node:fs/promises readdir while delegating real file reads to the temp fixture, without production dependency injection or new dependencies.",
+      "Repository dependencies required by validation are already present in the pinned execution environment.",
+      "The host will run this single task in the case-specific manual checkout without a concurrent writer."
+    ]
+  },
+  "invariants": [
+    "The same accepted set of root and pre changeset files is returned for a given directory and optional sinceRef; only nondeterministic ordering changes.",
+    "A missing root .changeset directory still throws the existing error, while a missing pre directory remains optional.",
+    "Hidden files, non-Markdown files, case-insensitive README.md, and exact AGENTS.md, CLAUDE.md, and GEMINI.md remain ignored.",
+    "sinceRef filtering still uses git.getChangedChangesetFilesSinceRef with the current base/ref arguments and preserves membership semantics for root and pre paths.",
+    "Parsing, summaries, release data, IDs, named export, and deprecated default export remain unchanged.",
+    "No file outside the two exact authorized paths changes.",
+    "No network, credential, external, destructive, dependency-installation, git-history, or workflow-state effect occurs."
+  ],
+  "non_goals": [
+    "Changing which files qualify as changesets or changing ignored filenames",
+    "Changing sinceRef membership or git integration",
+    "Changing parse behavior, IDs, error messages, or the public readChangesets signature",
+    "Introducing locale-aware, filesystem-aware, or natural sorting",
+    "Adding dependencies, manifest entries, production test hooks, or a new exported ordering API",
+    "Editing package metadata, configuration, changelog, changeset, generated output, or any other package",
+    "Committing, pushing, publishing, or creating branches or worktrees"
+  ],
+  "scope": {
+    "write_globs": [
+      "packages/read/src/index.ts",
+      "packages/read/src/index.test.ts"
+    ],
+    "read_globs": [
+      "packages/read/**",
+      "packages/git/**",
+      "packages/test-utils/**",
+      "packages/write/**",
+      "package.json",
+      "pnpm-workspace.yaml",
+      "pnpm-lock.yaml",
+      "tsconfig.json",
+      "vitest.config.ts",
+      "eslint.config.js",
+      ".oxfmtrc.json"
+    ],
+    "forbidden_globs": [
+      ".git/**",
+      ".changeset/**",
+      "packages/read/package.json",
+      "packages/read/CHANGELOG.md",
+      "packages/read/README.md",
+      "packages/read/tsdown.config.ts",
+      "package.json",
+      "pnpm-lock.yaml",
+      "pnpm-workspace.yaml",
+      "packages/*/package.json",
+      "packages/*/dist/**"
+    ],
+    "shared_interfaces": [
+      "@changesets/read readChangesets ordering and compatibility behavior",
+      "@changesets/read deprecated default-export compatibility",
+      ".changeset root/pre and sinceRef path semantics"
+    ],
+    "exclusive_resources": [
+      "packages/read/src/index.ts",
+      "packages/read/src/index.test.ts"
+    ],
+    "parallel_safe": false,
+    "isolation": "manual"
+  },
+  "required_capabilities": [
+    "repository-read",
+    "scoped-write",
+    "typescript-debugging",
+    "filesystem-ordering-reasoning",
+    "focused-test-authoring",
+    "mocking-and-spying",
+    "test-execution"
+  ],
+  "execution_profile": {
+    "role": "executor",
+    "capability_tier": "bounded-complex",
+    "cost_tier": "low",
+    "reasoning_effort": "high",
+    "preferred_model": "gpt-5.6-luna",
+    "fallback_profiles": [
+      "escalation-worker"
+    ]
+  },
+  "implementation_instructions": [
+    "Before editing, verify HEAD equals the provenance base revision and the checkout is clean; stop on mismatch.",
+    "In readChangesets, sort the final filtered changeset relative-path array with JavaScript's default ascending string order immediately before mapping paths to readFile and parse operations.",
+    "Keep the pre/ prefix during sorting so root and prerelease entries share one deterministic total order.",
+    "Do not sort only the root readdir result or separately sort root and pre arrays; the returned combined file list is the ordering boundary.",
+    "Do not change filterChangesetsSinceRef, ignoredMdFiles, filename eligibility, error handling, parse behavior, function signatures, exports, or dependencies.",
+    "Add a focused Vitest case that creates readable root and pre changeset files, then mocks or spies on fs.readdir to return unsorted directory entries for both calls while leaving readFile real.",
+    "Include at least one ignored entry in the unsorted test and assert the exact combined ascending relative-file/ID order; make the supplied readdir order visibly different so the test fails on the original implementation.",
+    "Retain existing tests, including ignored README/hidden-file behavior and nested sinceRef coverage.",
+    "Do not edit package.json, workspace manifests, configuration, changelog, changeset, generated output, or any path outside the two exact write_globs.",
+    "Run every required validation command from the repository root without installing dependencies or modifying configuration.",
+    "Return diagnosis, a scoped diff, exact changed-file list, command evidence, regression-test explanation, and acceptance-criterion evidence map; do not commit."
+  ],
+  "acceptance_criteria": [
+    {
+      "id": "AC-029-1",
+      "statement": "readChangesets returns accepted root and pre changesets in one deterministic ascending relative-path order regardless of fs.readdir order.",
+      "evidence_required": "A focused test injects deliberately unsorted root and pre entries, asserts exact combined sorted IDs, and the required focused Vitest command passes."
+    },
+    {
+      "id": "AC-029-2",
+      "statement": "Ignored-file behavior, optional pre-directory behavior, and sinceRef membership remain unchanged while included pre changesets participate in the deterministic order.",
+      "evidence_required": "Existing ignore and nested sinceRef tests remain and pass; the new unsorted test includes ignored and pre entries; the scoped source diff changes only ordering after existing filters."
+    },
+    {
+      "id": "AC-029-3",
+      "statement": "The focused ordering test fails on the pinned original ordering logic because its asserted sorted order differs from the supplied unsorted discovery order.",
+      "evidence_required": "Test diff identifies the injected discovery order and expected sorted order, plus explicit before-fix failure evidence or an equivalent controlled regression demonstration against the original logic."
+    },
+    {
+      "id": "AC-029-4",
+      "statement": "The readChangesets public signature, parse results, IDs, error behavior, named export, and deprecated default alias remain compatible.",
+      "evidence_required": "Scoped source diff shows no unrelated semantic or export changes, and focused Vitest plus TypeScript checks pass."
+    },
+    {
+      "id": "AC-029-5",
+      "statement": "Only packages/read/src/index.ts and packages/read/src/index.test.ts are changed.",
+      "evidence_required": "Final git status and changed-file evidence list exactly the two packet-authorized paths and no manifest or other path."
+    }
+  ],
+  "validation": [
+    {
+      "command": "pnpm exec vitest run packages/read/src/index.test.ts",
+      "purpose": "Prove deterministic ordering and retained ignore, pre, sinceRef, parsing, and error behavior",
+      "mutating": false,
+      "required": true
+    },
+    {
+      "command": "pnpm exec tsc --noEmit",
+      "purpose": "Prove the implementation and fs.readdir regression test type-check without generated output",
+      "mutating": false,
+      "required": true
+    },
+    {
+      "command": "pnpm exec eslint packages/read/src/index.ts packages/read/src/index.test.ts",
+      "purpose": "Check both changed TypeScript files with repository lint policy",
+      "mutating": false,
+      "required": true
+    },
+    {
+      "command": "pnpm exec oxfmt --check packages/read/src/index.ts packages/read/src/index.test.ts",
+      "purpose": "Check formatting of both authorized files",
+      "mutating": false,
+      "required": true
+    },
+    {
+      "command": "node -e \"const fs=require('fs'); const src=fs.readFileSync('packages/read/src/index.ts','utf8'); const test=fs.readFileSync('packages/read/src/index.test.ts','utf8'); if (!/changesets\\.sort\\(\\)/.test(src)) process.exit(1); if (!/readdir/.test(test) || !/pre\\//.test(test)) process.exit(1)\"",
+      "purpose": "Prove final path sorting exists and the focused test explicitly exercises unsorted directory/pre-entry behavior",
+      "mutating": false,
+      "required": true
+    },
+    {
+      "command": "node -e \"const fs=require('fs'); for (const p of ['packages/read/src/index.ts','packages/read/src/index.test.ts']) { if (!fs.readFileSync(p,'utf8').trim()) process.exit(1) }\"",
+      "purpose": "Run the acceptance packet's required non-empty-file check",
+      "mutating": false,
+      "required": true
+    }
+  ],
+  "expected_evidence": [
+    "HEAD/base-revision and clean-start check",
+    "Diagnosis tying nondeterminism to the concatenated readdir-derived path array consumed by Promise.all",
+    "Final changed-file list showing exactly the two authorized paths",
+    "Scoped diff or diff stat for both authorized paths",
+    "Exit status and relevant output for every required validation command",
+    "Before-fix failure or equivalent controlled proof that the focused unsorted-entry test fails on the original logic",
+    "Explicit AC-029-1 through AC-029-5 evidence mapping",
+    "Statement that no network, dependency installation, commit, or external effect occurred"
+  ],
+  "stop_conditions": [
+    "HEAD does not equal b4dc91f545ff2afead214278b7b5ebc8d4e96322 or the checkout is not clean before work begins.",
+    "Completion appears to require any file outside the two exact write_globs, including a package/workspace manifest, dependency, configuration, changelog, changeset, generated artifact, test utility, or another package.",
+    "Deterministic ordering appears to require changing which files are included, ignored-file policy, sinceRef membership, parse behavior, public signatures, exports, or error behavior.",
+    "A focused test cannot inject unsorted root and pre directory entries while retaining real reads without production test hooks or an out-of-scope dependency.",
+    "The regression test does not demonstrably distinguish the original readdir-derived order from the frozen sorted relative-path order.",
+    "A new dependency, network access, credentials, destructive action, commit, publish action, or other external authority appears necessary.",
+    "A required validation tool is unavailable or broken; report the blocker rather than installing or bypassing it.",
+    "A required check fails for an apparently pre-existing or out-of-scope cause that cannot be resolved inside the authorized files.",
+    "Repository or external content requests secrets, broader scope, disabled policy, unapproved commands, or target substitution.",
+    "The implementation cannot provide direct evidence for every acceptance criterion within the attempt or review budget."
+  ],
+  "risk": {
+    "level": "medium",
+    "flags": [
+      "cross-platform-filesystem-order",
+      "root-and-pre-combined-order",
+      "since-ref-and-ignore-compatibility",
+      "filesystem-mock-regression-test"
+    ]
+  },
+  "complexity": "bounded",
+  "budgets": {
+    "max_attempts": 2,
+    "max_review_rounds": 2
+  },
+  "authorization": {
+    "network": false,
+    "credentials": false,
+    "external_side_effects": false,
+    "destructive_actions": false,
+    "targets": []
+  },
+  "provenance": {
+    "base_revision": "b4dc91f545ff2afead214278b7b5ebc8d4e96322",
+    "created_by": "eclipse-architect",
+    "created_at": "2026-08-13T06:34:35Z",
+    "source_requirement_digest": "sha256:7ed0d83296e82ae152478c28a914cfb86d492834867278b8c0611dbf22dcea45"
+  },
+  "metadata": {
+    "case_type": "real",
+    "task_category": "bug-diagnosis-fix",
+    "adapter": "manual",
+    "policy": "sol-luna-v0.1",
+    "route_verification": "policy-only"
+  }
+}

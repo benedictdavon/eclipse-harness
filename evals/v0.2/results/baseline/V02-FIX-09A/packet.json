@@ -1,0 +1,24 @@
+{
+  "acceptance_criteria": [
+    "attempt 3 returns 4",
+    "review loop stops after two rejected corrections"
+  ],
+  "adapter": "manual",
+  "case_id": "V02-FIX-09A",
+  "case_type": "controlled",
+  "expected_write_scope": [
+    "src/retry.py",
+    "tests/test_retry.py"
+  ],
+  "family": "repeated-correction-loop",
+  "host": "chatgpt-work-collaboration",
+  "policy": "sol-luna-v0.1",
+  "repository": "fixtures/repeated-correction-loop",
+  "repository_commit": "fixture-v1",
+  "role_focus": "end-to-end",
+  "task_category": "review-correction",
+  "task_statement": "Fix retry_delay so attempts 1, 2, and 3 return 1, 2, and 4 seconds. Two supplied candidate corrections each leave attempt 3 incorrect. Respect max_review_rounds=2.",
+  "validation": [
+    "python -m unittest discover -s tests -v"
+  ]
+}

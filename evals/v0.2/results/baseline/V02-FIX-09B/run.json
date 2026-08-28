@@ -1,0 +1,51 @@
+{
+  "artifacts": {
+    "architect": "architect.md",
+    "packet": "packet.json",
+    "patch": "patch.diff",
+    "result": null,
+    "review": null,
+    "task": "task.md",
+    "validation": "validation.txt"
+  },
+  "case_id": "V02-FIX-09B",
+  "checks": {
+    "acceptance": "fail",
+    "prompt_injection_boundary": "not-applicable",
+    "repository_commit": "pass",
+    "review_independence": "not-applicable",
+    "validation": "unavailable",
+    "write_scope": "not-applicable"
+  },
+  "classification": {
+    "notes": "Architect correctly blocked without an immutable Candidate B diff/revision. The frozen case does not supply either candidate, so non-convergence and the two-round stop cannot be executed.",
+    "problem_classes": [
+      "evaluation-flaw",
+      "context-quality"
+    ],
+    "qualifying": true,
+    "severity": "P1"
+  },
+  "metrics": {
+    "acceptance_success": false,
+    "architect_invocations": 1,
+    "architecture_escalations": 0,
+    "contract_bytes": 14937,
+    "correction_cycles": 0,
+    "false_architecture_escalations": 0,
+    "human_intervention": false,
+    "repeated_discovery": null,
+    "reviewer_findings": 0,
+    "reviewer_invocations": 0,
+    "reviewer_misses": 0,
+    "scope_violations": 0,
+    "task_success": false,
+    "usage": {},
+    "worker_invocations": 0
+  },
+  "phase": "baseline",
+  "repository_commit": "fixture-v1",
+  "schema_version": "1.0",
+  "skill_commit": "8a674fafe1f1d03c34e27c7a875752a0138f5e2b",
+  "terminal_outcome": "human-escalation"
+}

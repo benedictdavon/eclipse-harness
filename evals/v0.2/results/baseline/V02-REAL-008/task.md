@@ -1,0 +1,291 @@
+{
+  "schema_version": "1.0",
+  "run_id": "V02-REAL-008",
+  "plan_revision": 1,
+  "plan_digest": "sha256:9a79fe0255495b67a2018d55ed1b2f5be8182ed0aa8ef174c2ef4816a6c16ac7",
+  "task_id": "T001",
+  "parent_task_id": null,
+  "dependencies": [],
+  "objective": "Add a conditional is_following boolean to User API serialization, propagate the token-authenticated user through every protected user-API serialization path, preserve safe anonymous serialization, and add focused regression tests without changing the database schema.",
+  "rationale": "User.to_dict currently has no caller identity, while Flask-HTTPAuth exposes the authenticated identity only at protected API handlers. Explicitly passing that identity preserves the model/API boundary, avoids a circular dependency on app.api.auth, and lets the existing User.is_following relationship query determine the boolean.",
+  "context_manifest": {
+    "schema_version": "1.0",
+    "summary": "At base a975ef64864354867c88e0ed3a17ba7d17dca752, User.to_dict builds the user representation and User.is_following already returns relationship membership. PaginatedAPIMixin.to_collection_dict invokes item.to_dict without serializer context. The protected handlers in app/api/users.py can obtain the Flask-HTTPAuth identity through token_auth.current_user(), while create_user is public and must remain safe without an authenticated identity. Existing tests cover relationship behavior but not identity-aware serialization or the user API response.",
+    "references": [
+      {
+        "path": "evals/v0.2/results/baseline/V02-REAL-008/packet.json",
+        "symbol": null,
+        "purpose": "Frozen requirement, acceptance, write-scope, validation, and base-revision packet",
+        "digest": "sha256:05325dbcc80b34b24bcd965958deb8a479a12dfbdddc4e175bb578acb70e27a9",
+        "trust": "harness"
+      },
+      {
+        "path": "app/models.py",
+        "symbol": "PaginatedAPIMixin.to_collection_dict; User.to_dict; User.is_following",
+        "purpose": "Serializer, collection serialization, and existing follow predicate",
+        "digest": "sha256:07534ea0df91817dc69aff5fb5c2ae5802a322b30cdc892517edf7955cd56bae",
+        "trust": "repository"
+      },
+      {
+        "path": "app/api/users.py",
+        "symbol": "get_user; get_users; get_followers; get_following; create_user; update_user",
+        "purpose": "All current user-API serialization call sites and their authentication boundaries",
+        "digest": "sha256:a6df82d6d859824fcd1d3b1db5082f0712a91a22afa87a3f96e24e98b62a80fc",
+        "trust": "repository"
+      },
+      {
+        "path": "app/api/auth.py",
+        "symbol": "token_auth; verify_token",
+        "purpose": "Read-only confirmation that protected endpoints obtain a User through Flask-HTTPAuth",
+        "digest": "sha256:e211c3b2c03078b1193d44736f4822a863427a498fb6d11be1a1ee4d11da7ec6",
+        "trust": "repository"
+      },
+      {
+        "path": "tests.py",
+        "symbol": "TestConfig; UserModelCase",
+        "purpose": "Existing SQLite-backed unittest setup and follow coverage to extend",
+        "digest": "sha256:15a002635f20396831bd523365f0939220fd958c72c48f1c0d3d05ae221aabcc",
+        "trust": "repository"
+      }
+    ],
+    "trusted_sources": [
+      "Frozen V02-REAL-008 acceptance packet",
+      "Eclipse orchestrator policy and task-contract schema"
+    ]
+  },
+  "decisions": {
+    "fixed": [
+      "Pass the token-authenticated User explicitly from API handlers to serialization; do not import API authentication into the model layer.",
+      "User.to_dict accepts an optional current-user argument and emits is_following only when that argument represents an authenticated user; absent or anonymous identities yield the existing representation without the field.",
+      "Compute is_following by calling the existing current_user.is_following(serialized_user) predicate and emit its boolean result, including false for self or a non-followed user.",
+      "Paginated user collections propagate the optional current user through a dedicated serializer-options argument that is not forwarded to url_for.",
+      "All token-protected user read and update endpoints pass token_auth.current_user(); public create-user serialization remains anonymous.",
+      "Do not add or alter an ORM column, association table, migration, dependency, authentication rule, or response field unrelated to is_following."
+    ],
+    "assumptions": [
+      "token_auth.current_user() returns the verified app.models.User inside every token_auth.login_required handler.",
+      "When no authenticated identity is supplied, omitting is_following is the intended anonymous representation because the value cannot be defined relative to a viewer.",
+      "The existing SQLite-backed unittest fixture is sufficient for follow and API response coverage when project dependencies are installed."
+    ]
+  },
+  "invariants": [
+    "Existing User.to_dict fields, include_email behavior, counts, links, and avatar URL remain unchanged.",
+    "Collection pagination metadata and self/next/prev URL parameters remain unchanged.",
+    "The public POST /api/users route remains callable without authentication and does not access token_auth.current_user().",
+    "Protected user endpoints keep their existing authentication and authorization decorators.",
+    "The followers association remains the only persisted follow state; no schema artifact is created.",
+    "Only app/models.py, app/api/users.py, and tests.py may be modified."
+  ],
+  "non_goals": [
+    "Adding follow or unfollow API endpoints",
+    "Changing Flask-Login session behavior or Flask-HTTPAuth verification",
+    "Changing database models, migrations, pagination shape, templates, or web UI",
+    "Adding dependencies or performing broad test refactors",
+    "Optimizing follow-count or is-following query performance"
+  ],
+  "scope": {
+    "write_globs": [
+      "app/models.py",
+      "app/api/users.py",
+      "tests.py"
+    ],
+    "read_globs": [
+      "app/models.py",
+      "app/api/users.py",
+      "app/api/auth.py",
+      "app/api/__init__.py",
+      "app/__init__.py",
+      "config.py",
+      "tests.py"
+    ],
+    "forbidden_globs": [
+      ".git/**",
+      "migrations/**",
+      "requirements.txt",
+      "app/templates/**",
+      "app/auth/**",
+      "deployment/**"
+    ],
+    "shared_interfaces": [
+      "User.to_dict(include_email=False, current_user=None) user representation contract",
+      "PaginatedAPIMixin.to_collection_dict serializer-options and URL-kwargs separation",
+      "GET/PUT /api/users* JSON response shape"
+    ],
+    "exclusive_resources": [
+      "User serialization and user-API response interface"
+    ],
+    "parallel_safe": false,
+    "isolation": "manual"
+  },
+  "required_capabilities": [
+    "repository-read",
+    "scoped-write",
+    "Python and Flask API reasoning",
+    "SQLAlchemy relationship reasoning",
+    "unittest authoring",
+    "local test-execution"
+  ],
+  "execution_profile": {
+    "role": "executor",
+    "capability_tier": "bounded-complex",
+    "cost_tier": "low",
+    "reasoning_effort": "high",
+    "preferred_model": "gpt-5.6-luna",
+    "fallback_profiles": [
+      "worker",
+      "escalation-worker"
+    ]
+  },
+  "implementation_instructions": [
+    "Before editing, verify HEAD is a975ef64864354867c88e0ed3a17ba7d17dca752 and that the checkout has no pre-existing changes; return a stale-base or dirty-worktree blocker otherwise.",
+    "Extend User.to_dict with an optional current-user parameter while preserving include_email compatibility. Treat None and an identity whose is_authenticated value is false as anonymous; do not access follow relationships and do not emit is_following in that case.",
+    "For an authenticated current user, set data['is_following'] to the boolean result of current_user.is_following(self). Keep this computed field transient and do not touch SQLAlchemy schema declarations.",
+    "Extend PaginatedAPIMixin.to_collection_dict with an optional, dedicated mapping of serializer keyword arguments. Default it safely, pass it only to each item.to_dict call, and keep endpoint kwargs exclusively for pagination url_for calls.",
+    "In app/api/users.py, pass token_auth.current_user() to get_user and update_user serialization and through the dedicated serializer options for get_users, get_followers, and get_following. Do not request the token current user from create_user or change any route decorator.",
+    "Add focused unittest coverage in tests.py using the existing in-memory database fixture: assert an authenticated viewer receives is_following false before following and true after following; assert serialization with no viewer and with an anonymous identity does not raise and omits is_following; and assert at least one token-authenticated user endpoint returns the correct boolean. If collection plumbing is changed, assert a protected collection item receives the viewer-relative field without corrupting pagination links.",
+    "Keep tests deterministic and local. Reuse User.follow, User.get_token, the Flask test client, and the existing TestConfig; do not require network services or new packages.",
+    "Inspect the final diff to confirm exactly the three authorized files (or a subset) changed and that no migration or generated artifact was created."
+  ],
+  "acceptance_criteria": [
+    {
+      "id": "AC-1",
+      "statement": "Serialization with an authenticated viewer includes is_following as false for a user the viewer does not follow and true after the viewer follows that user.",
+      "evidence_required": "Focused assertions in tests.py covering both boolean states, plus a passing focused unittest run when dependencies are available or a result mapping the assertions and implementation diff directly to this criterion."
+    },
+    {
+      "id": "AC-2",
+      "statement": "Serialization without an authenticated viewer does not raise and omits is_following.",
+      "evidence_required": "Focused assertions for both omitted current-user input and an anonymous identity, with the test diff and any available focused test result."
+    },
+    {
+      "id": "AC-3",
+      "statement": "Token-protected single-user and collection API serialization receives token_auth.current_user(), while public user creation remains independent of authentication context.",
+      "evidence_required": "Diff evidence for every protected user serialization call site and a focused authenticated endpoint assertion; collection test evidence must show pagination links remain valid if collection plumbing changed."
+    },
+    {
+      "id": "AC-4",
+      "statement": "No database column, association-table change, migration, dependency, route-authentication change, or file outside the authorized write scope is introduced.",
+      "evidence_required": "Final changed-file list and diff inspection showing only app/models.py, app/api/users.py, and tests.py changed, with no schema declaration or migration changes."
+    },
+    {
+      "id": "AC-5",
+      "statement": "Existing user representation fields, include_email behavior, and pagination URL behavior are preserved.",
+      "evidence_required": "Diff inspection and focused regression assertions demonstrating that existing fields remain and serializer-only options are not added to pagination URLs."
+    },
+    {
+      "id": "AC-6",
+      "statement": "All modified Python files compile successfully.",
+      "evidence_required": "Exit code 0 from python -m compileall -q app tests.py."
+    }
+  ],
+  "validation": [
+    {
+      "command": "python -m compileall -q app tests.py",
+      "purpose": "Required packet validation that all application and test Python files compile",
+      "mutating": false,
+      "required": true
+    },
+    {
+      "command": "python tests.py",
+      "purpose": "Run the focused and existing unittests when the checkout environment already provides project dependencies",
+      "mutating": false,
+      "required": false
+    },
+    {
+      "command": "git diff --check",
+      "purpose": "Reject whitespace errors in the scoped patch",
+      "mutating": false,
+      "required": true
+    },
+    {
+      "command": "git status --short",
+      "purpose": "Provide the final changed-file scope and detect generated or unauthorized files",
+      "mutating": false,
+      "required": true
+    }
+  ],
+  "expected_evidence": [
+    "Final git status --short output and changed-file list",
+    "Scoped diff for app/models.py, app/api/users.py, and tests.py",
+    "Criterion-by-criterion AC-1 through AC-6 result mapping",
+    "Exit code and concise output for each required validation command",
+    "Focused unittest output if dependencies are available; otherwise the exact dependency blocker without installing packages or using the network",
+    "Confirmation that HEAD/base revision was checked before editing"
+  ],
+  "stop_conditions": [
+    "HEAD does not equal the provenance base revision or the checkout is not clean before task edits.",
+    "Completion appears to require a file outside scope.write_globs, especially any migration, dependency, authentication module, template, or deployment file.",
+    "The implementation would require a database schema change, new persisted field, new dependency, network access, credentials, destructive action, or external side effect.",
+    "The authenticated identity cannot be propagated without changing authentication semantics or introducing an API-to-model circular import.",
+    "Repository behavior contradicts a fixed decision or acceptance criterion and resolving it requires an architecture or product decision.",
+    "Required compile validation fails for reasons not caused by the scoped patch after at most two bounded attempts.",
+    "A validation command creates an unexpected tracked or untracked artifact outside the authorized write scope."
+  ],
+  "risk": {
+    "level": "medium",
+    "flags": [
+      "authentication-context propagation",
+      "shared serializer interface",
+      "paginated response compatibility",
+      "runtime dependencies may be unavailable"
+    ]
+  },
+  "complexity": "bounded",
+  "budgets": {
+    "max_attempts": 2,
+    "max_review_rounds": 2
+  },
+  "authorization": {
+    "network": false,
+    "credentials": false,
+    "external_side_effects": false,
+    "destructive_actions": false,
+    "targets": [
+      "app/models.py",
+      "app/api/users.py",
+      "tests.py"
+    ]
+  },
+  "provenance": {
+    "base_revision": "a975ef64864354867c88e0ed3a17ba7d17dca752",
+    "created_by": "eclipse-architect",
+    "created_at": "2026-08-13T04:05:23Z",
+    "source_requirement_digest": "sha256:05325dbcc80b34b24bcd965958deb8a479a12dfbdddc4e175bb578acb70e27a9"
+  },
+  "metadata": {
+    "case_id": "V02-REAL-008",
+    "policy": "sol-luna-v0.1",
+    "routing_verification": "policy-only; effective model and permissions are unverified",
+    "recursive_delegation": false,
+    "plan_digest_algorithm": "SHA-256 over RFC 8785-compatible canonical JSON of metadata.plan_digest_basis",
+    "plan_digest_basis": {
+      "base_revision": "a975ef64864354867c88e0ed3a17ba7d17dca752",
+      "case_id": "V02-REAL-008",
+      "fixed_decisions": [
+        "Pass the token-authenticated User explicitly from API handlers to serialization; do not import API authentication into the model layer.",
+        "User.to_dict accepts an optional viewer and emits is_following only for an authenticated viewer; no viewer yields the existing representation without the field.",
+        "Paginated user collections propagate the optional viewer through a dedicated serializer-options argument, separate from URL kwargs.",
+        "All token-protected user read and update endpoints pass token_auth.current_user(); public create-user serialization remains anonymous.",
+        "Use the existing User.is_following relationship query; do not change ORM schema or migrations."
+      ],
+      "plan_revision": 1,
+      "run_id": "V02-REAL-008",
+      "tasks": [
+        {
+          "task_id": "T001",
+          "write_globs": [
+            "app/models.py",
+            "app/api/users.py",
+            "tests.py"
+          ]
+        }
+      ],
+      "waves": [
+        [
+          "T001"
+        ]
+      ]
+    }
+  }
+}
+

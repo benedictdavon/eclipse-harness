@@ -1,0 +1,23 @@
+{
+  "case_id": "V02-REAL-001",
+  "case_type": "real",
+  "repository": "REAL-PY-LIB",
+  "repository_commit": "672971d66a2ef9f85151e53283113f33d642dabd",
+  "host": "chatgpt-work-collaboration",
+  "adapter": "manual",
+  "task_category": "bounded-feature",
+  "task_statement": "Make int_to_bytes reject negative integers with ValueError('num must be non-negative') before struct packing. Add focused tests for -1 and preserve all non-negative behavior. Do not change public exports or dependencies.",
+  "expected_write_scope": [
+    "src/itsdangerous/encoding.py",
+    "tests/test_itsdangerous/test_encoding.py"
+  ],
+  "acceptance_criteria": [
+    "int_to_bytes(-1) raises the specified ValueError",
+    "0 and maximum uint64 cases remain unchanged",
+    "focused encoding tests pass"
+  ],
+  "validation": [
+    "PYTHONPATH=src python -m pytest tests/test_itsdangerous/test_encoding.py -q"
+  ],
+  "policy": "sol-luna-v0.1"
+}

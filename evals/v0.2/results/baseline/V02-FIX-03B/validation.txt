@@ -1,0 +1,1 @@
+No deterministic validation command declared; architect role was read-only.

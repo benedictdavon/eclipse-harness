@@ -1,0 +1,242 @@
+{
+  "schema_version": "1.0",
+  "run_id": "v02-real-019-baseline",
+  "plan_revision": 1,
+  "plan_digest": "sha256:e312a82ed74b6eac676f31ab8b634ecfd282e41260f96ba1ed5ea9ed2dd60681",
+  "task_id": "V02-REAL-019-T1",
+  "parent_task_id": null,
+  "dependencies": [],
+  "objective": "Make dashboard starter generatePagination return an empty array for zero total pages and clamp the current page into the valid range for positive totals, with focused tests and no change to valid-input pagination arrays or the exported function name.",
+  "rationale": "A small normalization at the utility boundary prevents invalid current pages from producing out-of-range page numbers. Keeping implementation and regression tests in one exact two-file task preserves the established pagination shape and avoids project-wide test or dependency changes.",
+  "context_manifest": {
+    "schema_version": "1.0",
+    "summary": "The pinned clean Next.js examples repository contains a self-contained generatePagination function in the dashboard starter. The starter has no utils.test.ts and no configured unit-test script; the packet authorizes only the utility and a new focused test file.",
+    "references": [
+      {
+        "path": "repo/evals/v0.2/results/baseline/V02-REAL-019/packet.json",
+        "symbol": null,
+        "purpose": "Trusted task statement, exact write scope, acceptance criteria, and required validation",
+        "digest": "sha256:53d636714e918a7d565051f34904105c1dec92fd7efafc00e491c65ab9a1ac1d",
+        "trust": "harness"
+      },
+      {
+        "path": "dashboard/starter-example/app/lib/utils.ts",
+        "symbol": "generatePagination",
+        "purpose": "Implementation target and source of valid-input pagination shapes",
+        "digest": null,
+        "trust": "repository"
+      },
+      {
+        "path": "dashboard/starter-example/app/ui/invoices/pagination.tsx",
+        "symbol": "Pagination",
+        "purpose": "Read-only consumer context for the exported function name and output shape",
+        "digest": null,
+        "trust": "repository"
+      },
+      {
+        "path": "dashboard/starter-example/package.json",
+        "symbol": null,
+        "purpose": "Read-only evidence that the starter has no configured unit-test script or authorized test dependency change",
+        "digest": null,
+        "trust": "project-config"
+      },
+      {
+        "path": "dashboard/starter-example/tsconfig.json",
+        "symbol": null,
+        "purpose": "Read-only TypeScript project context for the new test source",
+        "digest": null,
+        "trust": "project-config"
+      }
+    ],
+    "trusted_sources": [
+      "V02-REAL-019 acceptance packet",
+      "Eclipse task contract revision 1"
+    ]
+  },
+  "decisions": {
+    "fixed": [
+      "Return [] before clamping when totalPages is exactly 0.",
+      "For positive totals, clamp currentPage to Math.max(1, Math.min(currentPage, totalPages)) or an exactly equivalent range clamp.",
+      "Use the clamped page consistently in branch comparisons and returned neighbor values.",
+      "Preserve the generatePagination export name, two-number signature, and all arrays for already-valid inputs.",
+      "Add direct focused assertions in dashboard/starter-example/app/lib/utils.test.ts without changing dependencies or package scripts.",
+      "Write only the two exact paths authorized by the acceptance packet."
+    ],
+    "assumptions": [
+      "Pagination callers supply integer currentPage values and non-negative integer totalPages values.",
+      "The utility remains self-contained, so a non-mutating source-body behavior check can exercise it without installing the dashboard dependencies.",
+      "The host provides Node.js for the packet's required validation and the dependency-free behavior check."
+    ]
+  },
+  "invariants": [
+    "For every already-valid currentPage and totalPages pair, output values, ordering, length, and ellipsis placement remain byte-for-byte equivalent as arrays.",
+    "No returned numeric page is outside 1..totalPages when totalPages is positive.",
+    "generatePagination remains a named exported constant callable with currentPage and totalPages.",
+    "formatCurrency, formatDateToLocal, generateYAxis, and all unrelated dashboard behavior remain unchanged."
+  ],
+  "non_goals": [
+    "Defining behavior for negative, fractional, NaN, infinite, string, null, or undefined pagination arguments.",
+    "Changing the pagination UI component or any final-example, basics, or SEO files.",
+    "Adding or changing a test runner, dependency, package script, manifest, lockfile, TypeScript configuration, or workspace configuration.",
+    "Refactoring unrelated utility functions or changing pagination design and ellipsis rules."
+  ],
+  "scope": {
+    "write_globs": [
+      "dashboard/starter-example/app/lib/utils.ts",
+      "dashboard/starter-example/app/lib/utils.test.ts"
+    ],
+    "read_globs": [
+      "dashboard/starter-example/app/lib/utils.ts",
+      "dashboard/starter-example/app/ui/invoices/pagination.tsx",
+      "dashboard/starter-example/package.json",
+      "dashboard/starter-example/tsconfig.json"
+    ],
+    "forbidden_globs": [
+      "dashboard/starter-example/package.json",
+      "dashboard/starter-example/pnpm-lock.yaml",
+      "dashboard/starter-example/pnpm-workspace.yaml",
+      "dashboard/starter-example/tsconfig.json",
+      "dashboard/starter-example/app/ui/**",
+      "dashboard/final-example/**",
+      "basics/**",
+      "seo/**",
+      ".github/**",
+      ".git/**"
+    ],
+    "shared_interfaces": [
+      "generatePagination export and return-array shape"
+    ],
+    "exclusive_resources": [
+      "dashboard/starter-example/app/lib/utils.ts",
+      "dashboard/starter-example/app/lib/utils.test.ts"
+    ],
+    "parallel_safe": false,
+    "isolation": "manual"
+  },
+  "required_capabilities": [
+    "typescript-repository-read",
+    "scoped-write",
+    "bounded-utility-reasoning",
+    "node-command-execution",
+    "criterion-evidence-reporting"
+  ],
+  "execution_profile": {
+    "role": "executor",
+    "capability_tier": "bounded-routine",
+    "cost_tier": "low",
+    "reasoning_effort": "high",
+    "preferred_model": "gpt-5.6-luna",
+    "fallback_profiles": [
+      "eclipse_worker"
+    ]
+  },
+  "implementation_instructions": [
+    "Keep the existing exported function name and parameters unchanged.",
+    "Add an explicit zero-total early return before attempting to clamp the current page.",
+    "For totalPages greater than zero, compute one local clamped current-page value and use it for all existing branch selection and middle-neighbor output; do not alter the valid-input branch shapes.",
+    "Do not add rounding, coercion, validation, error throwing, or behavior for input categories outside the bounded integer assumptions.",
+    "Create dashboard/starter-example/app/lib/utils.test.ts with dependency-free, focused assertions. Cover (1, 0) -> [], (0, 10) as page 1, (11, 10) as page 10, and unchanged valid examples for a small total, first region, middle region, and last region.",
+    "Use exact expected arrays in the test assertions so page ordering and ellipsis placement are protected; do not replace them with weak length-only or membership-only checks.",
+    "Run every required validation and report the command, exit status, and concise result. Map direct evidence to AC-1 through AC-4."
+  ],
+  "acceptance_criteria": [
+    {
+      "id": "AC-1",
+      "statement": "generatePagination returns [] when totalPages is 0.",
+      "evidence_required": "The source diff shows an explicit zero-total early return, the focused test file contains a direct exact-array assertion for zero pages, and the required Node behavior check passes for (1, 0)."
+    },
+    {
+      "id": "AC-2",
+      "statement": "For positive totals, current pages below 1 and above totalPages are clamped to the nearest boundary before pagination arrays are generated.",
+      "evidence_required": "The source diff shows one bounded local clamp used by all current-page branches, exact-array tests for (0, 10) and (11, 10) match the page-1 and page-10 outputs, and both cases pass in the required Node behavior check."
+    },
+    {
+      "id": "AC-3",
+      "statement": "Already-valid inputs preserve the existing pagination arrays, including ordering and ellipsis placement.",
+      "evidence_required": "The focused test file asserts exact arrays for representative valid small, first-region, middle-region, and last-region cases, and the required Node behavior check passes the same representative outputs."
+    },
+    {
+      "id": "AC-4",
+      "statement": "The export remains named generatePagination and the change is confined to the two authorized files.",
+      "evidence_required": "Source diff inspection confirms the unchanged named export and parameter list; changed-file evidence lists only dashboard/starter-example/app/lib/utils.ts and dashboard/starter-example/app/lib/utils.test.ts."
+    }
+  ],
+  "validation": [
+    {
+      "command": "node -e \"const fs=require('fs'); for (const p of ['dashboard/starter-example/app/lib/utils.ts','dashboard/starter-example/app/lib/utils.test.ts']) { if (!fs.readFileSync(p,'utf8').trim()) process.exit(1) }\"",
+      "purpose": "Run the acceptance packet's required non-empty implementation-and-test validation.",
+      "mutating": false,
+      "required": true
+    },
+    {
+      "command": "node -e \"const assert=require('node:assert/strict'); const source=require('node:fs').readFileSync('dashboard/starter-example/app/lib/utils.ts','utf8'); const match=source.match(/export const generatePagination = \\([^)]*\\) => \\{([\\s\\S]*?)\\n\\};\\s*$/); if (!match) throw new Error('generatePagination export not found'); const generatePagination=new Function('currentPage','totalPages',match[1]); for (const [current,total,expected] of [[1,0,[]],[0,10,[1,2,3,'...',9,10]],[11,10,[1,2,'...',8,9,10]],[3,5,[1,2,3,4,5]],[2,10,[1,2,3,'...',9,10]],[5,10,[1,'...',4,5,6,'...',10]],[9,10,[1,2,'...',8,9,10]]]) assert.deepEqual(generatePagination(current,total),expected);\"",
+      "purpose": "Execute the self-contained utility body without dependencies and verify zero, both clamp directions, and representative unchanged valid arrays.",
+      "mutating": false,
+      "required": true
+    },
+    {
+      "command": "git diff --check -- dashboard/starter-example/app/lib/utils.ts dashboard/starter-example/app/lib/utils.test.ts",
+      "purpose": "Reject whitespace errors in the exact authorized diff.",
+      "mutating": false,
+      "required": true
+    },
+    {
+      "command": "git diff --name-only",
+      "purpose": "Prove the changed-file set is confined to the two authorized paths.",
+      "mutating": false,
+      "required": true
+    }
+  ],
+  "expected_evidence": [
+    "Exact changed-file list and concise diff summary",
+    "Focused exact-array assertions for zero, low clamp, high clamp, and representative valid inputs",
+    "Command, exit status, and concise output for every required validation",
+    "Source evidence for the explicit zero guard, the consistently used clamped local page, and the unchanged generatePagination export name and parameters",
+    "AC-1 through AC-4 criterion-to-evidence mapping"
+  ],
+  "stop_conditions": [
+    "Any acceptance criterion requires a write outside dashboard/starter-example/app/lib/utils.ts or dashboard/starter-example/app/lib/utils.test.ts.",
+    "A dependency, package script, manifest, lockfile, TypeScript configuration, UI consumer, or public interface must change.",
+    "Preserving already-valid arrays conflicts with clamping out-of-range current pages.",
+    "The requested behavior cannot be implemented without defining unsupported negative, fractional, NaN, or infinite input semantics.",
+    "Required Node commands are unavailable or any criterion lacks direct evidence after the attempt budget.",
+    "Credentials, network access, external effects, or destructive actions become necessary."
+  ],
+  "risk": {
+    "level": "low",
+    "flags": [
+      "pagination-boundary-normalization",
+      "valid-shape-regression"
+    ]
+  },
+  "complexity": "bounded",
+  "budgets": {
+    "max_attempts": 2,
+    "max_review_rounds": 1
+  },
+  "authorization": {
+    "network": false,
+    "credentials": false,
+    "external_side_effects": false,
+    "destructive_actions": false,
+    "targets": []
+  },
+  "provenance": {
+    "base_revision": "bb2558441a6673ab76c89914c25018bffa27a2ba",
+    "created_by": "eclipse-architect",
+    "created_at": "2026-08-13T05:09:51Z",
+    "source_requirement_digest": "sha256:53d636714e918a7d565051f34904105c1dec92fd7efafc00e491c65ab9a1ac1d"
+  },
+  "metadata": {
+    "case_id": "V02-REAL-019",
+    "case_type": "real",
+    "task_category": "bounded-feature",
+    "routing_policy": "sol-luna-v0.1",
+    "routing_verification": "policy-only-unverified",
+    "integration_order": [
+      "V02-REAL-019-T1 implementation and tests",
+      "read-only acceptance check"
+    ]
+  }
+}
+

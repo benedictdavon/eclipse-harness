@@ -1,0 +1,54 @@
+diff --git a/source/utils/normalize.ts b/source/utils/normalize.ts
+index f076343..5572186 100644
+--- a/source/utils/normalize.ts
++++ b/source/utils/normalize.ts
+@@ -27,6 +27,10 @@ const defaultRetryOptions: InternalRetryOptions = {
+ 
+ export const normalizeRetryOptions = (retry: number | RetryOptions = {}): InternalRetryOptions => {
+ 	if (typeof retry === 'number') {
++		if (retry < 0) {
++			throw new Error('retry limit must be non-negative');
++		}
++
+ 		return {
+ 			...defaultRetryOptions,
+ 			limit: retry,
+diff --git a/test/retry.ts b/test/retry.ts
+index 0ce0bbb..5d62d7c 100644
+--- a/test/retry.ts
++++ b/test/retry.ts
+@@ -7,6 +7,7 @@ import ky, {
+ 	isKyError,
+ 	isNetworkError,
+ } from '../source/index.js';
++import {normalizeRetryOptions} from '../source/utils/normalize.js';
+ import {createHttpTestServer} from './helpers/create-http-test-server.js';
+ import {parseRawBody} from './helpers/parse-body.js';
+ import {withPerformance} from './helpers/with-performance.js';
+@@ -21,6 +22,25 @@ const httpDateDayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+ const httpDateLongDayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+ const httpDateMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+ 
++test('normalizeRetryOptions: rejects negative numeric shorthand', t => {
++	for (const retry of [-1, -0.5, Number.NEGATIVE_INFINITY]) {
++		const error = t.throws(() => normalizeRetryOptions(retry));
++		t.is(error.message, 'retry limit must be non-negative');
++	}
++});
++
++test('normalizeRetryOptions: preserves numeric and object-form normalization', t => {
++	t.is(normalizeRetryOptions(0).limit, 0);
++	t.is(normalizeRetryOptions(4).limit, 4);
++
++	const objectOptions = normalizeRetryOptions({
++		limit: -1,
++		retryOnTimeout: true,
++	});
++	t.is(objectOptions.limit, -1);
++	t.true(objectOptions.retryOnTimeout);
++});
++
+ const formatHttpTime = (date: Date) => [
+ 	date.getUTCHours(),
+ 	date.getUTCMinutes(),
+

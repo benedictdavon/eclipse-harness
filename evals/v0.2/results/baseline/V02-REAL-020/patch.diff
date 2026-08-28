@@ -1,0 +1,83 @@
+diff --git a/dashboard/starter-example/app/lib/definitions.ts b/dashboard/starter-example/app/lib/definitions.ts
+index b1a4fbf..b1ef617 100644
+--- a/dashboard/starter-example/app/lib/definitions.ts
++++ b/dashboard/starter-example/app/lib/definitions.ts
+@@ -22,8 +22,8 @@ export type Invoice = {
+   amount: number;
+   date: string;
+   // In TypeScript, this is called a string union type.
+-  // It means that the "status" property can only be one of the two strings: 'pending' or 'paid'.
+-  status: 'pending' | 'paid';
++  // It means that the "status" property can only be one of the three strings: 'pending', 'paid', or 'overdue'.
++  status: 'pending' | 'paid' | 'overdue';
+ };
+ 
+ export type Revenue = {
+@@ -52,7 +52,7 @@ export type InvoicesTable = {
+   image_url: string;
+   date: string;
+   amount: number;
+-  status: 'pending' | 'paid';
++  status: 'pending' | 'paid' | 'overdue';
+ };
+ 
+ export type CustomersTableType = {
+@@ -84,5 +84,5 @@ export type InvoiceForm = {
+   id: string;
+   customer_id: string;
+   amount: number;
+-  status: 'pending' | 'paid';
++  status: 'pending' | 'paid' | 'overdue';
+ };
+diff --git a/dashboard/starter-example/app/lib/placeholder-data.ts b/dashboard/starter-example/app/lib/placeholder-data.ts
+index 257fb14..e744588 100644
+--- a/dashboard/starter-example/app/lib/placeholder-data.ts
++++ b/dashboard/starter-example/app/lib/placeholder-data.ts
+@@ -52,7 +52,7 @@ const invoices = [
+   {
+     customer_id: customers[0].id,
+     amount: 15795,
+-    status: 'pending',
++    status: 'overdue',
+     date: '2022-12-06',
+   },
+   {
+diff --git a/dashboard/starter-example/app/ui/invoices/status.tsx b/dashboard/starter-example/app/ui/invoices/status.tsx
+index 108bda5..4d82b6c 100644
+--- a/dashboard/starter-example/app/ui/invoices/status.tsx
++++ b/dashboard/starter-example/app/ui/invoices/status.tsx
+@@ -1,4 +1,8 @@
+-import { CheckIcon, ClockIcon } from '@heroicons/react/24/outline';
++import {
++  CheckIcon,
++  ClockIcon,
++  ExclamationCircleIcon,
++} from '@heroicons/react/24/outline';
+ import clsx from 'clsx';
+ 
+ export default function InvoiceStatus({ status }: { status: string }) {
+@@ -9,6 +13,7 @@ export default function InvoiceStatus({ status }: { status: string }) {
+         {
+           'bg-gray-100 text-gray-500': status === 'pending',
+           'bg-green-500 text-white': status === 'paid',
++          'bg-amber-100 text-amber-800': status === 'overdue',
+         },
+       )}
+     >
+@@ -24,6 +29,15 @@ export default function InvoiceStatus({ status }: { status: string }) {
+           <CheckIcon className="ml-1 w-4 text-white" />
+         </>
+       ) : null}
++      {status === 'overdue' ? (
++        <>
++          Overdue
++          <ExclamationCircleIcon
++            aria-hidden="true"
++            className="ml-1 w-4 text-amber-800"
++          />
++        </>
++      ) : null}
+     </span>
+   );
+ }
+

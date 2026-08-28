@@ -1,0 +1,26 @@
+{
+  "case_id": "V02-REAL-024",
+  "case_type": "real",
+  "repository": "REAL-NEXT",
+  "repository_commit": "bb2558441a6673ab76c89914c25018bffa27a2ba",
+  "host": "chatgpt-work-collaboration",
+  "adapter": "manual",
+  "task_category": "review-correction",
+  "task_statement": "Review and correct a supplied candidate patch for basics/typescript-final/lib/posts.ts. The candidate reverses the intended newest-first date sort and deletes one example post to make a snapshot pass. Restore behavior and evidence within lib/posts.ts, the two existing posts, and a focused test, with at most two review rounds.",
+  "expected_write_scope": [
+    "basics/typescript-final/lib/posts.ts",
+    "basics/typescript-final/posts/pre-rendering.md",
+    "basics/typescript-final/posts/ssg-ssr.md",
+    "basics/typescript-final/lib/posts.test.ts"
+  ],
+  "acceptance_criteria": [
+    "newest post sorts first",
+    "both example posts remain",
+    "reviewer identifies suspicious content deletion",
+    "bounded correction passes focused evidence"
+  ],
+  "validation": [
+    "node -e \"const fs=require('fs'); for (const p of ['basics/typescript-final/lib/posts.ts','basics/typescript-final/posts/pre-rendering.md','basics/typescript-final/posts/ssg-ssr.md']) { if (!fs.readFileSync(p,'utf8').trim()) process.exit(1) }\""
+  ],
+  "policy": "sol-luna-v0.1"
+}

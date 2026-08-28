@@ -1,0 +1,56 @@
+diff --git a/app/models.py b/app/models.py
+index db447d8..e0fc99e 100644
+--- a/app/models.py
++++ b/app/models.py
+@@ -138,6 +138,8 @@ class User(PaginatedAPIMixin, UserMixin, db.Model):
+         return check_password_hash(self.password_hash, password)
+ 
+     def avatar(self, size):
++        if isinstance(size, bool) or not isinstance(size, int) or not 1 <= size <= 2048:
++            raise ValueError('size must be an integer between 1 and 2048')
+         digest = md5(self.email.lower().encode('utf-8')).hexdigest()
+         return f'https://www.gravatar.com/avatar/{digest}?d=identicon&s={size}'
+ 
+diff --git a/app/templates/errors/404.html b/app/templates/errors/404.html
+index 3cc4cf1..4d294b9 100644
+--- a/app/templates/errors/404.html
++++ b/app/templates/errors/404.html
+@@ -1,6 +1,7 @@
+ {% extends "base.html" %}
+ 
+ {% block content %}
+-    <h1>{{ _('Not Found') }}</h1>
+-    <p><a href="{{ url_for('main.index') }}">{{ _('Back') }}</a></p>
++    <h1>{{ _('Page Not Found') }}</h1>
++    <p>{{ _('The page you requested could not be found.') }}</p>
++    <p><a href="{{ url_for('main.index') }}">{{ _('Return to the home page') }}</a></p>
+ {% endblock %}
+diff --git a/tests.py b/tests.py
+index 4ef9098..27738b4 100755
+--- a/tests.py
++++ b/tests.py
+@@ -36,6 +36,23 @@ class UserModelCase(unittest.TestCase):
+                                          'd4c74594d841139328695756648b6bd6'
+                                          '?d=identicon&s=128'))
+ 
++    def test_avatar_size_validation(self):
++        u = User(username='john', email='john@example.com')
++        expected_prefix = ('https://www.gravatar.com/avatar/'
++                           'd4c74594d841139328695756648b6bd6'
++                           '?d=identicon&s=')
++
++        for size in (1, 2048):
++            with self.subTest(size=size):
++                self.assertEqual(u.avatar(size), expected_prefix + str(size))
++
++        for size in (0, -1, 2049, True, 128.0, '128', None):
++            with self.subTest(size=size):
++                with self.assertRaisesRegex(
++                        ValueError,
++                        '^size must be an integer between 1 and 2048$'):
++                    u.avatar(size)
++
+     def test_follow(self):
+         u1 = User(username='john', email='john@example.com')
+         u2 = User(username='susan', email='susan@example.com')
+

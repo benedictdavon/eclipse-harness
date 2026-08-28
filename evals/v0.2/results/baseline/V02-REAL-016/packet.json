@@ -1,0 +1,23 @@
+{
+  "case_id": "V02-REAL-016",
+  "case_type": "real",
+  "repository": "REAL-TS-NODE",
+  "repository_commit": "3419113b48e034fdcf8fa6bd3be3da7b3d0d758f",
+  "host": "chatgpt-work-collaboration",
+  "adapter": "manual",
+  "task_category": "behavior-preserving-refactor",
+  "task_statement": "Refactor normalizeRetryOptions so array validation for methods and statusCodes uses one private helper. Preserve exact error messages, return shape, default values, and public types. Keep the change inside source/utils/normalize.ts and its focused tests.",
+  "expected_write_scope": [
+    "source/utils/normalize.ts",
+    "test/retry.ts"
+  ],
+  "acceptance_criteria": [
+    "duplicate array checks are removed",
+    "exact errors remain unchanged",
+    "normalization output is behaviorally identical"
+  ],
+  "validation": [
+    "node -e \"const fs=require('fs'); for (const p of ['source/utils/normalize.ts','test/retry.ts']) { if (!fs.readFileSync(p,'utf8').trim()) process.exit(1) }\""
+  ],
+  "policy": "sol-luna-v0.1"
+}

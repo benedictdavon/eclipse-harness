@@ -1,0 +1,7 @@
+test_registry_starts_empty (test_registry.RegistryTests.test_registry_starts_empty) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.000s
+
+OK
+host_validation_exit_code=0

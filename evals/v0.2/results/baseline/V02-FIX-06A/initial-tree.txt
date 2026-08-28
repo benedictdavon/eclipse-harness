@@ -1,0 +1,7 @@
+README.md
+candidate-a.patch
+candidate-b.patch
+packet.json
+pyproject.toml
+src/formatting.py
+src/parser.py

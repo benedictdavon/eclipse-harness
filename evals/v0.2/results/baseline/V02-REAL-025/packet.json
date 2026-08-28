@@ -1,0 +1,23 @@
+{
+  "case_id": "V02-REAL-025",
+  "case_type": "real",
+  "repository": "REAL-MONOREPO",
+  "repository_commit": "b4dc91f545ff2afead214278b7b5ebc8d4e96322",
+  "host": "chatgpt-work-collaboration",
+  "adapter": "manual",
+  "task_category": "bounded-feature",
+  "task_statement": "Extend getVersionRangeType to recognize a leading '<' operator and return '<'. Update its return type and focused table test. Preserve all existing operators and the deprecated default export.",
+  "expected_write_scope": [
+    "packages/get-version-range-type/src/index.ts",
+    "packages/get-version-range-type/src/index.test.ts"
+  ],
+  "acceptance_criteria": [
+    "'<1.0.0' returns '<'",
+    "existing cases remain",
+    "default export still aliases the named function"
+  ],
+  "validation": [
+    "node -e \"const fs=require('fs'); for (const p of ['packages/get-version-range-type/src/index.ts','packages/get-version-range-type/src/index.test.ts']) { if (!fs.readFileSync(p,'utf8').trim()) process.exit(1) }\""
+  ],
+  "policy": "sol-luna-v0.1"
+}

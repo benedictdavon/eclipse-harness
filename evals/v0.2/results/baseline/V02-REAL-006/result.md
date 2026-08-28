@@ -1,0 +1,1 @@
+Combined case result. See result-task1.md and result-task2.md. Host serialized both independently owned tasks; actual concurrency=false because isolated worktrees were not allocated. T01 blocked only on missing pytest; T02 deterministic checks passed.
