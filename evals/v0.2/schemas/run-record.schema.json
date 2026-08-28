@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/benedictdavon/eclipse-harness/evals/v0.2/schemas/run-record.schema.json",
+  "title": "Eclipse v0.2 evaluation run record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "case_id", "phase", "skill_commit", "repository_commit", "terminal_outcome", "artifacts", "metrics", "checks", "classification"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "case_id": {"type": "string", "minLength": 1},
+    "phase": {"enum": ["baseline", "v0.2"]},
+    "skill_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "repository_commit": {"type": "string", "minLength": 1},
+    "terminal_outcome": {"enum": ["accepted", "changes-requested", "architect-escalation", "human-escalation", "environment-failure", "invalid-output"]},
+    "artifacts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["packet", "architect", "task", "result", "patch", "review", "validation"],
+      "properties": {
+        "packet": {"type": ["string", "null"]},
+        "architect": {"type": ["string", "null"]},
+        "task": {"type": ["string", "null"]},
+        "result": {"type": ["string", "null"]},
+        "patch": {"type": ["string", "null"]},
+        "review": {"type": ["string", "null"]},
+        "validation": {"type": ["string", "null"]}
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["task_success", "acceptance_success", "scope_violations", "architecture_escalations", "false_architecture_escalations", "reviewer_findings", "reviewer_misses", "correction_cycles", "architect_invocations", "worker_invocations", "reviewer_invocations", "human_intervention", "contract_bytes", "repeated_discovery", "usage"],
+      "properties": {
+        "task_success": {"type": ["boolean", "null"]},
+        "acceptance_success": {"type": ["boolean", "null"]},
+        "scope_violations": {"type": "integer", "minimum": 0},
+        "architecture_escalations": {"type": "integer", "minimum": 0},
+        "false_architecture_escalations": {"type": "integer", "minimum": 0},
+        "reviewer_findings": {"type": "integer", "minimum": 0},
+        "reviewer_misses": {"type": "integer", "minimum": 0},
+        "correction_cycles": {"type": "integer", "minimum": 0},
+        "architect_invocations": {"type": "integer", "minimum": 0},
+        "worker_invocations": {"type": "integer", "minimum": 0},
+        "reviewer_invocations": {"type": "integer", "minimum": 0},
+        "human_intervention": {"type": "boolean"},
+        "contract_bytes": {"type": ["integer", "null"], "minimum": 0},
+        "repeated_discovery": {"type": ["boolean", "null"]},
+        "usage": {"type": "object"}
+      }
+    },
+    "checks": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repository_commit", "write_scope", "acceptance", "validation", "review_independence", "prompt_injection_boundary"],
+      "properties": {
+        "repository_commit": {"enum": ["pass", "fail", "unavailable"]},
+        "write_scope": {"enum": ["pass", "fail", "not-applicable", "unavailable"]},
+        "acceptance": {"enum": ["pass", "fail", "unavailable"]},
+        "validation": {"enum": ["pass", "fail", "unavailable"]},
+        "review_independence": {"enum": ["pass", "fail", "unverified", "not-applicable"]},
+        "prompt_injection_boundary": {"enum": ["pass", "fail", "not-applicable", "unavailable"]}
+      }
+    },
+    "classification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["qualifying", "problem_classes", "severity", "notes"],
+      "properties": {
+        "qualifying": {"type": "boolean"},
+        "problem_classes": {"type": "array", "items": {"enum": ["skill-semantics", "task-contract", "result-review-contract", "routing-escalation", "context-quality", "adapter", "security", "optional-tooling", "documentation", "evaluation-flaw", "repository-specific"]}},
+        "severity": {"enum": ["none", "P0", "P1", "P2", "P3"]},
+        "notes": {"type": "string"}
+      }
+    }
+  }
+}

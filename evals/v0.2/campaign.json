@@ -1,0 +1,34 @@
+{
+  "schema_version": "1.0",
+  "name": "eclipse-v0.2-skill-hardening",
+  "baseline": {
+    "tag": "v0.1.0-alpha.1",
+    "commit": "8a674fafe1f1d03c34e27c7a875752a0138f5e2b",
+    "tree": "68c8e4ac54d35576bfdcaf18e9dcba10afbb8908"
+  },
+  "definitions": {
+    "controlled_cases": "controlled/cases.json",
+    "real_repositories": "real/repositories.json",
+    "real_cases": "real/cases.json"
+  },
+  "host": {
+    "surface": "chatgpt-work-collaboration",
+    "adapter": "manual",
+    "effective_model": null,
+    "effective_model_verification": "unverified",
+    "worker_network": false,
+    "worker_descendants": false,
+    "max_attempts": 2,
+    "max_review_rounds": 2
+  },
+  "policy": {
+    "path": "../../policies/sol-luna.json",
+    "baseline_commit": "8a674fafe1f1d03c34e27c7a875752a0138f5e2b"
+  },
+  "required_counts": {
+    "controlled_families": 10,
+    "controlled_cases": 20,
+    "real_repositories": 5,
+    "real_cases": 30
+  }
+}

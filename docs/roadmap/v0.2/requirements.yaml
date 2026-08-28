@@ -1,0 +1,27 @@
+roadmap_requirements_schema: 1
+version: v0.2
+mandatory_artifacts:
+  - implementation-spec.md
+  - evaluation.md
+  - findings.md
+  - before-after.md
+  - release-evidence.md
+requirements:
+  - id: 02-G01
+    summary: 10 controlled fixture families implemented
+  - id: 02-G02
+    summary: At least 20 controlled cases executed
+  - id: 02-G03
+    summary: At least 5 real repositories tested
+  - id: 02-G04
+    summary: At least 30 real task runs
+  - id: 02-G05
+    summary: All task-category minimums satisfied
+  - id: 02-G06
+    summary: Zero open P0/P1
+  - id: 02-G07
+    summary: All baseline failures preserved and classified
+  - id: 02-G08
+    summary: Frozen baseline rerun after fixes
+  - id: 02-G09
+    summary: Core skills remain usable without optional tooling
