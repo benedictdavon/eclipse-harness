@@ -1,0 +1,25 @@
+{
+  "case_id": "V02-REAL-008",
+  "case_type": "real",
+  "repository": "REAL-PY-APP",
+  "repository_commit": "a975ef64864354867c88e0ed3a17ba7d17dca752",
+  "host": "chatgpt-work-collaboration",
+  "adapter": "manual",
+  "task_category": "multi-file-feature",
+  "task_statement": "Add an is_following boolean to the user API representation when the current authenticated user is available. Keep anonymous/API contexts safe, update the users API endpoint or serializer call site as needed, and add focused tests. Do not add a database column or migration.",
+  "expected_write_scope": [
+    "app/models.py",
+    "app/api/users.py",
+    "tests.py"
+  ],
+  "acceptance_criteria": [
+    "authenticated serialization reports true or false correctly",
+    "anonymous serialization does not crash",
+    "no schema migration is added",
+    "modified Python files compile"
+  ],
+  "validation": [
+    "python -m compileall -q app tests.py"
+  ],
+  "policy": "sol-luna-v0.1"
+}

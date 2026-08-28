@@ -21,7 +21,7 @@
     "architecture_escalations": 0,
     "false_architecture_escalations": 0,
     "reviewer_findings": 4,
-    "reviewer_misses": 0,
+    "reviewer_misses": null,
     "correction_cycles": 0,
     "architect_invocations": 1,
     "worker_invocations": 2,
@@ -29,7 +29,8 @@
     "human_intervention": false,
     "contract_bytes": 8891,
     "repeated_discovery": null,
-    "usage": {}
+    "usage": {},
+    "predeclared_expected_findings_missed": null
   },
   "checks": {
     "repository_commit": "pass",
@@ -48,5 +49,11 @@
     ],
     "severity": "P2",
     "notes": "Safe disjoint ownership and serial fallback were correct; untracked test capture and unavailable type-check evidence remained."
+  },
+  "acceptance_evidence": {
+    "kind": "unavailable",
+    "status": "fail",
+    "path": "evals/v0.2/results/baseline/V02-REAL-023/validation.txt",
+    "criteria": []
   }
 }

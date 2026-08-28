@@ -1,0 +1,31 @@
+diff --git a/docs/encoding.rst b/docs/encoding.rst
+index 0c5a0e3..9108535 100644
+--- a/docs/encoding.rst
++++ b/docs/encoding.rst
+@@ -6,3 +6,7 @@ Encoding Utilities
+ .. autofunction:: base64_encode
+ 
+ .. autofunction:: base64_decode
++
++URL-safe Base64 uses ``-`` and ``_`` in place of ``+`` and ``/``;
++:func:`base64_encode` omits ``=`` padding and :func:`base64_decode` restores it
++when required.
+diff --git a/tests/test_itsdangerous/test_encoding.py b/tests/test_itsdangerous/test_encoding.py
+index 268367e..aa927e8 100644
+--- a/tests/test_itsdangerous/test_encoding.py
++++ b/tests/test_itsdangerous/test_encoding.py
+@@ -28,7 +28,13 @@ def test_base64_bad():
+ 
+ 
+ @pytest.mark.parametrize(
+-    ("value", "expect"), ((0, b""), (192, b"\xc0"), (18446744073709551615, b"\xff" * 8))
++    ("value", "expect"),
++    (
++        (0, b""),
++        (192, b"\xc0"),
++        (256, b"\x01\x00"),
++        (18446744073709551615, b"\xff" * 8),
++    ),
+ )
+ def test_int_bytes(value, expect):
+     enc = int_to_bytes(value)

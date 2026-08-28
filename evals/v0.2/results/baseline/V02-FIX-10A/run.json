@@ -38,15 +38,22 @@
     "repeated_discovery": null,
     "reviewer_findings": 2,
     "reviewer_invocations": 1,
-    "reviewer_misses": 0,
+    "reviewer_misses": null,
     "scope_violations": 1,
     "task_success": false,
     "usage": {},
-    "worker_invocations": 1
+    "worker_invocations": 1,
+    "predeclared_expected_findings_missed": 0
   },
   "phase": "baseline",
   "repository_commit": "fixture-v1",
   "schema_version": "1.0",
   "skill_commit": "8a674fafe1f1d03c34e27c7a875752a0138f5e2b",
-  "terminal_outcome": "human-escalation"
+  "terminal_outcome": "human-escalation",
+  "acceptance_evidence": {
+    "kind": "unavailable",
+    "status": "fail",
+    "path": "review.md",
+    "criteria": []
+  }
 }

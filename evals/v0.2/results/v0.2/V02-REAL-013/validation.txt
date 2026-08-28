@@ -1,0 +1,4 @@
+$ node -e "const fs=require('fs'); for (const p of ['source/utils/normalize.ts','test/retry.ts']) { if (!fs.readFileSync(p,'utf8').trim()) process.exit(1) }"
+exit_code: 0
+stdout: (empty)
+stderr: (empty)

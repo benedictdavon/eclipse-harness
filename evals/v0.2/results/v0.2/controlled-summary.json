@@ -1,0 +1,79 @@
+{
+  "schema_version": "1.0",
+  "phase": "v0.2",
+  "skill_commit": "4438280c502e1e0d9e667e841206cc19b8e6521e",
+  "campaign_scope": {
+    "controlled_fixture_families": 10,
+    "controlled_cases": 20,
+    "qualifying_records": 20
+  },
+  "results": {
+    "task_successes": 18,
+    "acceptance_successes": 18,
+    "terminal_outcomes": {
+      "accepted": 6,
+      "changes-requested": 7,
+      "architect-escalation": 3,
+      "human-escalation": 4
+    },
+    "scope_violations": 3,
+    "architecture_escalations": 3,
+    "false_architecture_escalations": 0,
+    "reviewer_findings": 14,
+    "reviewer_misses": 0,
+    "correction_cycles": 1,
+    "human_interventions": 0
+  },
+  "before_after": {
+    "improved": 3,
+    "unchanged": 15,
+    "regressed": 0,
+    "invalid/incomparable": 2,
+    "improved_case_ids": [
+      "V02-FIX-01A",
+      "V02-FIX-01B",
+      "V02-FIX-10A"
+    ],
+    "invalid_incomparable_case_ids": [
+      "V02-FIX-09A",
+      "V02-FIX-09B"
+    ]
+  },
+  "severities": {
+    "none": 12,
+    "P2": 6,
+    "P1": 2,
+    "P0": 0
+  },
+  "open_p0_p1": {
+    "P0": [],
+    "P1": [
+      "V02-FIX-09A",
+      "V02-FIX-09B"
+    ],
+    "note": "Both P1 records are preserved frozen evaluation flaws: candidate correction states are absent, so repeated correction behavior remains invalid/incomparable. They are not production-skill regressions, but they remain open evaluation-integrity limitations."
+  },
+  "integrity": {
+    "run_record_schema": "pass (20/20)",
+    "artifact_references": "pass (20/20)",
+    "frozen_campaign_hashes": "pass",
+    "candidate_commit_verified": "4438280c502e1e0d9e667e841206cc19b8e6521e",
+    "baseline_mutated": false,
+    "regressions": 0
+  },
+  "measurement_limits": {
+    "usage_tokens_cost": "unavailable from host",
+    "effective_model": "unverified",
+    "mechanical_reviewer_readonly_enforcement": "unverified"
+  },
+  "contract_size_controls": {
+    "V02-FIX-01A": {
+      "baseline_bytes": 14581,
+      "v0_2_bytes": 9906
+    },
+    "V02-FIX-01B": {
+      "baseline_bytes": 17756,
+      "v0_2_bytes": 9476
+    }
+  }
+}

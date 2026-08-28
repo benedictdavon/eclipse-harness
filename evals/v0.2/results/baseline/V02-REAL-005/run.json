@@ -21,7 +21,7 @@
     "architecture_escalations": 1,
     "false_architecture_escalations": 0,
     "reviewer_findings": 0,
-    "reviewer_misses": 0,
+    "reviewer_misses": null,
     "correction_cycles": 0,
     "architect_invocations": 1,
     "worker_invocations": 0,
@@ -29,7 +29,8 @@
     "human_intervention": false,
     "contract_bytes": null,
     "repeated_discovery": null,
-    "usage": {}
+    "usage": {},
+    "predeclared_expected_findings_missed": null
   },
   "checks": {
     "repository_commit": "pass",
@@ -44,5 +45,11 @@
     "problem_classes": [],
     "severity": "none",
     "notes": "Architecture-first request safely terminated at the architect with public API, subclass, compatibility, and security decisions identified."
+  },
+  "acceptance_evidence": {
+    "kind": "architecture-plan",
+    "status": "pass",
+    "path": "evals/v0.2/results/baseline/V02-REAL-005/review.md",
+    "criteria": []
   }
 }

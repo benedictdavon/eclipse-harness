@@ -1,0 +1,4 @@
+ M src/title.py
+ M tests/test_title.py
+?? src/__pycache__/title.cpython-312.pyc
+?? tests/__pycache__/test_title.cpython-312.pyc

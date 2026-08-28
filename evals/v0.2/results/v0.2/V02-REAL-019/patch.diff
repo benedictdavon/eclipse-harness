@@ -1,0 +1,73 @@
+diff --git a/dashboard/starter-example/app/lib/utils.ts b/dashboard/starter-example/app/lib/utils.ts
+index b7f7cff..abcc7cd 100644
+--- a/dashboard/starter-example/app/lib/utils.ts
++++ b/dashboard/starter-example/app/lib/utils.ts
+@@ -36,6 +36,12 @@ export const generateYAxis = (revenue: Revenue[]) => {
+ };
+ 
+ export const generatePagination = (currentPage: number, totalPages: number) => {
++  if (totalPages === 0) {
++    return [];
++  }
++
++  const clampedCurrentPage = Math.min(Math.max(currentPage, 1), totalPages);
++
+   // If the total number of pages is 7 or less,
+   // display all pages without any ellipsis.
+   if (totalPages <= 7) {
+@@ -44,13 +50,13 @@ export const generatePagination = (currentPage: number, totalPages: number) => {
+ 
+   // If the current page is among the first 3 pages,
+   // show the first 3, an ellipsis, and the last 2 pages.
+-  if (currentPage <= 3) {
++  if (clampedCurrentPage <= 3) {
+     return [1, 2, 3, '...', totalPages - 1, totalPages];
+   }
+ 
+   // If the current page is among the last 3 pages,
+   // show the first 2, an ellipsis, and the last 3 pages.
+-  if (currentPage >= totalPages - 2) {
++  if (clampedCurrentPage >= totalPages - 2) {
+     return [1, 2, '...', totalPages - 2, totalPages - 1, totalPages];
+   }
+ 
+@@ -60,9 +66,9 @@ export const generatePagination = (currentPage: number, totalPages: number) => {
+   return [
+     1,
+     '...',
+-    currentPage - 1,
+-    currentPage,
+-    currentPage + 1,
++    clampedCurrentPage - 1,
++    clampedCurrentPage,
++    clampedCurrentPage + 1,
+     '...',
+     totalPages,
+   ];
+diff --git a/dashboard/starter-example/app/lib/utils.test.ts b/dashboard/starter-example/app/lib/utils.test.ts
+new file mode 100644
+index 0000000..bf84341
+--- /dev/null
++++ b/dashboard/starter-example/app/lib/utils.test.ts
+@@ -0,0 +1,21 @@
++import assert from 'node:assert/strict';
++import test from 'node:test';
++
++import { generatePagination } from './utils';
++
++test('returns no pagination entries for zero pages', () => {
++  assert.deepEqual(generatePagination(1, 0), []);
++  assert.deepEqual(generatePagination(10, 0), []);
++});
++
++test('clamps the current page into the positive page range', () => {
++  assert.deepEqual(generatePagination(0, 10), generatePagination(1, 10));
++  assert.deepEqual(generatePagination(11, 10), generatePagination(10, 10));
++});
++
++test('preserves representative valid pagination shapes', () => {
++  assert.deepEqual(generatePagination(2, 5), [1, 2, 3, 4, 5]);
++  assert.deepEqual(generatePagination(2, 10), [1, 2, 3, '...', 9, 10]);
++  assert.deepEqual(generatePagination(5, 10), [1, '...', 4, 5, 6, '...', 10]);
++  assert.deepEqual(generatePagination(9, 10), [1, 2, '...', 8, 9, 10]);
++});

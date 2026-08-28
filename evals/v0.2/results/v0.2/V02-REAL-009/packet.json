@@ -1,0 +1,23 @@
+{
+  "case_id": "V02-REAL-009",
+  "case_type": "real",
+  "repository": "REAL-PY-APP",
+  "repository_commit": "a975ef64864354867c88e0ed3a17ba7d17dca752",
+  "host": "chatgpt-work-collaboration",
+  "adapter": "manual",
+  "task_category": "bug-diagnosis-fix",
+  "task_statement": "User.to_dict crashes when last_seen is None. Make serialization return null for last_seen in that case and preserve the existing timezone-aware ISO string otherwise. Add a focused regression test.",
+  "expected_write_scope": [
+    "app/models.py",
+    "tests.py"
+  ],
+  "acceptance_criteria": [
+    "None last_seen serializes as null",
+    "non-None last_seen remains ISO formatted",
+    "modified Python files compile"
+  ],
+  "validation": [
+    "python -m compileall -q app tests.py"
+  ],
+  "policy": "sol-luna-v0.1"
+}

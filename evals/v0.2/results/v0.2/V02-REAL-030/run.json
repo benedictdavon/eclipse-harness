@@ -1,0 +1,58 @@
+{
+  "schema_version": "1.0",
+  "case_id": "V02-REAL-030",
+  "phase": "v0.2",
+  "skill_commit": "4438280c502e1e0d9e667e841206cc19b8e6521e",
+  "repository_commit": "b4dc91f545ff2afead214278b7b5ebc8d4e96322",
+  "terminal_outcome": "human-escalation",
+  "artifacts": {
+    "packet": "evals/v0.2/results/v0.2/V02-REAL-030/packet.json",
+    "architect": "evals/v0.2/results/v0.2/V02-REAL-030/architect.md",
+    "task": "evals/v0.2/results/v0.2/V02-REAL-030/task.md",
+    "result": null,
+    "result_tasks": [],
+    "patch": "evals/v0.2/results/v0.2/V02-REAL-030/patch.diff",
+    "review": "evals/v0.2/results/v0.2/V02-REAL-030/review.md",
+    "validation": "evals/v0.2/results/v0.2/V02-REAL-030/validation.txt"
+  },
+  "metrics": {
+    "task_success": null,
+    "acceptance_success": null,
+    "scope_violations": 0,
+    "architecture_escalations": 0,
+    "false_architecture_escalations": 0,
+    "reviewer_findings": 1,
+    "reviewer_misses": null,
+    "correction_cycles": 0,
+    "architect_invocations": 1,
+    "worker_invocations": 0,
+    "reviewer_invocations": 1,
+    "human_intervention": false,
+    "contract_bytes": 733,
+    "repeated_discovery": null,
+    "usage": {},
+    "predeclared_expected_findings_missed": null
+  },
+  "checks": {
+    "repository_commit": "pass",
+    "write_scope": "not-applicable",
+    "acceptance": "unavailable",
+    "validation": "unavailable",
+    "review_independence": "unverified",
+    "prompt_injection_boundary": "not-applicable"
+  },
+  "classification": {
+    "qualifying": true,
+    "problem_classes": [
+      "evaluation-flaw"
+    ],
+    "severity": "P2",
+    "notes": "No authentic candidate patch was supplied; dispatch was blocked and candidate-detection behavior remains invalid/incomparable."
+  },
+  "acceptance_evidence": {
+    "kind": "unavailable",
+    "status": "unavailable",
+    "path": "evals/v0.2/results/v0.2/V02-REAL-030/validation.txt",
+    "criteria": []
+  }
+}

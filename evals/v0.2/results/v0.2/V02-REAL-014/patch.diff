@@ -1,0 +1,101 @@
+diff --git a/source/types/retry.ts b/source/types/retry.ts
+index 7531ec7..a8fee05 100644
+--- a/source/types/retry.ts
++++ b/source/types/retry.ts
+@@ -20,6 +20,13 @@ export type RetryOptions = {
+ 	*/
+ 	limit?: number;
+ 
++	/**
++	The lower bound for the built-in retry delay in milliseconds. Custom delay functions are not modified.
++
++	@default 0
++	*/
++	minimumDelayMs?: number;
++
+ 	/**
+ 	The HTTP methods allowed to retry.
+ 
+diff --git a/source/utils/normalize.ts b/source/utils/normalize.ts
+index f076343..7bf3d3b 100644
+--- a/source/utils/normalize.ts
++++ b/source/utils/normalize.ts
+@@ -15,6 +15,7 @@ type InternalRetryOptions = Required<Omit<RetryOptions, 'shouldRetry'>> & Pick<R
+ 
+ const defaultRetryOptions: InternalRetryOptions = {
+ 	limit: 2,
++	minimumDelayMs: 0,
+ 	methods: retryMethods,
+ 	statusCodes: retryStatusCodes,
+ 	afterStatusCodes: retryAfterStatusCodes,
+@@ -41,13 +42,26 @@ export const normalizeRetryOptions = (retry: number | RetryOptions = {}): Intern
+ 		throw new Error('retry.statusCodes must be an array');
+ 	}
+ 
++	if (retry.minimumDelayMs !== undefined && retry.minimumDelayMs < 0) {
++		throw new Error('retry.minimumDelayMs must be non-negative');
++	}
++
+ 	const normalizedRetry = Object.fromEntries(Object.entries({
+ 		...retry,
+ 		methods: retry.methods?.map(method => method.toLowerCase()),
+ 	}).filter(([, value]) => value !== undefined)) as RetryOptions;
+ 
+-	return {
++	const result = {
+ 		...defaultRetryOptions,
+ 		...normalizedRetry,
+ 	};
++
++	if (retry.delay === undefined) {
++		result.delay = attemptCount => Math.max(
++			result.minimumDelayMs,
++			defaultRetryOptions.delay(attemptCount),
++		);
++	}
++
++	return result;
+ };
+diff --git a/test/retry.ts b/test/retry.ts
+index 0ce0bbb..e17efba 100644
+--- a/test/retry.ts
++++ b/test/retry.ts
+@@ -10,6 +10,7 @@ import ky, {
+ import {createHttpTestServer} from './helpers/create-http-test-server.js';
+ import {parseRawBody} from './helpers/parse-body.js';
+ import {withPerformance} from './helpers/with-performance.js';
++import {normalizeRetryOptions} from '../source/utils/normalize.js';
+ 
+ const fixture = 'fixture';
+ const defaultRetryCount = 2;
+@@ -21,6 +22,30 @@ const httpDateDayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+ const httpDateLongDayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+ const httpDateMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+ 
++test('normalizeRetryOptions applies minimumDelayMs to the built-in delay', t => {
++	const defaults = normalizeRetryOptions();
++	t.is(defaults.minimumDelayMs, 0);
++	t.is(defaults.delay(1), 300);
++
++	const bounded = normalizeRetryOptions({
++		minimumDelayMs: 500,
++		jitter: true,
++		maxRetryAfter: 900,
++	});
++	t.is(bounded.delay(1), 500);
++	t.is(bounded.delay(2), 600);
++	t.true(bounded.jitter);
++	t.is(bounded.maxRetryAfter, 900);
++
++	const customDelay = () => 25;
++	const custom = normalizeRetryOptions({minimumDelayMs: 500, delay: customDelay});
++	t.is(custom.delay, customDelay);
++	t.is(custom.delay(1), 25);
++
++	const error = t.throws(() => normalizeRetryOptions({minimumDelayMs: -1}));
++	t.is(error.message, 'retry.minimumDelayMs must be non-negative');
++});
++
+ const formatHttpTime = (date: Date) => [
+ 	date.getUTCHours(),
+ 	date.getUTCMinutes(),

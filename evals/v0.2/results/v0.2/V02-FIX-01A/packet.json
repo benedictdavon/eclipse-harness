@@ -1,0 +1,26 @@
+{
+  "case_id": "V02-FIX-01A",
+  "family": "bounded-implementation",
+  "case_type": "controlled",
+  "repository": "fixtures/bounded-implementation",
+  "repository_commit": "fixture-v1",
+  "host": "chatgpt-work-collaboration",
+  "adapter": "manual",
+  "task_category": "bounded-feature",
+  "role_focus": "end-to-end",
+  "task_statement": "Add an optional percentage discount to calculate_total. Accept integer percentages from 0 through 100, keep the default behavior unchanged, and add focused tests. Do not redesign the pricing module or add dependencies.",
+  "expected_write_scope": [
+    "src/pricing.py",
+    "tests/test_pricing.py"
+  ],
+  "acceptance_criteria": [
+    "calculate_total([1000], 10) returns 900",
+    "omitting the discount preserves existing results",
+    "invalid percentages raise ValueError",
+    "all fixture tests pass"
+  ],
+  "validation": [
+    "python -m unittest discover -s tests -v"
+  ],
+  "policy": "sol-luna-v0.1"
+}

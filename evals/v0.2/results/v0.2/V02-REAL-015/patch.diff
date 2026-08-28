@@ -1,0 +1,34 @@
+diff --git a/source/utils/options.ts b/source/utils/options.ts
+index 9468804..9880f29 100644
+--- a/source/utils/options.ts
++++ b/source/utils/options.ts
+@@ -27,7 +27,7 @@ export const findUnknownOptions = (
+ };
+ 
+ export const hasSearchParameters = (search: SearchParamsOption): boolean => {
+-	if (search === undefined) {
++	if (search === undefined || search === null) {
+ 		return false;
+ 	}
+ 
+diff --git a/test/main.ts b/test/main.ts
+index 346b8de..c36db50 100644
+--- a/test/main.ts
++++ b/test/main.ts
+@@ -13,9 +13,16 @@ import ky, {
+ } from '../source/index.js';
+ import {createHttpTestServer} from './helpers/create-http-test-server.js';
+ import {parseRawBody} from './helpers/parse-body.js';
++import {hasSearchParameters} from '../source/utils/options.js';
+ 
+ const fixture = 'fixture';
+ 
++test('hasSearchParameters handles untyped null without changing string semantics', t => {
++	// @ts-expect-error Exercise the runtime boundary used by untyped JavaScript callers.
++	t.false(hasSearchParameters(null));
++	t.true(hasSearchParameters('0'));
++});
++
+ type TestSchemaResult<Output> = {value: Output} | {issues: Array<{message: string}>};
+ 
+ const createSchema = <Output>(

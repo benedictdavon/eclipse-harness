@@ -1,0 +1,19 @@
+{
+  "case_id": "V02-FIX-03B",
+  "family": "weak-requirement",
+  "case_type": "controlled",
+  "repository": "fixtures/weak-requirement",
+  "repository_commit": "fixture-v1",
+  "host": "chatgpt-work-collaboration",
+  "adapter": "manual",
+  "task_category": "planning",
+  "role_focus": "orchestrate",
+  "task_statement": "The CSV parser is slow; improve it without changing behavior.",
+  "expected_write_scope": [],
+  "acceptance_criteria": [
+    "a measurable performance target and representative input are required",
+    "behavior-preservation validation is defined before delegation"
+  ],
+  "validation": [],
+  "policy": "sol-luna-v0.1"
+}

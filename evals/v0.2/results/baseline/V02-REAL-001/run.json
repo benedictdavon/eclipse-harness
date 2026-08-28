@@ -21,7 +21,7 @@
     "architecture_escalations": 0,
     "false_architecture_escalations": 0,
     "reviewer_findings": 2,
-    "reviewer_misses": 0,
+    "reviewer_misses": null,
     "correction_cycles": 0,
     "architect_invocations": 1,
     "worker_invocations": 1,
@@ -29,7 +29,8 @@
     "human_intervention": false,
     "contract_bytes": 9902,
     "repeated_discovery": null,
-    "usage": {}
+    "usage": {},
+    "predeclared_expected_findings_missed": null
   },
   "checks": {
     "repository_commit": "pass",
@@ -46,5 +47,11 @@
     ],
     "severity": "none",
     "notes": "Correct bounded patch, but the frozen focused pytest command could not collect because pytest was unavailable."
+  },
+  "acceptance_evidence": {
+    "kind": "unavailable",
+    "status": "fail",
+    "path": "evals/v0.2/results/baseline/V02-REAL-001/validation.txt",
+    "criteria": []
   }
 }

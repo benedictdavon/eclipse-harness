@@ -1,0 +1,6 @@
+$ node -e "const fs=require('fs'); for (const p of ['dashboard/starter-example/app/lib/definitions.ts','dashboard/starter-example/app/ui/invoices/status.tsx']) { if (!fs.readFileSync(p,'utf8').trim()) process.exit(1) }"
+exit_code: 0
+--- stdout ---
+
+--- stderr ---
+

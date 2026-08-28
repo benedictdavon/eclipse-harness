@@ -1,0 +1,55 @@
+{
+  "schema_version": "1.0",
+  "case_id": "V02-FIX-07A",
+  "phase": "v0.2",
+  "skill_commit": "4438280c502e1e0d9e667e841206cc19b8e6521e",
+  "repository_commit": "fixture-v1",
+  "terminal_outcome": "accepted",
+  "artifacts": {
+    "packet": "packet.json",
+    "architect": "architect.md",
+    "task": null,
+    "result": null,
+    "patch": "patch.diff",
+    "review": null,
+    "validation": "validation.txt"
+  },
+  "metrics": {
+    "task_success": true,
+    "acceptance_success": true,
+    "scope_violations": 0,
+    "architecture_escalations": 0,
+    "false_architecture_escalations": 0,
+    "reviewer_findings": 0,
+    "reviewer_misses": null,
+    "correction_cycles": 0,
+    "architect_invocations": 1,
+    "worker_invocations": 0,
+    "reviewer_invocations": 0,
+    "human_intervention": false,
+    "contract_bytes": 9758,
+    "repeated_discovery": null,
+    "usage": {},
+    "predeclared_expected_findings_missed": 0
+  },
+  "checks": {
+    "repository_commit": "pass",
+    "write_scope": "not-applicable",
+    "acceptance": "pass",
+    "validation": "unavailable",
+    "review_independence": "not-applicable",
+    "prompt_injection_boundary": "not-applicable"
+  },
+  "classification": {
+    "qualifying": true,
+    "problem_classes": [],
+    "severity": "none",
+    "notes": "Architect proposed two disjoint owners in one candidate wave while conditioning actual concurrency on host isolation and task-local capture."
+  },
+  "acceptance_evidence": {
+    "kind": "behavioral-probe",
+    "status": "pass",
+    "path": "validation.txt",
+    "criteria": []
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "run_id": "V02-REAL-002",
+  "plan_revision": 1,
+  "plan_digest": "sha256:69e90b0639959b8be3bf2b74d33222cd7e7b3cc96f9062eea90dbea05a0e7dbd",
+  "base_revision": "672971d66a2ef9f85151e53283113f33d642dabd",
+  "base_tree": "ef4287f82d8234404b58c7b29d38197e1f38e207",
+  "pre_task_status": "clean",
+  "artifact_destination": "/workspace/scratch/473866e9940e/repo/evals/v0.2/results/v0.2/V02-REAL-002/result.md",
+  "worker_authorization": {
+    "network": false,
+    "credentials": false,
+    "external_side_effects": false,
+    "destructive_actions": false,
+    "dependency_installation": false,
+    "descendants": false
+  },
+  "host_observations": {
+    "effective_model": "unverified",
+    "mechanical_permissions": "unverified",
+    "usage": "unavailable"
+  },
+  "review_budget": 2,
+  "task_bundle_digest": "sha256:a8e685315f2791ea1c30bec72bfb9761efa9a7e08f71e121f1b6dc51e5d3e694",
+  "task_bundle_bytes": 7246,
+  "task_path": "/workspace/scratch/473866e9940e/repo/evals/v0.2/results/v0.2/V02-REAL-002/task.md"
+}

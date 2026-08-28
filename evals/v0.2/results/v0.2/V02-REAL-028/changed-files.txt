@@ -1,0 +1,3 @@
+packages/get-version-range-type/README.md
+packages/get-version-range-type/src/index.test.ts
+packages/get-version-range-type/src/index.ts

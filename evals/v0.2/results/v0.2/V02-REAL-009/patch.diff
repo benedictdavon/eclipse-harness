@@ -1,0 +1,37 @@
+diff --git a/app/models.py b/app/models.py
+index db447d8..c4ebd23 100644
+--- a/app/models.py
++++ b/app/models.py
+@@ -232,8 +232,8 @@ class User(PaginatedAPIMixin, UserMixin, db.Model):
+         data = {
+             'id': self.id,
+             'username': self.username,
+-            'last_seen': self.last_seen.replace(
+-                tzinfo=timezone.utc).isoformat(),
++            'last_seen': None if self.last_seen is None else
++            self.last_seen.replace(tzinfo=timezone.utc).isoformat(),
+             'about_me': self.about_me,
+             'post_count': self.posts_count(),
+             'follower_count': self.followers_count(),
+diff --git a/tests.py b/tests.py
+index 4ef9098..fa18c5b 100755
+--- a/tests.py
++++ b/tests.py
+@@ -36,6 +36,17 @@ class UserModelCase(unittest.TestCase):
+                                          'd4c74594d841139328695756648b6bd6'
+                                          '?d=identicon&s=128'))
+ 
++    def test_to_dict_nullable_last_seen(self):
++        user = User(username='john', email='john@example.com')
++        db.session.add(user)
++        db.session.commit()
++        user.last_seen = None
++        self.assertIsNone(user.to_dict()['last_seen'])
++
++        user.last_seen = datetime(2024, 1, 2, 3, 4, 5)
++        self.assertEqual(user.to_dict()['last_seen'],
++                         '2024-01-02T03:04:05+00:00')
++
+     def test_follow(self):
+         u1 = User(username='john', email='john@example.com')
+         u2 = User(username='susan', email='susan@example.com')

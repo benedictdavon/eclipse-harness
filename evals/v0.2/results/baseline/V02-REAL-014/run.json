@@ -21,7 +21,7 @@
     "architecture_escalations": 0,
     "false_architecture_escalations": 0,
     "reviewer_findings": 1,
-    "reviewer_misses": 0,
+    "reviewer_misses": null,
     "correction_cycles": 0,
     "architect_invocations": 1,
     "worker_invocations": 1,
@@ -29,7 +29,8 @@
     "human_intervention": false,
     "contract_bytes": 14237,
     "repeated_discovery": null,
-    "usage": {}
+    "usage": {},
+    "predeclared_expected_findings_missed": null
   },
   "checks": {
     "repository_commit": "pass",
@@ -47,5 +48,11 @@
     ],
     "severity": "none",
     "notes": "Implementation satisfied frozen static validation, but reviewer escalated on additional unavailable repository toolchain checks."
+  },
+  "acceptance_evidence": {
+    "kind": "unavailable",
+    "status": "fail",
+    "path": "evals/v0.2/results/baseline/V02-REAL-014/validation.txt",
+    "criteria": []
   }
 }

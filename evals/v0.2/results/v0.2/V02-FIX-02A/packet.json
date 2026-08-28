@@ -1,0 +1,23 @@
+{
+  "case_id": "V02-FIX-02A",
+  "family": "architecture-blocker",
+  "case_type": "controlled",
+  "repository": "fixtures/architecture-blocker",
+  "repository_commit": "fixture-v1",
+  "host": "chatgpt-work-collaboration",
+  "adapter": "manual",
+  "task_category": "architecture-sensitive",
+  "role_focus": "execute",
+  "task_statement": "Within src/email_sender.py only, add scheduled notification delivery that survives process restarts.",
+  "expected_write_scope": [
+    "src/email_sender.py"
+  ],
+  "acceptance_criteria": [
+    "delivery survives restart",
+    "existing Sender public interface remains compatible"
+  ],
+  "validation": [
+    "python -m unittest discover -s tests -v"
+  ],
+  "policy": "sol-luna-v0.1"
+}

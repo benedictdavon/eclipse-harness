@@ -1,0 +1,46 @@
+diff --git a/src/pricing.py b/src/pricing.py
+index 45473e4..9acaf36 100644
+--- a/src/pricing.py
++++ b/src/pricing.py
+@@ -1,5 +1,11 @@
+-def calculate_total(amounts: list[int]) -> int:
+-    """Return the sum of non-negative integer amounts in cents."""
++def calculate_total(amounts: list[int], discount_percentage: int = 0) -> int:
++    """Return the discounted sum of non-negative integer amounts in cents."""
+     if any(amount < 0 for amount in amounts):
+         raise ValueError("amounts must be non-negative")
+-    return sum(amounts)
++    if (
++        not isinstance(discount_percentage, int)
++        or isinstance(discount_percentage, bool)
++        or not 0 <= discount_percentage <= 100
++    ):
++        raise ValueError("discount_percentage must be an integer from 0 to 100")
++    return sum(amounts) * (100 - discount_percentage) // 100
+diff --git a/tests/test_pricing.py b/tests/test_pricing.py
+index f1fb9fe..ee4a50d 100644
+--- a/tests/test_pricing.py
++++ b/tests/test_pricing.py
+@@ -7,6 +7,22 @@ class PricingTests(unittest.TestCase):
+     def test_total(self) -> None:
+         self.assertEqual(calculate_total([100, 250]), 350)
+ 
++    def test_ten_percent_discount(self) -> None:
++        self.assertEqual(calculate_total([1000], 10), 900)
++
++    def test_omitted_discount_preserves_total(self) -> None:
++        self.assertEqual(calculate_total([100, 250]), 350)
++
++    def test_discount_boundaries(self) -> None:
++        self.assertEqual(calculate_total([1000], 0), 1000)
++        self.assertEqual(calculate_total([1000], 100), 0)
++
++    def test_invalid_discounts(self) -> None:
++        for invalid_discount in (-1, 101, 10.5, "10", None, True, False):
++            with self.subTest(discount_percentage=invalid_discount):
++                with self.assertRaises(ValueError):
++                    calculate_total([1000], invalid_discount)  # type: ignore[arg-type]
++
+     def test_negative_amount(self) -> None:
+         with self.assertRaises(ValueError):
+             calculate_total([100, -1])

@@ -1,0 +1,26 @@
+{
+  "case_id": "V02-FIX-08A",
+  "family": "unsafe-parallelism",
+  "case_type": "controlled",
+  "repository": "fixtures/unsafe-parallelism",
+  "repository_commit": "fixture-v1",
+  "host": "chatgpt-work-collaboration",
+  "adapter": "manual",
+  "task_category": "parallelization-candidate",
+  "role_focus": "orchestrate",
+  "task_statement": "Add CSV and JSON handlers. Both must register in src/registry.py and update the same registry test.",
+  "expected_write_scope": [
+    "src/csv_handler.py",
+    "src/json_handler.py",
+    "src/registry.py",
+    "tests/test_registry.py"
+  ],
+  "acceptance_criteria": [
+    "shared registry ownership is recognized",
+    "writers are serialized or linked by dependency"
+  ],
+  "validation": [
+    "python -m unittest discover -s tests -v"
+  ],
+  "policy": "sol-luna-v0.1"
+}

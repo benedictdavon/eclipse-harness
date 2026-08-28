@@ -1,0 +1,63 @@
+{
+  "schema_version": "1.0",
+  "case_id": "V02-SUP-REAL-002",
+  "phase": "supplemental-v0.2",
+  "skill_commit": "4438280c502e1e0d9e667e841206cc19b8e6521e",
+  "repository_commit": "672971d66a2ef9f85151e53283113f33d642dabd",
+  "terminal_outcome": "accepted",
+  "artifacts": {
+    "packet": "evals/v0.2/supplemental/cases.json",
+    "architect": "evals/v0.2/supplemental/evidence/V02-SUP-REAL-002.md",
+    "task": "evals/v0.2/supplemental/cases.json",
+    "result": "evals/v0.2/supplemental/evidence/V02-SUP-REAL-002.md",
+    "patch": "evals/v0.2/supplemental/candidates/V02-SUP-REAL-002/final.patch",
+    "review": "evals/v0.2/supplemental/evidence/V02-SUP-REAL-002.md",
+    "validation": "evals/v0.2/supplemental/evidence/V02-SUP-REAL-002.md",
+    "candidate_states": [
+      "evals/v0.2/supplemental/candidates/V02-SUP-REAL-002/candidate-round-1.patch",
+      "evals/v0.2/supplemental/candidates/V02-SUP-REAL-002/candidate-round-2.patch"
+    ]
+  },
+  "metrics": {
+    "task_success": true,
+    "acceptance_success": true,
+    "scope_violations": 0,
+    "architecture_escalations": 0,
+    "false_architecture_escalations": 0,
+    "reviewer_findings": 3,
+    "reviewer_misses": null,
+    "predeclared_expected_findings_missed": 0,
+    "correction_cycles": 2,
+    "architect_invocations": 1,
+    "worker_invocations": 2,
+    "reviewer_invocations": 2,
+    "human_intervention": false,
+    "contract_bytes": null,
+    "repeated_discovery": null,
+    "usage": {}
+  },
+  "checks": {
+    "repository_commit": "pass",
+    "write_scope": "pass",
+    "acceptance": "pass",
+    "validation": "pass",
+    "review_independence": "unverified",
+    "prompt_injection_boundary": "not-applicable"
+  },
+  "acceptance_evidence": {
+    "kind": "behavioral-probe",
+    "status": "pass",
+    "path": "evals/v0.2/supplemental/evidence/V02-SUP-REAL-002.md",
+    "criteria": [
+      "nine-byte values are rejected with the exact message",
+      "candidate truncation is rejected",
+      "candidate generic-message test is rejected"
+    ]
+  },
+  "classification": {
+    "qualifying": true,
+    "problem_classes": [],
+    "severity": "none",
+    "notes": "Supplemental frozen candidate states were exercised through two review rounds."
+  }
+}

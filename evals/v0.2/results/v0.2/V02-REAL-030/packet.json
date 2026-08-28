@@ -1,0 +1,24 @@
+{
+  "case_id": "V02-REAL-030",
+  "case_type": "real",
+  "repository": "REAL-MONOREPO",
+  "repository_commit": "b4dc91f545ff2afead214278b7b5ebc8d4e96322",
+  "host": "chatgpt-work-collaboration",
+  "adapter": "manual",
+  "task_category": "review-correction",
+  "task_statement": "Review and correct a supplied candidate patch for packages/read. The candidate sorts only root entries, makes README matching case-sensitive, and stops ignoring CLAUDE.md. Preserve cross-platform deterministic order and all ignored-file behavior, with at most two review rounds.",
+  "expected_write_scope": [
+    "packages/read/src/index.ts",
+    "packages/read/src/index.test.ts"
+  ],
+  "acceptance_criteria": [
+    "root and pre entries have one deterministic order",
+    "README matching remains case-insensitive",
+    "AGENTS.md, CLAUDE.md, and GEMINI.md remain ignored",
+    "reviewer identifies candidate regressions"
+  ],
+  "validation": [
+    "node -e \"const fs=require('fs'); for (const p of ['packages/read/src/index.ts','packages/read/src/index.test.ts']) { if (!fs.readFileSync(p,'utf8').trim()) process.exit(1) }\""
+  ],
+  "policy": "sol-luna-v0.1"
+}

@@ -21,7 +21,7 @@
     "architecture_escalations": 1,
     "false_architecture_escalations": 0,
     "reviewer_findings": 2,
-    "reviewer_misses": 0,
+    "reviewer_misses": null,
     "correction_cycles": 0,
     "architect_invocations": 1,
     "worker_invocations": 0,
@@ -29,7 +29,8 @@
     "human_intervention": false,
     "contract_bytes": null,
     "repeated_discovery": null,
-    "usage": {}
+    "usage": {},
+    "predeclared_expected_findings_missed": null
   },
   "checks": {
     "repository_commit": "pass",
@@ -47,5 +48,11 @@
     ],
     "severity": "P2",
     "notes": "Architecture-first behavior occurred, but independent review found unresolved form-error scope and transaction-boundary contradictions; returned to architect."
+  },
+  "acceptance_evidence": {
+    "kind": "unavailable",
+    "status": "fail",
+    "path": "evals/v0.2/results/baseline/V02-REAL-011/validation.txt",
+    "criteria": []
   }
 }

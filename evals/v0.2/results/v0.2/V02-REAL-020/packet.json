@@ -1,0 +1,26 @@
+{
+  "case_id": "V02-REAL-020",
+  "case_type": "real",
+  "repository": "REAL-NEXT",
+  "repository_commit": "bb2558441a6673ab76c89914c25018bffa27a2ba",
+  "host": "chatgpt-work-collaboration",
+  "adapter": "manual",
+  "task_category": "multi-file-feature",
+  "task_statement": "Add an overdue invoice status to the dashboard starter. Extend the status type/fixture data where required, render an amber pill with accessible text and an exclamation icon, and add a focused component test or deterministic rendering check. Preserve pending and paid behavior.",
+  "expected_write_scope": [
+    "dashboard/starter-example/app/lib/definitions.ts",
+    "dashboard/starter-example/app/lib/placeholder-data.ts",
+    "dashboard/starter-example/app/ui/invoices/status.tsx",
+    "dashboard/starter-example/app/ui/invoices/status.test.tsx"
+  ],
+  "acceptance_criteria": [
+    "overdue is represented in data/types",
+    "component renders distinct accessible overdue state",
+    "pending and paid markup remain",
+    "no unrelated UI refactor"
+  ],
+  "validation": [
+    "node -e \"const fs=require('fs'); for (const p of ['dashboard/starter-example/app/lib/definitions.ts','dashboard/starter-example/app/ui/invoices/status.tsx']) { if (!fs.readFileSync(p,'utf8').trim()) process.exit(1) }\""
+  ],
+  "policy": "sol-luna-v0.1"
+}

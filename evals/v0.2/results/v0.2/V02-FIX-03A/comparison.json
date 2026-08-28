@@ -1,0 +1,22 @@
+{
+  "case_id": "V02-FIX-03A",
+  "classification": "unchanged",
+  "baseline": {
+    "terminal_outcome": "human-escalation",
+    "task_success": true,
+    "acceptance_success": true,
+    "scope_violations": 0,
+    "correction_cycles": 0,
+    "severity": "none"
+  },
+  "v0_2": {
+    "terminal_outcome": "human-escalation",
+    "task_success": true,
+    "acceptance_success": true,
+    "scope_violations": 0,
+    "correction_cycles": 0,
+    "severity": "none"
+  },
+  "evidence": "Independently measurable expected behavior was preserved; no material before/after change was observed.",
+  "frozen_limitations": []
+}

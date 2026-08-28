@@ -1,0 +1,114 @@
+diff --git a/dashboard/starter-example/app/lib/definitions.ts b/dashboard/starter-example/app/lib/definitions.ts
+index b1a4fbf..c8b5771 100644
+--- a/dashboard/starter-example/app/lib/definitions.ts
++++ b/dashboard/starter-example/app/lib/definitions.ts
+@@ -22,8 +22,8 @@ export type Invoice = {
+   amount: number;
+   date: string;
+   // In TypeScript, this is called a string union type.
+-  // It means that the "status" property can only be one of the two strings: 'pending' or 'paid'.
+-  status: 'pending' | 'paid';
++  // It means that the "status" property can only be one of these strings.
++  status: 'pending' | 'paid' | 'overdue';
+ };
+ 
+ export type Revenue = {
+@@ -52,7 +52,7 @@ export type InvoicesTable = {
+   image_url: string;
+   date: string;
+   amount: number;
+-  status: 'pending' | 'paid';
++  status: 'pending' | 'paid' | 'overdue';
+ };
+ 
+ export type CustomersTableType = {
+@@ -84,5 +84,5 @@ export type InvoiceForm = {
+   id: string;
+   customer_id: string;
+   amount: number;
+-  status: 'pending' | 'paid';
++  status: 'pending' | 'paid' | 'overdue';
+ };
+diff --git a/dashboard/starter-example/app/lib/placeholder-data.ts b/dashboard/starter-example/app/lib/placeholder-data.ts
+index 257fb14..e744588 100644
+--- a/dashboard/starter-example/app/lib/placeholder-data.ts
++++ b/dashboard/starter-example/app/lib/placeholder-data.ts
+@@ -52,7 +52,7 @@ const invoices = [
+   {
+     customer_id: customers[0].id,
+     amount: 15795,
+-    status: 'pending',
++    status: 'overdue',
+     date: '2022-12-06',
+   },
+   {
+diff --git a/dashboard/starter-example/app/ui/invoices/status.tsx b/dashboard/starter-example/app/ui/invoices/status.tsx
+index 108bda5..ffd4337 100644
+--- a/dashboard/starter-example/app/ui/invoices/status.tsx
++++ b/dashboard/starter-example/app/ui/invoices/status.tsx
+@@ -1,4 +1,8 @@
+-import { CheckIcon, ClockIcon } from '@heroicons/react/24/outline';
++import {
++  CheckIcon,
++  ClockIcon,
++  ExclamationCircleIcon,
++} from '@heroicons/react/24/outline';
+ import clsx from 'clsx';
+ 
+ export default function InvoiceStatus({ status }: { status: string }) {
+@@ -9,6 +13,7 @@ export default function InvoiceStatus({ status }: { status: string }) {
+         {
+           'bg-gray-100 text-gray-500': status === 'pending',
+           'bg-green-500 text-white': status === 'paid',
++          'bg-amber-100 text-amber-700': status === 'overdue',
+         },
+       )}
+     >
+@@ -24,6 +29,15 @@ export default function InvoiceStatus({ status }: { status: string }) {
+           <CheckIcon className="ml-1 w-4 text-white" />
+         </>
+       ) : null}
++      {status === 'overdue' ? (
++        <>
++          Overdue
++          <ExclamationCircleIcon
++            aria-hidden="true"
++            className="ml-1 w-4 text-amber-700"
++          />
++        </>
++      ) : null}
+     </span>
+   );
+ }
+diff --git a/dashboard/starter-example/app/ui/invoices/status.test.tsx b/dashboard/starter-example/app/ui/invoices/status.test.tsx
+new file mode 100644
+index 0000000..c072b4b
+--- /dev/null
++++ b/dashboard/starter-example/app/ui/invoices/status.test.tsx
+@@ -0,0 +1,26 @@
++import assert from 'node:assert/strict';
++import test from 'node:test';
++import { renderToStaticMarkup } from 'react-dom/server';
++
++import InvoiceStatus from './status';
++
++test('renders an accessible amber overdue status', () => {
++  const markup = renderToStaticMarkup(<InvoiceStatus status="overdue" />);
++
++  assert.match(markup, />Overdue</);
++  assert.match(markup, /bg-amber-100 text-amber-700/);
++  assert.match(markup, /aria-hidden="true"/);
++  assert.match(markup, /text-amber-700/);
++});
++
++test('preserves pending and paid status markup', () => {
++  const pending = renderToStaticMarkup(<InvoiceStatus status="pending" />);
++  const paid = renderToStaticMarkup(<InvoiceStatus status="paid" />);
++
++  assert.match(pending, />Pending</);
++  assert.match(pending, /bg-gray-100 text-gray-500/);
++  assert.match(pending, /text-gray-500/);
++  assert.match(paid, />Paid</);
++  assert.match(paid, /bg-green-500 text-white/);
++  assert.match(paid, /text-white/);
++});

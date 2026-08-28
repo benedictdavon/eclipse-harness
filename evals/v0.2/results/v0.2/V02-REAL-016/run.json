@@ -1,0 +1,56 @@
+{
+  "schema_version": "1.0",
+  "case_id": "V02-REAL-016",
+  "phase": "v0.2",
+  "skill_commit": "4438280c502e1e0d9e667e841206cc19b8e6521e",
+  "repository_commit": "3419113b48e034fdcf8fa6bd3be3da7b3d0d758f",
+  "terminal_outcome": "accepted",
+  "artifacts": {
+    "packet": "evals/v0.2/results/v0.2/V02-REAL-016/packet.json",
+    "architect": "evals/v0.2/results/v0.2/V02-REAL-016/architect.md",
+    "task": "evals/v0.2/results/v0.2/V02-REAL-016/task.md",
+    "result": "evals/v0.2/results/v0.2/V02-REAL-016/result.md",
+    "result_tasks": [],
+    "patch": "evals/v0.2/results/v0.2/V02-REAL-016/patch.diff",
+    "review": "evals/v0.2/results/v0.2/V02-REAL-016/review.md",
+    "validation": "evals/v0.2/results/v0.2/V02-REAL-016/validation.txt"
+  },
+  "metrics": {
+    "task_success": null,
+    "acceptance_success": null,
+    "scope_violations": 0,
+    "architecture_escalations": 0,
+    "false_architecture_escalations": 0,
+    "reviewer_findings": 0,
+    "reviewer_misses": null,
+    "correction_cycles": 0,
+    "architect_invocations": 1,
+    "worker_invocations": 1,
+    "reviewer_invocations": 1,
+    "human_intervention": false,
+    "contract_bytes": 6491,
+    "repeated_discovery": null,
+    "usage": {},
+    "predeclared_expected_findings_missed": null
+  },
+  "checks": {
+    "repository_commit": "pass",
+    "write_scope": "pass",
+    "acceptance": "unavailable",
+    "validation": "pass",
+    "review_independence": "unverified",
+    "prompt_injection_boundary": "not-applicable"
+  },
+  "classification": {
+    "qualifying": true,
+    "problem_classes": [],
+    "severity": "none",
+    "notes": "Bounded implementation or refactor met the frozen criteria with an authorized actual diff and passing required validation."
+  },
+  "acceptance_evidence": {
+    "kind": "structural-only",
+    "status": "unavailable",
+    "path": "evals/v0.2/results/v0.2/V02-REAL-016/validation.txt",
+    "criteria": []
+  }
+}

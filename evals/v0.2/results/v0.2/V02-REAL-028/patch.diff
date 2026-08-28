@@ -1,0 +1,39 @@
+diff --git a/packages/get-version-range-type/README.md b/packages/get-version-range-type/README.md
+index e4a3c6b..592f1e7 100644
+--- a/packages/get-version-range-type/README.md
++++ b/packages/get-version-range-type/README.md
+@@ -7,3 +7,7 @@ Simple function that takes in a string which is a version range (ie `^1.0.0`, `~
+ and returns the range definition.
+ 
+ A helper published mostly to ensure consistency across several changeset packages.
++
++Supported leading operators are `^`, `~`, `>=`, `<=`, `>`, and `=`; the
++function returns the matching operator string. A plain exact version such as
++`1.0.0` returns the empty string (`""`).
+diff --git a/packages/get-version-range-type/src/index.test.ts b/packages/get-version-range-type/src/index.test.ts
+index 84c84d4..e76fa5b 100644
+--- a/packages/get-version-range-type/src/index.test.ts
++++ b/packages/get-version-range-type/src/index.test.ts
+@@ -8,6 +8,7 @@ test.each([
+   ["<=1.0.0", "<="],
+   [">1.0.0", ">"],
+   ["1.0.0", ""],
++  ["=1.0.0", "="],
+ ])('getVersionRangeType should return "%s" if passed "%s"', (input, output) => {
+   expect(getVersionRangeType(input)).toEqual(output);
+ });
+diff --git a/packages/get-version-range-type/src/index.ts b/packages/get-version-range-type/src/index.ts
+index 374664a..946a132 100644
+--- a/packages/get-version-range-type/src/index.ts
++++ b/packages/get-version-range-type/src/index.ts
+@@ -1,8 +1,9 @@
+ export function getVersionRangeType(
+   versionRange: string,
+-): "^" | "~" | ">=" | "<=" | ">" | "" {
++): "^" | "~" | ">=" | "<=" | ">" | "=" | "" {
+   if (versionRange.charAt(0) === "^") return "^";
+   if (versionRange.charAt(0) === "~") return "~";
++  if (versionRange.charAt(0) === "=") return "=";
+   if (versionRange.startsWith(">=")) return ">=";
+   if (versionRange.startsWith("<=")) return "<=";
+   if (versionRange.charAt(0) === ">") return ">";

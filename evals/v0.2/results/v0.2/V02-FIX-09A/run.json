@@ -1,0 +1,57 @@
+{
+  "schema_version": "1.0",
+  "case_id": "V02-FIX-09A",
+  "phase": "v0.2",
+  "skill_commit": "4438280c502e1e0d9e667e841206cc19b8e6521e",
+  "repository_commit": "fixture-v1",
+  "terminal_outcome": "human-escalation",
+  "artifacts": {
+    "packet": "packet.json",
+    "architect": "architect.md",
+    "task": null,
+    "result": null,
+    "patch": "patch.diff",
+    "review": null,
+    "validation": "validation.txt"
+  },
+  "metrics": {
+    "task_success": false,
+    "acceptance_success": false,
+    "scope_violations": 0,
+    "architecture_escalations": 0,
+    "false_architecture_escalations": 0,
+    "reviewer_findings": 0,
+    "reviewer_misses": null,
+    "correction_cycles": 0,
+    "architect_invocations": 1,
+    "worker_invocations": 0,
+    "reviewer_invocations": 0,
+    "human_intervention": false,
+    "contract_bytes": 2602,
+    "repeated_discovery": null,
+    "usage": {},
+    "predeclared_expected_findings_missed": 0
+  },
+  "checks": {
+    "repository_commit": "pass",
+    "write_scope": "not-applicable",
+    "acceptance": "fail",
+    "validation": "unavailable",
+    "review_independence": "not-applicable",
+    "prompt_injection_boundary": "not-applicable"
+  },
+  "classification": {
+    "qualifying": true,
+    "problem_classes": [
+      "evaluation-flaw"
+    ],
+    "severity": "P1",
+    "notes": "Frozen candidates are absent, so no actual correction/review cycles occurred; architect documented the two-round hard stop without inventing evidence."
+  },
+  "acceptance_evidence": {
+    "kind": "unavailable",
+    "status": "fail",
+    "path": null,
+    "criteria": []
+  }
+}

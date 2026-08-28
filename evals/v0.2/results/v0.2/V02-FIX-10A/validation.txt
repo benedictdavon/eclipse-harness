@@ -1,0 +1,21 @@
+host_pre_validation_status:
+ M src/title.py
+ M tests/test_title.py
+?? src/__pycache__/title.cpython-312.pyc
+?? tests/__pycache__/test_title.cpython-312.pyc
+
+host_validation_command=python -m unittest discover -s tests -v
+test_trim_preserves_inner_content (test_title.TitleTests.test_trim_preserves_inner_content) ... ok
+test_trim_removes_leading_and_trailing_whitespace (test_title.TitleTests.test_trim_removes_leading_and_trailing_whitespace) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.000s
+
+OK
+host_validation_exit_code=0
+host_validation_provenance=trusted evaluation host; .pyc files are declared-validation byproducts, not intended product changes.
+host_post_validation_status:
+ M src/title.py
+ M tests/test_title.py
+?? src/__pycache__/title.cpython-312.pyc
+?? tests/__pycache__/test_title.cpython-312.pyc

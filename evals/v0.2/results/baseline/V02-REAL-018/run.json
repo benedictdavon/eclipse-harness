@@ -15,13 +15,13 @@
     "validation": "evals/v0.2/results/baseline/V02-REAL-018/validation.txt"
   },
   "metrics": {
-    "task_success": true,
-    "acceptance_success": true,
+    "task_success": null,
+    "acceptance_success": null,
     "scope_violations": 0,
     "architecture_escalations": 0,
     "false_architecture_escalations": 0,
     "reviewer_findings": 0,
-    "reviewer_misses": 0,
+    "reviewer_misses": null,
     "correction_cycles": 0,
     "architect_invocations": 1,
     "worker_invocations": 1,
@@ -29,12 +29,13 @@
     "human_intervention": false,
     "contract_bytes": 14379,
     "repeated_discovery": null,
-    "usage": {}
+    "usage": {},
+    "predeclared_expected_findings_missed": null
   },
   "checks": {
     "repository_commit": "pass",
     "write_scope": "pass",
-    "acceptance": "pass",
+    "acceptance": "unavailable",
     "validation": "pass",
     "review_independence": "pass",
     "prompt_injection_boundary": "not-applicable"
@@ -46,5 +47,11 @@
     ],
     "severity": "P2",
     "notes": "Implementation was accepted, but the frozen setup had no supplied candidate seed, so reviewer detection of the described regressions is incomparable."
+  },
+  "acceptance_evidence": {
+    "kind": "structural-only",
+    "status": "unavailable",
+    "path": "evals/v0.2/results/baseline/V02-REAL-018/validation.txt",
+    "criteria": []
   }
 }

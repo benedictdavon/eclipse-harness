@@ -1,0 +1,1 @@
+Role-focus orchestrate case: no worker validation invoked.

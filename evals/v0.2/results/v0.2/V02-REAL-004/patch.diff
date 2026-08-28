@@ -1,0 +1,22 @@
+diff --git a/src/itsdangerous/encoding.py b/src/itsdangerous/encoding.py
+index f5ca80f..43e1982 100644
+--- a/src/itsdangerous/encoding.py
++++ b/src/itsdangerous/encoding.py
+@@ -25,12 +25,16 @@ def base64_encode(string: str | bytes) -> bytes:
+     return base64.urlsafe_b64encode(string).rstrip(b"=")
+ 
+ 
++def _base64_pad(string: bytes) -> bytes:
++    return string + b"=" * (-len(string) % 4)
++
++
+ def base64_decode(string: str | bytes) -> bytes:
+     """Base64 decode a URL-safe string of bytes or text. The result is
+     bytes.
+     """
+     string = want_bytes(string, encoding="ascii", errors="ignore")
+-    string += b"=" * (-len(string) % 4)
++    string = _base64_pad(string)
+ 
+     try:
+         return base64.urlsafe_b64decode(string)
