@@ -4,8 +4,11 @@ import collections
 import hashlib
 import json
 import re
+from copy import deepcopy
 from pathlib import Path
 from typing import Any
+
+import jsonschema
 
 from eclipse_harness.contracts import (
     ResultContract,
@@ -14,6 +17,7 @@ from eclipse_harness.contracts import (
     validate_result_against_task,
     validate_review_against_result,
 )
+from tools.score_v02_campaign import observed_success, summarize
 
 ROOT = Path(__file__).parents[2]
 EVAL_ROOT = ROOT / "evals" / "v0.2"
@@ -95,6 +99,11 @@ def _runs(phase: str) -> dict[str, dict[str, Any]]:
     return {path.parent.name: _load(path) for path in paths}
 
 
+def _supplemental_runs(phase: str) -> dict[str, dict[str, Any]]:
+    paths = (EVAL_ROOT / "supplemental" / "results" / phase).glob("*/run.json")
+    return {path.parent.name: _load(path) for path in paths}
+
+
 def test_v02_both_campaign_phases_preserve_every_case() -> None:
     frozen_ids = {
         case["case_id"]
@@ -110,7 +119,7 @@ def test_v02_both_campaign_phases_preserve_every_case() -> None:
     assert all(run["classification"]["qualifying"] for run in candidate.values())
 
 
-def test_v02_before_after_outcomes_are_locked_to_raw_records() -> None:
+def test_v02_before_after_outcomes_are_recomputed_from_raw_evidence() -> None:
     baseline = _runs("baseline")
     candidate = _runs("v0.2")
     incomparable = {
@@ -120,32 +129,18 @@ def test_v02_before_after_outcomes_are_locked_to_raw_records() -> None:
         "V02-REAL-024",
         "V02-REAL-030",
     }
-    classifications: collections.Counter[str] = collections.Counter()
+    assert set(baseline) == set(candidate)
+    assert len(incomparable) == 5
+    assert all(
+        "evaluation-flaw" in baseline[case_id]["classification"]["problem_classes"]
+        for case_id in incomparable
+    )
 
-    for case_id, before in baseline.items():
-        if case_id in incomparable:
-            classifications["incomparable"] += 1
-            continue
-        before_success = before["metrics"]["task_success"] is True
-        after_success = candidate[case_id]["metrics"]["task_success"] is True
-        if not before_success and after_success:
-            classifications["improved"] += 1
-        elif before_success and not after_success:
-            classifications["regressed"] += 1
-        else:
-            classifications["unchanged"] += 1
-
-    assert classifications == {
-        "improved": 19,
-        "unchanged": 26,
-        "incomparable": 5,
-    }
-    assert sum(
-        run["metrics"]["task_success"] is True for run in baseline.values()
-    ) == 21
-    assert sum(
-        run["metrics"]["task_success"] is True for run in candidate.values()
-    ) == 39
+    totals = summarize(ROOT)
+    assert totals["baseline"]["runs"] == 50
+    assert totals["v0.2"]["runs"] == 50
+    assert totals["baseline"]["evidence_supported_successes"] == 7
+    assert totals["v0.2"]["evidence_supported_successes"] == 12
 
 
 def test_v02_real_rerun_does_not_invent_unavailable_measurements() -> None:
@@ -167,6 +162,87 @@ def test_v02_real_rerun_does_not_invent_unavailable_measurements() -> None:
     assert sum(
         run["metrics"]["scope_violations"] for run in real_runs.values()
     ) == 0
+    assert all(run["metrics"]["reviewer_misses"] is None for run in real_runs.values())
+    assert all(
+        run["metrics"]["predeclared_expected_findings_missed"] is None
+        for run in real_runs.values()
+    )
+
+
+def test_v02_run_corpus_validates_against_the_run_record_schema() -> None:
+    schema = _load(EVAL_ROOT / "schemas/run-record.schema.json")
+    validator = jsonschema.Draft202012Validator(schema)
+    paths = sorted((EVAL_ROOT / "results").glob("*/*/run.json")) + sorted(
+        (EVAL_ROOT / "supplemental" / "results").glob("*/*/run.json")
+    )
+
+    assert len(paths) == 110
+    for path in paths:
+        validator.validate(_load(path))
+
+
+def test_v02_candidate_records_use_one_full_candidate_revision() -> None:
+    candidate_runs = list(_runs("v0.2").values()) + list(
+        _supplemental_runs("v0.2").values()
+    )
+    commits = {run["skill_commit"] for run in candidate_runs}
+
+    assert len(candidate_runs) == 55
+    assert commits == {"4438280c502e1e0d9e667e841206cc19b8e6521e"}
+    assert all(re.fullmatch(r"[0-9a-f]{40}", commit) for commit in commits)
+
+
+def test_v02_acceptance_score_uses_raw_evidence_not_recorded_booleans() -> None:
+    record_path = EVAL_ROOT / "results/v0.2/V02-REAL-014/run.json"
+    record = _load(record_path)
+    mutated = deepcopy(record)
+    mutated["metrics"]["task_success"] = False
+    mutated["metrics"]["acceptance_success"] = False
+
+    assert observed_success(ROOT, record, record_path)
+    assert observed_success(ROOT, mutated, record_path)
+    totals = summarize(ROOT)["v0.2"]
+    assert totals["evidence_supported_successes"] == 12
+    assert totals["structural_only"] == 18
+    assert totals["inconclusive_acceptance"] == 21
+
+
+def test_v02_real_structural_validation_is_not_scored_as_behavioral_acceptance() -> None:
+    real_014 = _runs("v0.2")["V02-REAL-014"]
+    structural_only = _runs("v0.2")["V02-REAL-013"]
+
+    assert real_014["acceptance_evidence"]["kind"] == "behavioral-probe"
+    assert real_014["acceptance_evidence"]["status"] == "pass"
+    assert structural_only["acceptance_evidence"] == {
+        "kind": "structural-only",
+        "status": "unavailable",
+        "path": "evals/v0.2/results/v0.2/V02-REAL-013/validation.txt",
+        "criteria": [],
+    }
+    assert structural_only["metrics"]["acceptance_success"] is None
+
+
+def test_v02_supplemental_campaign_exercises_correction_cases() -> None:
+    cases = _load(EVAL_ROOT / "supplemental/cases.json")["cases"]
+    baseline = _supplemental_runs("baseline")
+    candidate = _supplemental_runs("v0.2")
+
+    assert len(cases) == len(baseline) == len(candidate) == 5
+    assert sum(case["case_type"] == "real" for case in cases) == 3
+    assert all(case["task_category"] == "review-correction" for case in cases[2:])
+    assert all(len(case["candidate_states"]) == 2 for case in cases)
+    for case in cases:
+        for relative in case["candidate_states"]:
+            patch = EVAL_ROOT / "supplemental" / relative
+            assert patch.read_text(encoding="utf-8").startswith("diff --git ")
+        assert baseline[case["case_id"]]["metrics"]["correction_cycles"] == 2
+        assert candidate[case["case_id"]]["metrics"]["correction_cycles"] == 2
+        assert candidate[case["case_id"]]["metrics"]["reviewer_misses"] is None
+        assert (
+            candidate[case["case_id"]]["metrics"]
+            ["predeclared_expected_findings_missed"]
+            == 0
+        )
 
 
 def test_v02_selected_real_contract_handoffs_validate_semantically() -> None:

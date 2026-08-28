@@ -122,6 +122,34 @@ def test_core_skills_do_not_require_python_or_eclipse_runtime() -> None:
     assert "optional CLI" in combined
 
 
+def test_v02_hardening_guidance_covers_baseline_regressions() -> None:
+    skill_root = ROOT / ".agents" / "skills"
+    orchestrate = (skill_root / "eclipse-orchestrate" / "SKILL.md").read_text(
+        encoding="utf-8"
+    )
+    execute = (skill_root / "eclipse-execute" / "SKILL.md").read_text(encoding="utf-8")
+    review = (skill_root / "eclipse-review" / "SKILL.md").read_text(encoding="utf-8")
+    contracts = (
+        skill_root / "eclipse-orchestrate" / "references" / "contracts.md"
+    ).read_text(encoding="utf-8")
+    execution = (skill_root / "eclipse-execute" / "references" / "execution.md").read_text(
+        encoding="utf-8"
+    )
+    review_contract = (
+        skill_root / "eclipse-review" / "references" / "review-contract.md"
+    ).read_text(encoding="utf-8")
+
+    assert "Copy those identities verbatim" in orchestrate
+    assert "smallest sufficient context" in orchestrate
+    assert "including untracked files" in execute
+    assert "do not destructively clean" in execute
+    assert "undeclared tool is absent" in review
+    assert "cannot prove a negative capability claim" in review
+    assert "Markdown wrapper" in contracts
+    assert "Optional probes" in execution
+    assert "full post-task status" in review_contract
+
+
 def test_distribution_omits_runtime_engine_resources() -> None:
     absent = (
         ROOT / "src/eclipse_harness/store.py",

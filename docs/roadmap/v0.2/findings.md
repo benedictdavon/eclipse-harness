@@ -15,7 +15,8 @@ and is preserved in `evals/v0.2/results/baseline/*/run.json`.
 | Accepted reviews | 8 |
 | Architecture escalations | 7 |
 | Scope violations | 8 |
-| Reviewer misses | 0 |
+| Reviewer misses | unavailable (independence unverified) |
+| Predeclared expected findings missed | 0 where an oracle exists |
 | Correction cycles | 4 |
 | Environment failures | 22 |
 | Measured token/cost records | 0 |
