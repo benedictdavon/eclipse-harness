@@ -1,0 +1,80 @@
+{
+  "attempt": 2,
+  "blockers": [
+    "Reviewer decision required."
+  ],
+  "commands": [
+    {
+      "command": "python -m unittest",
+      "exit_code": null,
+      "outcome": "not-run",
+      "purpose": "Bounded supplemental validation",
+      "summary": "Awaiting reviewer result."
+    }
+  ],
+  "criteria_evidence": [
+    {
+      "criterion_id": "AC-1",
+      "evidence": "Candidate under review.",
+      "status": "unsatisfied"
+    },
+    {
+      "criterion_id": "AC-2",
+      "evidence": "Candidate under review.",
+      "status": "unsatisfied"
+    },
+    {
+      "criterion_id": "AC-3",
+      "evidence": "Candidate under review.",
+      "status": "unsatisfied"
+    }
+  ],
+  "decisions": [
+    "No scope expansion."
+  ],
+  "deviations": [],
+  "files_changed": [],
+  "finished_at": "2026-08-28T00:00:00Z",
+  "git": {
+    "base_revision": "0000000000000000000000000000000000000000",
+    "changed_files_digest": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+  },
+  "implementation_summary": "Frozen candidate submitted for bounded review.",
+  "metadata": {
+    "artifact_origin": "frozen-candidate-replay",
+    "candidate_state": "evals/v0.2/supplemental/candidates/V02-SUP-FIX-02/candidate-round-2.patch",
+    "phase": "supplemental-v0.2",
+    "skill_commit": "4438280c502e1e0d9e667e841206cc19b8e6521e"
+  },
+  "observed_risks": [
+    "Candidate may violate a frozen criterion."
+  ],
+  "plan_digest": "sha256:supplemental-v02-sup-fix-02-supplemental-v0.2",
+  "plan_revision": 1,
+  "requested_escalation": {
+    "code": "REVIEW_BOUND",
+    "reason": "Two review rounds exhausted.",
+    "route_to": "architect"
+  },
+  "run_id": "V02-SUP-FIX-02-supplemental-v0.2",
+  "schema_version": "1.0",
+  "started_at": "2026-08-28T00:00:00Z",
+  "status": "escalated",
+  "task_contract_digest": "sha256:0e8aa0d03fb2811a04495eb6558da21a0d4205f1284c547ae6554bf628af8c6f",
+  "task_id": "V02-SUP-FIX-02.review-correction",
+  "unresolved_issues": [
+    "float return",
+    "removed upper-bound test"
+  ],
+  "usage": {
+    "quality": "unavailable",
+    "source": "frozen supplemental host"
+  },
+  "worker_identity": {
+    "configured_model": null,
+    "effective_model": null,
+    "requested_model": null,
+    "role": "executor",
+    "verification": "unverified"
+  }
+}

@@ -40,7 +40,7 @@ records. The three real supplemental cases bring the valid real-run total to
 `tools/score_v02_campaign.py` derives its aggregate from terminal state,
 authorization/acceptance checks, and evidence artifacts. It does not trust
 pre-populated task or acceptance success booleans. Across the combined corpus,
-evidence-supported outcomes rise from 12/55 on v0.1 to 17/55 on the final
+evidence-supported outcomes rise from 8/55 on v0.1 to 10/55 on the final
 candidate. The 18 structural-only and 21 unavailable/inconclusive final
 acceptance claims are not counted as behavioral successes. `V02-REAL-014` has
 a dependency-free Node behavioral probe; other file-existence/compile-only

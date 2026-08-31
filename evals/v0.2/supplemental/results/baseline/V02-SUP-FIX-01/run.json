@@ -7,12 +7,20 @@
   "terminal_outcome": "architect-escalation",
   "artifacts": {
     "packet": "evals/v0.2/supplemental/cases.json",
-    "architect": "evals/v0.2/supplemental/evidence/baseline-V02-SUP-FIX-01.md",
-    "task": "evals/v0.2/supplemental/cases.json",
-    "result": "evals/v0.2/supplemental/evidence/baseline-V02-SUP-FIX-01.md",
-    "patch": "evals/v0.2/supplemental/candidates/V02-SUP-FIX-01/candidate-round-1.patch",
-    "review": "evals/v0.2/supplemental/evidence/baseline-V02-SUP-FIX-01.md",
-    "validation": "evals/v0.2/supplemental/evidence/baseline-V02-SUP-FIX-01.md",
+    "architect": "evals/v0.2/supplemental/results/baseline/V02-SUP-FIX-01/role-artifacts/architect.json",
+    "task": "evals/v0.2/supplemental/results/baseline/V02-SUP-FIX-01/role-artifacts/task-contract.json",
+    "result": "evals/v0.2/supplemental/results/baseline/V02-SUP-FIX-01/role-artifacts/worker-round-2.json",
+    "patch": "evals/v0.2/supplemental/candidates/V02-SUP-FIX-01/candidate-round-2.patch",
+    "review": "evals/v0.2/supplemental/results/baseline/V02-SUP-FIX-01/role-artifacts/review-round-2.json",
+    "validation": "evals/v0.2/supplemental/results/baseline/V02-SUP-FIX-01/role-artifacts/validation.txt",
+    "worker_rounds": [
+      "evals/v0.2/supplemental/results/baseline/V02-SUP-FIX-01/role-artifacts/worker-round-1.json",
+      "evals/v0.2/supplemental/results/baseline/V02-SUP-FIX-01/role-artifacts/worker-round-2.json"
+    ],
+    "review_rounds": [
+      "evals/v0.2/supplemental/results/baseline/V02-SUP-FIX-01/role-artifacts/review-round-1.json",
+      "evals/v0.2/supplemental/results/baseline/V02-SUP-FIX-01/role-artifacts/review-round-2.json"
+    ],
     "candidate_states": [
       "evals/v0.2/supplemental/candidates/V02-SUP-FIX-01/candidate-round-1.patch",
       "evals/v0.2/supplemental/candidates/V02-SUP-FIX-01/candidate-round-2.patch"
@@ -47,7 +55,7 @@
   "acceptance_evidence": {
     "kind": "review-oracle",
     "status": "pass",
-    "path": "evals/v0.2/supplemental/evidence/baseline-V02-SUP-FIX-01.md",
+    "path": "evals/v0.2/supplemental/results/baseline/V02-SUP-FIX-01/role-artifacts/review-round-2.json",
     "criteria": [
       "attempt 3 returns 4",
       "attempts above 8 raise ValueError",

@@ -1,0 +1,76 @@
+{
+  "attempt": 1,
+  "blockers": [
+    "Reviewer decision required."
+  ],
+  "commands": [
+    {
+      "command": "python -m unittest",
+      "exit_code": null,
+      "outcome": "not-run",
+      "purpose": "Bounded supplemental validation",
+      "summary": "Awaiting reviewer result."
+    }
+  ],
+  "criteria_evidence": [
+    {
+      "criterion_id": "AC-1",
+      "evidence": "Candidate under review.",
+      "status": "unsatisfied"
+    },
+    {
+      "criterion_id": "AC-2",
+      "evidence": "Candidate under review.",
+      "status": "unsatisfied"
+    },
+    {
+      "criterion_id": "AC-3",
+      "evidence": "Candidate under review.",
+      "status": "unsatisfied"
+    }
+  ],
+  "decisions": [
+    "No scope expansion."
+  ],
+  "deviations": [],
+  "files_changed": [],
+  "finished_at": "2026-08-28T00:00:00Z",
+  "git": {
+    "base_revision": "672971d66a2ef9f85151e53283113f33d642dabd",
+    "changed_files_digest": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+  },
+  "implementation_summary": "Frozen candidate submitted for bounded review.",
+  "metadata": {
+    "artifact_origin": "frozen-candidate-replay",
+    "candidate_state": "evals/v0.2/supplemental/candidates/V02-SUP-REAL-003/candidate-round-1.patch",
+    "phase": "supplemental-v0.2",
+    "skill_commit": "4438280c502e1e0d9e667e841206cc19b8e6521e"
+  },
+  "observed_risks": [
+    "Candidate may violate a frozen criterion."
+  ],
+  "plan_digest": "sha256:supplemental-v02-sup-real-003-supplemental-v0.2",
+  "plan_revision": 1,
+  "requested_escalation": null,
+  "run_id": "V02-SUP-REAL-003-supplemental-v0.2",
+  "schema_version": "1.0",
+  "started_at": "2026-08-28T00:00:00Z",
+  "status": "failed",
+  "task_contract_digest": "sha256:dca7f56aa7d3335c7aaab1f5750565a45113ae93785b5c6995fe08bef5e139db",
+  "task_id": "V02-SUP-REAL-003.review-correction",
+  "unresolved_issues": [
+    "deleted malformed-input test",
+    "leaked UnicodeEncodeError"
+  ],
+  "usage": {
+    "quality": "unavailable",
+    "source": "frozen supplemental host"
+  },
+  "worker_identity": {
+    "configured_model": null,
+    "effective_model": null,
+    "requested_model": null,
+    "role": "executor",
+    "verification": "unverified"
+  }
+}

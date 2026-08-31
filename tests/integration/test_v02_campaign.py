@@ -139,8 +139,8 @@ def test_v02_before_after_outcomes_are_recomputed_from_raw_evidence() -> None:
     totals = summarize(ROOT)
     assert totals["baseline"]["runs"] == 50
     assert totals["v0.2"]["runs"] == 50
-    assert totals["baseline"]["evidence_supported_successes"] == 7
-    assert totals["v0.2"]["evidence_supported_successes"] == 12
+    assert totals["baseline"]["evidence_supported_successes"] == 3
+    assert totals["v0.2"]["evidence_supported_successes"] == 5
 
 
 def test_v02_real_rerun_does_not_invent_unavailable_measurements() -> None:
@@ -202,7 +202,7 @@ def test_v02_acceptance_score_uses_raw_evidence_not_recorded_booleans() -> None:
     assert observed_success(ROOT, record, record_path)
     assert observed_success(ROOT, mutated, record_path)
     totals = summarize(ROOT)["v0.2"]
-    assert totals["evidence_supported_successes"] == 12
+    assert totals["evidence_supported_successes"] == 5
     assert totals["structural_only"] == 18
     assert totals["inconclusive_acceptance"] == 21
 
@@ -222,6 +222,23 @@ def test_v02_real_structural_validation_is_not_scored_as_behavioral_acceptance()
     assert structural_only["metrics"]["acceptance_success"] is None
 
 
+def test_v02_scorer_rejects_an_adversarial_record_artifact_mismatch(
+    tmp_path: Path,
+) -> None:
+    record_path = EVAL_ROOT / "results/v0.2/V02-REAL-014/run.json"
+    record = _load(record_path)
+    failed_probe = tmp_path / "failed-probe.txt"
+    failed_probe.write_text(
+        "ECLIPSE_ACCEPTANCE_EVIDENCE: FAIL\nexit_code: 1\n",
+        encoding="utf-8",
+    )
+    mismatched = deepcopy(record)
+    mismatched["acceptance_evidence"]["status"] = "pass"
+    mismatched["acceptance_evidence"]["path"] = str(failed_probe)
+
+    assert not observed_success(ROOT, mismatched, record_path)
+
+
 def test_v02_supplemental_campaign_exercises_correction_cases() -> None:
     cases = _load(EVAL_ROOT / "supplemental/cases.json")["cases"]
     baseline = _supplemental_runs("baseline")
@@ -231,6 +248,7 @@ def test_v02_supplemental_campaign_exercises_correction_cases() -> None:
     assert sum(case["case_type"] == "real" for case in cases) == 3
     assert all(case["task_category"] == "review-correction" for case in cases[2:])
     assert all(len(case["candidate_states"]) == 2 for case in cases)
+    assert not (EVAL_ROOT / "supplemental/evidence").exists()
     for case in cases:
         for relative in case["candidate_states"]:
             patch = EVAL_ROOT / "supplemental" / relative
@@ -243,6 +261,26 @@ def test_v02_supplemental_campaign_exercises_correction_cases() -> None:
             ["predeclared_expected_findings_missed"]
             == 0
         )
+        for run in (baseline[case["case_id"]], candidate[case["case_id"]]):
+            artifacts = run["artifacts"]
+            assert len(artifacts["worker_rounds"]) == 2
+            assert len(artifacts["review_rounds"]) == 2
+            task = TaskContract.from_dict(_load(ROOT / artifacts["task"]))
+            workers = [
+                ResultContract.from_dict(_load(ROOT / path))
+                for path in artifacts["worker_rounds"]
+            ]
+            reviews = [
+                ReviewContract.from_dict(_load(ROOT / path))
+                for path in artifacts["review_rounds"]
+            ]
+            for worker, review in zip(workers, reviews, strict=True):
+                validate_result_against_task(worker, task)
+                validate_review_against_result(review, worker, task)
+            assert all(
+                _load(ROOT / path)["review_round"] == round_number
+                for round_number, path in enumerate(artifacts["review_rounds"], start=1)
+            )
 
 
 def test_v02_selected_real_contract_handoffs_validate_semantically() -> None:

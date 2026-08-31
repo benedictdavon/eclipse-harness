@@ -1,0 +1,64 @@
+{
+  "criteria_verdicts": [
+    {
+      "criterion_id": "AC-1",
+      "evidence": "Candidate requires disposition.",
+      "status": "unverified"
+    },
+    {
+      "criterion_id": "AC-2",
+      "evidence": "Candidate requires disposition.",
+      "status": "unverified"
+    },
+    {
+      "criterion_id": "AC-3",
+      "evidence": "Candidate requires disposition.",
+      "status": "unverified"
+    }
+  ],
+  "findings": [
+    {
+      "correction": "Provide only the bounded correction.",
+      "disposition": "worker",
+      "evidence": "float return",
+      "id": "F-ROUND-1",
+      "impact": "Frozen candidate cannot satisfy the task.",
+      "path": "evals/v0.2/supplemental/candidates/V02-SUP-FIX-02/candidate-round-1.patch",
+      "severity": "high",
+      "type": "acceptance-failure"
+    }
+  ],
+  "finished_at": "2026-08-28T00:00:00Z",
+  "metadata": {
+    "artifact_origin": "frozen-candidate-replay",
+    "candidate_state": "evals/v0.2/supplemental/candidates/V02-SUP-FIX-02/candidate-round-1.patch",
+    "predeclared_expected_findings": [
+      "float return"
+    ]
+  },
+  "outcome": "changes_requested",
+  "permissions": {
+    "desired": "read-only",
+    "effective": "unverified",
+    "enforcement": "manual frozen-evaluation host"
+  },
+  "plan_digest": "sha256:supplemental-v02-sup-fix-02-supplemental-v0.2",
+  "plan_revision": 1,
+  "residual_risk": [
+    "Reviewer independence is unverified; only the fixed oracle is measured."
+  ],
+  "result_digest": "sha256:619bb8103a86b1202f626c927496c7e20dafa17a019c811c9c4925335bdec066",
+  "review_round": 1,
+  "reviewer_identity": {
+    "effective_model": null,
+    "requested_model": null,
+    "role": "reviewer",
+    "verification": "unverified"
+  },
+  "run_id": "V02-SUP-FIX-02-supplemental-v0.2",
+  "schema_version": "1.0",
+  "started_at": "2026-08-28T00:00:00Z",
+  "task_contract_digest": "sha256:0e8aa0d03fb2811a04495eb6558da21a0d4205f1284c547ae6554bf628af8c6f",
+  "task_id": "V02-SUP-FIX-02.review-correction",
+  "validation_summary": "Reviewed the named frozen candidate state and its bound worker result."
+}

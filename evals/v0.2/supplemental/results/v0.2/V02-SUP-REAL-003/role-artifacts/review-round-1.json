@@ -1,0 +1,64 @@
+{
+  "criteria_verdicts": [
+    {
+      "criterion_id": "AC-1",
+      "evidence": "Candidate requires disposition.",
+      "status": "unverified"
+    },
+    {
+      "criterion_id": "AC-2",
+      "evidence": "Candidate requires disposition.",
+      "status": "unverified"
+    },
+    {
+      "criterion_id": "AC-3",
+      "evidence": "Candidate requires disposition.",
+      "status": "unverified"
+    }
+  ],
+  "findings": [
+    {
+      "correction": "Provide only the bounded correction.",
+      "disposition": "worker",
+      "evidence": "deleted malformed-input test",
+      "id": "F-ROUND-1",
+      "impact": "Frozen candidate cannot satisfy the task.",
+      "path": "evals/v0.2/supplemental/candidates/V02-SUP-REAL-003/candidate-round-1.patch",
+      "severity": "high",
+      "type": "acceptance-failure"
+    }
+  ],
+  "finished_at": "2026-08-28T00:00:00Z",
+  "metadata": {
+    "artifact_origin": "frozen-candidate-replay",
+    "candidate_state": "evals/v0.2/supplemental/candidates/V02-SUP-REAL-003/candidate-round-1.patch",
+    "predeclared_expected_findings": [
+      "deleted malformed-input test"
+    ]
+  },
+  "outcome": "changes_requested",
+  "permissions": {
+    "desired": "read-only",
+    "effective": "unverified",
+    "enforcement": "manual frozen-evaluation host"
+  },
+  "plan_digest": "sha256:supplemental-v02-sup-real-003-supplemental-v0.2",
+  "plan_revision": 1,
+  "residual_risk": [
+    "Reviewer independence is unverified; only the fixed oracle is measured."
+  ],
+  "result_digest": "sha256:3a8563416be4e5e54f9eb41ece0a496568a278c47d697177c3acbd1e111d2955",
+  "review_round": 1,
+  "reviewer_identity": {
+    "effective_model": null,
+    "requested_model": null,
+    "role": "reviewer",
+    "verification": "unverified"
+  },
+  "run_id": "V02-SUP-REAL-003-supplemental-v0.2",
+  "schema_version": "1.0",
+  "started_at": "2026-08-28T00:00:00Z",
+  "task_contract_digest": "sha256:dca7f56aa7d3335c7aaab1f5750565a45113ae93785b5c6995fe08bef5e139db",
+  "task_id": "V02-SUP-REAL-003.review-correction",
+  "validation_summary": "Reviewed the named frozen candidate state and its bound worker result."
+}

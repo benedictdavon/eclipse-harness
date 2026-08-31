@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 from collections import Counter
 from pathlib import Path
 from typing import Any, Iterable
@@ -15,6 +16,55 @@ from typing import Any, Iterable
 
 EVIDENCE_KINDS = {"behavioral-probe", "architecture-plan", "review-oracle"}
 PASSING_TERMINAL_OUTCOMES = {"accepted", "architect-escalation"}
+
+
+def _evidence_path(root: Path, record_path: Path | None, relative: str) -> Path:
+    """Resolve an evidence artifact without trusting a run-record score claim."""
+
+    repository_relative = root / relative
+    if repository_relative.is_file():
+        return repository_relative
+    if record_path is not None:
+        return record_path.parent / relative
+    return repository_relative
+
+
+def _artifact_reports_pass(path: Path, kind: str) -> bool:
+    """Read the evidence artifact itself and derive its pass/fail conclusion.
+
+    Explicit failure signals always override a pass-looking record.  This keeps a
+    stale or adversarially edited ``run.json`` from converting failed evidence
+    into a scored success.
+    """
+
+    if not path.is_file():
+        return False
+    text = path.read_text(encoding="utf-8")
+    if re.search(r"ECLIPSE_(?:ACCEPTANCE_EVIDENCE|EVIDENCE_STATUS):\s*FAIL", text):
+        return False
+    if re.search(r"(?:host_validation_)?exit_code\s*[:=]\s*[1-9][0-9]*", text):
+        return False
+
+    if kind == "behavioral-probe":
+        return bool(
+            re.search(r"ECLIPSE_ACCEPTANCE_EVIDENCE:\s*PASS", text)
+            or re.search(r"host_validation_exit_code\s*=\s*0", text)
+            or re.search(r"(?m)^exit_code:\s*0\s*$", text)
+        )
+    if kind == "review-oracle":
+        try:
+            value = json.loads(text)
+        except json.JSONDecodeError:
+            return bool(re.search(r"ECLIPSE_EVIDENCE_STATUS:\s*PASS", text))
+        metadata = value.get("metadata")
+        return bool(
+            isinstance(metadata, dict)
+            and metadata.get("evidence_status") == "pass"
+            and value.get("outcome") in {"accepted", "escalated"}
+        )
+    if kind == "architecture-plan":
+        return "Outcome: **accepted architecture escalation**." in text
+    return False
 
 
 def load_json(path: Path) -> dict[str, Any]:
@@ -50,12 +100,10 @@ def observed_success(root: Path, record: dict[str, Any], record_path: Path | Non
     if checks["write_scope"] not in {"pass", "not-applicable"}:
         return False
 
-    path = evidence["path"]
-    if not isinstance(path, str):
+    relative = evidence["path"]
+    if not isinstance(relative, str):
         return False
-    repository_relative = root / path
-    run_relative = record_path.parent / path if record_path is not None else None
-    return repository_relative.is_file() or (run_relative is not None and run_relative.is_file())
+    return _artifact_reports_pass(_evidence_path(root, record_path, relative), evidence["kind"])
 
 
 def summarize(root: Path) -> dict[str, dict[str, int]]:

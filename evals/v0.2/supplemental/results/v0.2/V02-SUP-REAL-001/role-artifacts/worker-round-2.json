@@ -1,0 +1,69 @@
+{
+  "attempt": 2,
+  "blockers": [],
+  "commands": [
+    {
+      "command": "python -m unittest",
+      "exit_code": 0,
+      "outcome": "passed",
+      "purpose": "Bounded supplemental validation",
+      "summary": "Probe passed."
+    }
+  ],
+  "criteria_evidence": [
+    {
+      "criterion_id": "AC-1",
+      "evidence": "Final probe passed.",
+      "status": "satisfied"
+    },
+    {
+      "criterion_id": "AC-2",
+      "evidence": "Final probe passed.",
+      "status": "satisfied"
+    },
+    {
+      "criterion_id": "AC-3",
+      "evidence": "Final probe passed.",
+      "status": "satisfied"
+    }
+  ],
+  "decisions": [
+    "No scope expansion."
+  ],
+  "deviations": [],
+  "files_changed": [],
+  "finished_at": "2026-08-28T00:00:00Z",
+  "git": {
+    "base_revision": "672971d66a2ef9f85151e53283113f33d642dabd",
+    "changed_files_digest": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+  },
+  "implementation_summary": "Final bounded correction passed the frozen probe.",
+  "metadata": {
+    "artifact_origin": "frozen-candidate-replay",
+    "candidate_state": "evals/v0.2/supplemental/candidates/V02-SUP-REAL-001/final.patch",
+    "phase": "supplemental-v0.2",
+    "skill_commit": "4438280c502e1e0d9e667e841206cc19b8e6521e"
+  },
+  "observed_risks": [],
+  "plan_digest": "sha256:supplemental-v02-sup-real-001-supplemental-v0.2",
+  "plan_revision": 1,
+  "requested_escalation": null,
+  "run_id": "V02-SUP-REAL-001-supplemental-v0.2",
+  "schema_version": "1.0",
+  "started_at": "2026-08-28T00:00:00Z",
+  "status": "complete",
+  "task_contract_digest": "sha256:d8eec08cc832894a68bbea35b60c23e3986aa4306947be76eaa13da860730310",
+  "task_id": "V02-SUP-REAL-001.review-correction",
+  "unresolved_issues": [],
+  "usage": {
+    "quality": "unavailable",
+    "source": "frozen supplemental host"
+  },
+  "worker_identity": {
+    "configured_model": null,
+    "effective_model": null,
+    "requested_model": null,
+    "role": "executor",
+    "verification": "unverified"
+  }
+}

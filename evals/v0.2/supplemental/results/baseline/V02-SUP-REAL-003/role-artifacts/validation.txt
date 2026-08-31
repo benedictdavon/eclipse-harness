@@ -1,0 +1,4 @@
+ECLIPSE_EVIDENCE_KIND: behavioral-probe
+ECLIPSE_ACCEPTANCE_EVIDENCE: PASS
+exit_code: 0
+case_id: V02-SUP-REAL-003

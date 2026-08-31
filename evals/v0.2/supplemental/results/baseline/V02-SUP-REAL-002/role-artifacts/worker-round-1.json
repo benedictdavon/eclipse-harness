@@ -1,0 +1,77 @@
+{
+  "attempt": 1,
+  "blockers": [
+    "Reviewer decision required."
+  ],
+  "commands": [
+    {
+      "command": "python -m unittest",
+      "exit_code": null,
+      "outcome": "not-run",
+      "purpose": "Bounded supplemental validation",
+      "summary": "Awaiting reviewer result."
+    }
+  ],
+  "criteria_evidence": [
+    {
+      "criterion_id": "AC-1",
+      "evidence": "Candidate under review.",
+      "status": "unsatisfied"
+    },
+    {
+      "criterion_id": "AC-2",
+      "evidence": "Candidate under review.",
+      "status": "unsatisfied"
+    },
+    {
+      "criterion_id": "AC-3",
+      "evidence": "Candidate under review.",
+      "status": "unsatisfied"
+    }
+  ],
+  "decisions": [
+    "No scope expansion."
+  ],
+  "deviations": [],
+  "files_changed": [],
+  "finished_at": "2026-08-28T00:00:00Z",
+  "git": {
+    "base_revision": "672971d66a2ef9f85151e53283113f33d642dabd",
+    "changed_files_digest": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+  },
+  "implementation_summary": "Frozen candidate submitted for bounded review.",
+  "metadata": {
+    "artifact_origin": "frozen-candidate-replay",
+    "candidate_state": "evals/v0.2/supplemental/candidates/V02-SUP-REAL-002/candidate-round-1.patch",
+    "phase": "supplemental-baseline",
+    "skill_commit": "8a674fafe1f1d03c34e27c7a875752a0138f5e2b"
+  },
+  "observed_risks": [
+    "Candidate may violate a frozen criterion."
+  ],
+  "plan_digest": "sha256:supplemental-v02-sup-real-002-supplemental-baseline",
+  "plan_revision": 1,
+  "requested_escalation": null,
+  "run_id": "V02-SUP-REAL-002-supplemental-baseline",
+  "schema_version": "1.0",
+  "started_at": "2026-08-28T00:00:00Z",
+  "status": "failed",
+  "task_contract_digest": "sha256:06ba265dbb78aba1ed919ed612b3b8c3edfc10426f4ce3f5e8f78e5f5fad7b88",
+  "task_id": "V02-SUP-REAL-002.review-correction",
+  "unresolved_issues": [
+    "silent truncation",
+    "wrong error message",
+    "weak exception assertion"
+  ],
+  "usage": {
+    "quality": "unavailable",
+    "source": "frozen supplemental host"
+  },
+  "worker_identity": {
+    "configured_model": null,
+    "effective_model": null,
+    "requested_model": null,
+    "role": "executor",
+    "verification": "unverified"
+  }
+}

@@ -26,6 +26,8 @@
         "review": {"type": ["string", "null"]},
         "validation": {"type": ["string", "null"]},
         "acceptance_probe": {"type": ["string", "null"]},
+        "worker_rounds": {"type": "array", "items": {"type": "string"}},
+        "review_rounds": {"type": "array", "items": {"type": "string"}},
         "candidate_states": {"type": "array", "items": {"type": "string"}}
       }
     },
