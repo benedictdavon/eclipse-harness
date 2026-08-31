@@ -1,0 +1,5 @@
+src/itsdangerous/encoding.py
+tests/test_itsdangerous/test_encoding.py
+ M src/itsdangerous/encoding.py
+ M tests/test_itsdangerous/test_encoding.py
+

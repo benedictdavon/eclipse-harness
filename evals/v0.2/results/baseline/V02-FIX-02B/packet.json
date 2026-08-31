@@ -1,0 +1,23 @@
+{
+  "acceptance_criteria": [
+    "exactly-once delivery across processes",
+    "no public interface changes"
+  ],
+  "adapter": "manual",
+  "case_id": "V02-FIX-02B",
+  "case_type": "controlled",
+  "expected_write_scope": [
+    "src/email_sender.py"
+  ],
+  "family": "architecture-blocker",
+  "host": "chatgpt-work-collaboration",
+  "policy": "sol-luna-v0.1",
+  "repository": "fixtures/architecture-blocker",
+  "repository_commit": "fixture-v1",
+  "role_focus": "execute",
+  "task_category": "architecture-sensitive",
+  "task_statement": "Change src/email_sender.py so every notification is exactly-once across multiple processes, without changing storage.py, api.py, or any public interface.",
+  "validation": [
+    "python -m unittest discover -s tests -v"
+  ]
+}

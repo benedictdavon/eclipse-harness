@@ -1,0 +1,22 @@
+{
+  "case_id": "V02-FIX-01A",
+  "classification": "improved",
+  "baseline": {
+    "terminal_outcome": "human-escalation",
+    "task_success": false,
+    "acceptance_success": false,
+    "scope_violations": 1,
+    "correction_cycles": 0,
+    "severity": "P1"
+  },
+  "v0_2": {
+    "terminal_outcome": "accepted",
+    "task_success": true,
+    "acceptance_success": true,
+    "scope_violations": 0,
+    "correction_cycles": 0,
+    "severity": "none"
+  },
+  "evidence": "Bounded discount implementation passed required checks; review separated trusted validation byproducts from the product patch and accepted. Baseline rejected correct code for scope/provenance defects; v0.2 accepted with complete host-attributed status.",
+  "frozen_limitations": []
+}

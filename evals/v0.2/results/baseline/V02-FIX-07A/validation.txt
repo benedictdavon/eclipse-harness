@@ -1,0 +1,8 @@
+test_normalize_subject (test_email.EmailTests.test_normalize_subject) ... ok
+test_normalize_phone (test_sms.SmsTests.test_normalize_phone) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.000s
+
+OK
+host_validation_exit_code=0

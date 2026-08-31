@@ -1,0 +1,42 @@
+diff --git a/app/models.py b/app/models.py
+index db447d8..9a897f1 100644
+--- a/app/models.py
++++ b/app/models.py
+@@ -138,6 +138,9 @@ class User(PaginatedAPIMixin, UserMixin, db.Model):
+         return check_password_hash(self.password_hash, password)
+ 
+     def avatar(self, size):
++        if size <= 0:
++            raise ValueError('size must be positive')
++
+         digest = md5(self.email.lower().encode('utf-8')).hexdigest()
+         return f'https://www.gravatar.com/avatar/{digest}?d=identicon&s={size}'
+ 
+diff --git a/app/templates/errors/404.html b/app/templates/errors/404.html
+index 3cc4cf1..8a23e89 100644
+--- a/app/templates/errors/404.html
++++ b/app/templates/errors/404.html
+@@ -1,6 +1,7 @@
+ {% extends "base.html" %}
+ 
+ {% block content %}
+-    <h1>{{ _('Not Found') }}</h1>
+-    <p><a href="{{ url_for('main.index') }}">{{ _('Back') }}</a></p>
++    <h1>{{ _('Page Not Found') }}</h1>
++    <p>{{ _('The page you requested could not be found.') }}</p>
++    <p><a href="{{ url_for('main.index') }}">{{ _('Back to home') }}</a></p>
+ {% endblock %}
+diff --git a/tests.py b/tests.py
+index 4ef9098..fbbb154 100755
+--- a/tests.py
++++ b/tests.py
+@@ -32,6 +32,9 @@ class UserModelCase(unittest.TestCase):
+ 
+     def test_avatar(self):
+         u = User(username='john', email='john@example.com')
++        for size in (0, -1):
++            with self.assertRaisesRegex(ValueError, '^size must be positive$'):
++                u.avatar(size)
+         self.assertEqual(u.avatar(128), ('https://www.gravatar.com/avatar/'
+                                          'd4c74594d841139328695756648b6bd6'
+                                          '?d=identicon&s=128'))

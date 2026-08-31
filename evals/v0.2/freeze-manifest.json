@@ -1,0 +1,24 @@
+{
+  "schema_version": "1.0",
+  "frozen_at": "2026-08-13T00:00:00+08:00",
+  "baseline_tag": "v0.1.0-alpha.1",
+  "baseline_commit": "8a674fafe1f1d03c34e27c7a875752a0138f5e2b",
+  "roadmap_archive_sha256": "56b8522a3997ffb5472cd0a3698d42effe91159f845796ed02211f5cb69d2e79",
+  "definition_tree_sha256": "32a8bc8c3b93b37c5fb6e24a5253ee2030bfc8569a3a8efba90e2dcc961957bf",
+  "files": {
+    "campaign.json": "a3c7a6b3f1bfa562b13742243f892f4996fae16d3eb997d85407dd8e4572db4c",
+    "controlled/cases.json": "80a180f3d51fec5d6b5ef25646caee8ff6c7e54c9e09ade4d8d6a55ea23da3ba",
+    "real/repositories.json": "93456d9bc6074d240a77e764d0e743df6bf32a78715a9fd7f8e9f441b954691c",
+    "real/cases.json": "75f6c6ee70003f339a580bc3341c728dd444f68f334e3b9a02d88f7db584c110",
+    "prompts/architect.md": "a8e484e802d361e2236c7b7221ae84c40037fca40815cb6ae695b5897528e931",
+    "prompts/worker.md": "290b3eae964943fcbe4195a7f2c44c178069ad612c7deef030cdc18067c98b20",
+    "prompts/reviewer.md": "907461a8ba3b7b90c34dabb08009bf3edc272618fab36deeafdd3a51371a2fef"
+  },
+  "pinned_repositories": {
+    "REAL-PY-LIB": "672971d66a2ef9f85151e53283113f33d642dabd",
+    "REAL-PY-APP": "a975ef64864354867c88e0ed3a17ba7d17dca752",
+    "REAL-TS-NODE": "3419113b48e034fdcf8fa6bd3be3da7b3d0d758f",
+    "REAL-NEXT": "bb2558441a6673ab76c89914c25018bffa27a2ba",
+    "REAL-MONOREPO": "b4dc91f545ff2afead214278b7b5ebc8d4e96322"
+  }
+}

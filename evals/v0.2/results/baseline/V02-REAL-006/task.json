@@ -1,0 +1,237 @@
+{
+  "schema_version": "1.0",
+  "run_id": "V02-REAL-006",
+  "plan_revision": 1,
+  "plan_digest": "sha256:9ad88fd343a14118432e21b09a2364a152913c6f292f43adf647c99d3fc79d5b",
+  "task_id": "V02-REAL-006-T01",
+  "parent_task_id": null,
+  "dependencies": [],
+  "objective": "Add exactly one int_to_bytes boundary case to the existing parametrized round-trip test in tests/test_itsdangerous/test_encoding.py.",
+  "rationale": "The current test covers zero, a one-byte interior value, and the maximum unsigned 64-bit value, but not the first value that requires two encoded bytes. Decimal 256 is the one-to-two-byte length transition and has the exact minimal big-endian representation b\"\\x01\\x00\".",
+  "context_manifest": {
+    "schema_version": "1.0",
+    "summary": "At base revision 672971d66a2ef9f85151e53283113f33d642dabd, test_int_bytes is parametrized with 0, 192, and 18446744073709551615. It already asserts both the exact int_to_bytes output and bytes_to_int round trip. The implementation packs an unsigned big-endian 64-bit integer and strips leading zero bytes. Extend only the existing case table with decimal 256 and expected bytes b\"\\x01\\x00\"; production behavior is frozen.",
+    "references": [
+      {
+        "path": "/workspace/scratch/473866e9940e/repo/evals/v0.2/results/baseline/V02-REAL-006/packet.json",
+        "symbol": null,
+        "purpose": "Authoritative case requirement, allowed write scope, acceptance criteria, and required focused pytest command.",
+        "digest": "sha256:5109ffc4a1c59980e30fc27a2ecf1613ad5fa5320a623d97e555251690c99952",
+        "trust": "harness"
+      },
+      {
+        "path": "/workspace/scratch/473866e9940e/repo/evals/v0.2/prompts/architect.md",
+        "symbol": null,
+        "purpose": "Frozen architect-role and read-only planning boundary.",
+        "digest": "sha256:a8e484e802d361e2236c7b7221ae84c40037fca40815cb6ae695b5897528e931",
+        "trust": "harness"
+      },
+      {
+        "path": "/workspace/scratch/473866e9940e/repo/AGENTS.md",
+        "symbol": null,
+        "purpose": "Applicable Eclipse workflow and repository validation policy.",
+        "digest": "sha256:a366165b64fd24fdb33cf4c95a557605ea0aed337ba97c9e9ed6821e294c6f77",
+        "trust": "project-config"
+      },
+      {
+        "path": "/workspace/scratch/473866e9940e/repo/policies/sol-luna.json",
+        "symbol": "profiles.worker-lite",
+        "purpose": "Configured policy preference for tiny deterministic execution tasks.",
+        "digest": "sha256:0748e68bb125b6aa8e3a36893b43966217953d01828c6c84306d6ed8caa7fcbf",
+        "trust": "project-config"
+      },
+      {
+        "path": "tests/test_itsdangerous/test_encoding.py",
+        "symbol": "test_int_bytes",
+        "purpose": "Owned test parametrization and existing exact-output/round-trip assertions.",
+        "digest": "sha256:af71dbee0825fc8ae947b6c789b05f2331afe60efae2aee5145727446385c3f0",
+        "trust": "repository"
+      },
+      {
+        "path": "src/itsdangerous/encoding.py",
+        "symbol": "int_to_bytes; bytes_to_int",
+        "purpose": "Read-only implementation context establishing unsigned big-endian minimal-byte behavior.",
+        "digest": "sha256:c304f3e6aff7ccb71a01dba793afef4a84adc06a9859edf4ed997f53ceda4453",
+        "trust": "repository"
+      },
+      {
+        "path": "pyproject.toml",
+        "symbol": "tool.pytest.ini_options",
+        "purpose": "Read-only focused-test configuration context.",
+        "digest": "sha256:201c20759a79bd30b8fcb38ce5539ed1dc28ff2b39d4f9742a6a54d696033a79",
+        "trust": "repository"
+      }
+    ],
+    "trusted_sources": [
+      "/workspace/scratch/473866e9940e/repo/evals/v0.2/results/baseline/V02-REAL-006/packet.json",
+      "/workspace/scratch/473866e9940e/repo/evals/v0.2/prompts/architect.md",
+      "/workspace/scratch/473866e9940e/repo/AGENTS.md",
+      "/workspace/scratch/473866e9940e/repo/policies/sol-luna.json"
+    ]
+  },
+  "decisions": {
+    "fixed": [
+      "Use decimal 256 as the single additional boundary because it is the first value requiring two minimal big-endian bytes.",
+      "Use b\"\\x01\\x00\" as the expected int_to_bytes output.",
+      "Extend the existing test_int_bytes parametrization rather than adding a new test function.",
+      "Do not change src/itsdangerous/encoding.py or any runtime behavior.",
+      "This task owns only tests/test_itsdangerous/test_encoding.py and may share execution wave 1 with V02-REAL-006-T02 only in a separate host-provided worktree."
+    ],
+    "assumptions": [
+      "The executor starts from the exact base revision and the referenced test file digest still matches.",
+      "The configured pytest environment already contains the dependencies needed by the packet's validation command.",
+      "Host integration preserves each task's scoped diff and performs the final focused validation after both tasks are integrated."
+    ]
+  },
+  "invariants": [
+    "int_to_bytes and bytes_to_int production implementations remain unchanged.",
+    "All existing parametrized cases and both existing assertions remain intact.",
+    "Exactly one new parameter tuple is added.",
+    "No network, credentials, external effects, destructive actions, dependency changes, generated files, or unrelated formatting changes are authorized.",
+    "Write ownership remains disjoint from V02-REAL-006-T02."
+  ],
+  "non_goals": [
+    "Changing integer conversion behavior, supported ranges, exceptions, or public interfaces.",
+    "Adding multiple boundary cases or refactoring the test.",
+    "Editing documentation, configuration, dependencies, changelogs, or other tests.",
+    "Running the full repository validation suite within this tiny worker task."
+  ],
+  "scope": {
+    "write_globs": [
+      "tests/test_itsdangerous/test_encoding.py"
+    ],
+    "read_globs": [
+      "tests/test_itsdangerous/test_encoding.py",
+      "src/itsdangerous/encoding.py",
+      "pyproject.toml"
+    ],
+    "forbidden_globs": [
+      "docs/**",
+      "src/**",
+      "pyproject.toml",
+      "uv.lock",
+      "CHANGES.rst",
+      "README.md"
+    ],
+    "shared_interfaces": [],
+    "exclusive_resources": [],
+    "parallel_safe": true,
+    "isolation": "worktree"
+  },
+  "required_capabilities": [
+    "scoped text editing",
+    "Python bytes-literal reasoning",
+    "pytest execution",
+    "git diff inspection without commit or push authority"
+  ],
+  "execution_profile": {
+    "role": "executor",
+    "capability_tier": "bounded-routine",
+    "cost_tier": "low",
+    "reasoning_effort": "medium",
+    "preferred_model": "gpt-5.6-luna",
+    "fallback_profiles": [
+      "worker: executor/bounded-complex/low/high",
+      "manual executor under the same contract"
+    ]
+  },
+  "implementation_instructions": [
+    "Before editing, verify HEAD is 672971d66a2ef9f85151e53283113f33d642dabd and verify that only the task-owned worktree is used.",
+    "In the existing @pytest.mark.parametrize values for test_int_bytes, add exactly the tuple (256, b\"\\x01\\x00\").",
+    "Preserve the existing test name, parameter names, three existing tuples, exact-output assertion, and bytes_to_int round-trip assertion.",
+    "Do not edit production source or any path other than tests/test_itsdangerous/test_encoding.py.",
+    "Run every required validation command and capture its command, exit status, and concise output in the result evidence.",
+    "Report the exact files changed and a focused diff; do not commit, push, install dependencies, or use the network unless separately authorized by the host."
+  ],
+  "acceptance_criteria": [
+    {
+      "id": "T01-AC1",
+      "statement": "test_int_bytes contains exactly one additional parameter case, decimal 256 with expected bytes b\"\\x01\\x00\", while all three pre-existing cases remain unchanged.",
+      "evidence_required": "Focused diff of tests/test_itsdangerous/test_encoding.py showing the single tuple addition and no unrelated edits."
+    },
+    {
+      "id": "T01-AC2",
+      "statement": "The new boundary case verifies both exact int_to_bytes output and bytes_to_int round-trip equality through the existing assertions.",
+      "evidence_required": "Passing output for PYTHONPATH=src python -m pytest tests/test_itsdangerous/test_encoding.py -q, together with the focused diff retaining both assertions."
+    },
+    {
+      "id": "T01-AC3",
+      "statement": "No runtime code, documentation, dependency, configuration, or other test file is changed.",
+      "evidence_required": "Repository-wide git diff --name-only output listing only tests/test_itsdangerous/test_encoding.py."
+    }
+  ],
+  "validation": [
+    {
+      "command": "PYTHONPATH=src python -m pytest tests/test_itsdangerous/test_encoding.py -q",
+      "purpose": "Required packet validation of all encoding tests, including the new boundary round trip.",
+      "mutating": false,
+      "required": true
+    },
+    {
+      "command": "git diff --check -- tests/test_itsdangerous/test_encoding.py",
+      "purpose": "Reject whitespace errors in the owned patch.",
+      "mutating": false,
+      "required": true
+    },
+    {
+      "command": "git diff --name-only",
+      "purpose": "Prove that the worker changed only its authorized file.",
+      "mutating": false,
+      "required": true
+    }
+  ],
+  "expected_evidence": [
+    "Base revision verification.",
+    "Exact files_changed list containing only tests/test_itsdangerous/test_encoding.py.",
+    "Focused patch showing one added parameter tuple and no assertion changes.",
+    "Command, exit status, and concise output for every required validation command.",
+    "Criterion-by-criterion evidence mapped to T01-AC1 through T01-AC3.",
+    "Any deviations, blockers, or observed unrelated failures stated explicitly."
+  ],
+  "stop_conditions": [
+    "HEAD or the referenced owned-file digest does not match the approved base context.",
+    "The requested boundary cannot be expressed as exactly (256, b\"\\x01\\x00\") in the existing parametrization without changing test semantics.",
+    "Any production-code, documentation, dependency, lockfile, configuration, or other out-of-scope edit appears necessary.",
+    "The required focused pytest command fails for a reason not caused by the authorized one-line test-data addition.",
+    "Required tools or dependencies are unavailable; report the environment blocker rather than installing or using the network.",
+    "Credentials, external effects, destructive actions, expanded permissions, or a verified model guarantee are requested.",
+    "An architectural, interface, scope, or concurrency decision must change; return to the architect for a new plan revision."
+  ],
+  "risk": {
+    "level": "low",
+    "flags": [
+      "test-only edit",
+      "fixed boundary expectation",
+      "parallel dispatch conditional on isolated worktree"
+    ]
+  },
+  "complexity": "trivial",
+  "budgets": {
+    "max_attempts": 2,
+    "max_review_rounds": 1
+  },
+  "authorization": {
+    "network": false,
+    "credentials": false,
+    "external_side_effects": false,
+    "destructive_actions": false,
+    "targets": [
+      "tests/test_itsdangerous/test_encoding.py"
+    ]
+  },
+  "provenance": {
+    "base_revision": "672971d66a2ef9f85151e53283113f33d642dabd",
+    "created_by": "eclipse-architect",
+    "created_at": "2026-08-13T03:32:19Z",
+    "source_requirement_digest": "sha256:5109ffc4a1c59980e30fc27a2ecf1613ad5fa5320a623d97e555251690c99952"
+  },
+  "metadata": {
+    "policy": "sol-luna-v0.1",
+    "routing_status": "policy-only; requested/configured model identity, effective route, permissions, and cost are unverified",
+    "execution_wave": 1,
+    "integration_order": 1,
+    "concurrency_decision": "May run concurrently with V02-REAL-006-T02 only in separate host-provided worktrees; otherwise serialize T01 then T02.",
+    "plan_digest_algorithm": "SHA-256 over the exact UTF-8 bytes of metadata.plan_digest_input, with no trailing newline.",
+    "plan_digest_input": "{\"base_revision\":\"672971d66a2ef9f85151e53283113f33d642dabd\",\"fixed_decisions\":[\"add decimal 256 as the one-to-two-byte length boundary in the existing parametrized round-trip test\",\"document the RFC 4648 URL-safe alphabet and unpadded encoding behavior without changing runtime code\",\"use two disjoint contracts in one concurrent wave only with host-provided isolated worktrees\"],\"plan_revision\":1,\"run_id\":\"V02-REAL-006\",\"task_ids\":[\"V02-REAL-006-T01\",\"V02-REAL-006-T02\"],\"waves\":[[\"V02-REAL-006-T01\",\"V02-REAL-006-T02\"]]}"
+  }
+}

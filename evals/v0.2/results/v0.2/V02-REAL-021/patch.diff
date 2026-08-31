@@ -1,0 +1,50 @@
+diff --git a/dashboard/starter-example/app/lib/utils.ts b/dashboard/starter-example/app/lib/utils.ts
+index b7f7cff..d8feb05 100644
+--- a/dashboard/starter-example/app/lib/utils.ts
++++ b/dashboard/starter-example/app/lib/utils.ts
+@@ -22,6 +22,10 @@ export const formatDateToLocal = (
+ };
+ 
+ export const generateYAxis = (revenue: Revenue[]) => {
++  if (revenue.length === 0) {
++    return { yAxisLabels: ['$0K'], topLabel: 0 };
++  }
++
+   // Calculate what labels we need to display on the y-axis
+   // based on highest record and in 1000s
+   const yAxisLabels = [];
+diff --git a/dashboard/starter-example/app/lib/utils.test.ts b/dashboard/starter-example/app/lib/utils.test.ts
+new file mode 100644
+index 0000000..d6dcb72
+--- /dev/null
++++ b/dashboard/starter-example/app/lib/utils.test.ts
+@@ -0,0 +1,29 @@
++import assert from 'node:assert/strict';
++import test from 'node:test';
++
++import { generateYAxis } from './utils';
++
++test('returns a zero axis for empty revenue', () => {
++  assert.deepEqual(generateYAxis([]), {
++    yAxisLabels: ['$0K'],
++    topLabel: 0,
++  });
++});
++
++test('preserves non-empty rounding and descending labels', () => {
++  assert.deepEqual(generateYAxis([{ month: 'Jan', revenue: 1500 }]), {
++    yAxisLabels: ['$2K', '$1K', '$0K'],
++    topLabel: 2000,
++  });
++
++  assert.deepEqual(
++    generateYAxis([
++      { month: 'Jan', revenue: 1000 },
++      { month: 'Feb', revenue: 3000 },
++    ]),
++    {
++      yAxisLabels: ['$3K', '$2K', '$1K', '$0K'],
++      topLabel: 3000,
++    },
++  );
++});

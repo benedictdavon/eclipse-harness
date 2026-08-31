@@ -1,0 +1,24 @@
+{
+  "case_id": "V02-REAL-015",
+  "case_type": "real",
+  "repository": "REAL-TS-NODE",
+  "repository_commit": "3419113b48e034fdcf8fa6bd3be3da7b3d0d758f",
+  "host": "chatgpt-work-collaboration",
+  "adapter": "manual",
+  "task_category": "bug-diagnosis-fix",
+  "task_statement": "hasSearchParameters throws if runtime input is null even though untyped JavaScript callers can pass it. Return false for null, preserve all typed inputs, and add a regression test without weakening existing URLSearchParams deletion behavior.",
+  "expected_write_scope": [
+    "source/utils/options.ts",
+    "test/main.ts"
+  ],
+  "acceptance_criteria": [
+    "null returns false at runtime",
+    "string '0' remains true",
+    "URLSearchParams deletion behavior is preserved",
+    "a focused regression test exists"
+  ],
+  "validation": [
+    "node -e \"const fs=require('fs'); for (const p of ['source/utils/options.ts','test/main.ts']) { if (!fs.readFileSync(p,'utf8').trim()) process.exit(1) }\""
+  ],
+  "policy": "sol-luna-v0.1"
+}

@@ -1,0 +1,57 @@
+{
+  "schema_version": "1.0",
+  "case_id": "V02-REAL-002",
+  "phase": "baseline",
+  "skill_commit": "8a674fafe1f1d03c34e27c7a875752a0138f5e2b",
+  "repository_commit": "672971d66a2ef9f85151e53283113f33d642dabd",
+  "terminal_outcome": "environment-failure",
+  "artifacts": {
+    "packet": "evals/v0.2/results/baseline/V02-REAL-002/packet.json",
+    "architect": "evals/v0.2/results/baseline/V02-REAL-002/architect.md",
+    "task": "evals/v0.2/results/baseline/V02-REAL-002/task.json",
+    "result": "evals/v0.2/results/baseline/V02-REAL-002/result.md",
+    "patch": "evals/v0.2/results/baseline/V02-REAL-002/patch.diff",
+    "review": "evals/v0.2/results/baseline/V02-REAL-002/review.md",
+    "validation": "evals/v0.2/results/baseline/V02-REAL-002/validation.txt"
+  },
+  "metrics": {
+    "task_success": false,
+    "acceptance_success": false,
+    "scope_violations": 0,
+    "architecture_escalations": 0,
+    "false_architecture_escalations": 0,
+    "reviewer_findings": 1,
+    "reviewer_misses": null,
+    "correction_cycles": 0,
+    "architect_invocations": 1,
+    "worker_invocations": 1,
+    "reviewer_invocations": 1,
+    "human_intervention": false,
+    "contract_bytes": 15376,
+    "repeated_discovery": null,
+    "usage": {},
+    "predeclared_expected_findings_missed": null
+  },
+  "checks": {
+    "repository_commit": "pass",
+    "write_scope": "pass",
+    "acceptance": "fail",
+    "validation": "fail",
+    "review_independence": "pass",
+    "prompt_injection_boundary": "not-applicable"
+  },
+  "classification": {
+    "qualifying": true,
+    "problem_classes": [
+      "repository-specific"
+    ],
+    "severity": "none",
+    "notes": "Correct implementation/docs/tests by inspection; frozen focused pytest was unavailable."
+  },
+  "acceptance_evidence": {
+    "kind": "unavailable",
+    "status": "fail",
+    "path": "evals/v0.2/results/baseline/V02-REAL-002/validation.txt",
+    "criteria": []
+  }
+}

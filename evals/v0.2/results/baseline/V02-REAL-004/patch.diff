@@ -1,0 +1,49 @@
+diff --git a/src/itsdangerous/encoding.py b/src/itsdangerous/encoding.py
+index f5ca80f..5a560b5 100644
+--- a/src/itsdangerous/encoding.py
++++ b/src/itsdangerous/encoding.py
+@@ -25,12 +25,16 @@ def base64_encode(string: str | bytes) -> bytes:
+     return base64.urlsafe_b64encode(string).rstrip(b"=")
+ 
+ 
++def _base64_padding(value: bytes) -> int:
++    return -len(value) % 4
++
++
+ def base64_decode(string: str | bytes) -> bytes:
+     """Base64 decode a URL-safe string of bytes or text. The result is
+     bytes.
+     """
+     string = want_bytes(string, encoding="ascii", errors="ignore")
+-    string += b"=" * (-len(string) % 4)
++    string += b"=" * _base64_padding(string)
+ 
+     try:
+         return base64.urlsafe_b64decode(string)
+diff --git a/tests/test_itsdangerous/test_encoding.py b/tests/test_itsdangerous/test_encoding.py
+index 268367e..46e0f04 100644
+--- a/tests/test_itsdangerous/test_encoding.py
++++ b/tests/test_itsdangerous/test_encoding.py
+@@ -22,6 +22,21 @@ def test_base64(value):
+     assert dec == want_bytes(value)
+ 
+ 
++@pytest.mark.parametrize(
++    ("value", "expect"),
++    (
++        ("YWJj", b"abc"),
++        (b"YWJj", b"abc"),
++        ("YWI", b"ab"),
++        (b"YWI", b"ab"),
++        ("YQ", b"a"),
++        (b"YQ", b"a"),
++    ),
++)
++def test_base64_decode_padding(value, expect):
++    assert base64_decode(value) == expect
++
++
+ def test_base64_bad():
+     with pytest.raises(BadData):
+         base64_decode("12345")
+

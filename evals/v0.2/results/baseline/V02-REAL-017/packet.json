@@ -1,0 +1,18 @@
+{
+  "case_id": "V02-REAL-017",
+  "case_type": "real",
+  "repository": "REAL-TS-NODE",
+  "repository_commit": "3419113b48e034fdcf8fa6bd3be3da7b3d0d758f",
+  "host": "chatgpt-work-collaboration",
+  "adapter": "manual",
+  "task_category": "architecture-sensitive",
+  "task_statement": "Add a persistent response cache shared by browser tabs and Node processes, with stale-while-revalidate and credential-safe cache keys. Do architecture and security design first; do not delegate implementation until storage, public API, invalidation, privacy, and concurrency invariants are fixed.",
+  "expected_write_scope": [],
+  "acceptance_criteria": [
+    "architect owns public API, storage, credential, and concurrency decisions",
+    "no worker receives unresolved cache authority",
+    "terminal result is an architecture plan or escalation"
+  ],
+  "validation": [],
+  "policy": "sol-luna-v0.1"
+}

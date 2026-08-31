@@ -1,0 +1,18 @@
+ECLIPSE_EVIDENCE_KIND: validation-transcript
+declared_command: python evals/v0.2/supplemental/probe_real.py V02-SUP-REAL-002 <candidate-source-root>
+executed_command: python /workspace/scratch/473866e9940e/repo/evals/v0.2/supplemental/probe_real.py V02-SUP-REAL-002 /tmp/eclipse-v02-supp-9vehj8sq/source
+patch_path: evals/v0.2/supplemental/candidates/V02-SUP-REAL-002/candidate-round-1.patch
+patch_digest: sha256:96e3df8a9680cd927ecc175937e7349359b6b17fecc0da3d76edd8068f969f10
+exit_code: 1
+stdout:
+
+stderr:
+Traceback (most recent call last):
+  File "/workspace/scratch/473866e9940e/repo/evals/v0.2/supplemental/probe_real.py", line 60, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "/workspace/scratch/473866e9940e/repo/evals/v0.2/supplemental/probe_real.py", line 36, in main
+    expect_value_error(
+  File "/workspace/scratch/473866e9940e/repo/evals/v0.2/supplemental/probe_real.py", line 17, in expect_value_error
+    raise AssertionError("ValueError was not raised")
+AssertionError: ValueError was not raised

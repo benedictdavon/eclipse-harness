@@ -1,0 +1,25 @@
+diff --git a/src/itsdangerous/encoding.py b/src/itsdangerous/encoding.py
+--- a/src/itsdangerous/encoding.py
++++ b/src/itsdangerous/encoding.py
+@@ -49,6 +49,9 @@ _bytes_to_int = t.cast("t.Callable[[bytes], tuple[int]]", _int64_struct.unpack)
+ 
+ 
+ def int_to_bytes(num: int) -> bytes:
++    if num < 0:
++        raise ValueError("num must be nonnegative")
++
+     return _int_to_bytes(num).lstrip(b"\x00")
+ 
+ 
+diff --git a/tests/test_itsdangerous/test_encoding.py b/tests/test_itsdangerous/test_encoding.py
+--- a/tests/test_itsdangerous/test_encoding.py
++++ b/tests/test_itsdangerous/test_encoding.py
+@@ -35,3 +35,8 @@ def test_int_bytes(value, expect):
+     assert enc == expect
+     dec = bytes_to_int(enc)
+     assert dec == value
++
++
++def test_int_bytes_negative():
++    with pytest.raises(ValueError):
++        int_to_bytes(-1)

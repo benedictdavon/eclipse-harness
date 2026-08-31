@@ -1,0 +1,46 @@
+diff --git a/packages/should-skip-package/src/index.ts b/packages/should-skip-package/src/index.ts
+index f6c19a1..1dbdb10 100644
+--- a/packages/should-skip-package/src/index.ts
++++ b/packages/should-skip-package/src/index.ts
+@@ -1,6 +1,6 @@
+ import type { PackageGroup, Package } from "@changesets/types";
+ 
+-export function shouldSkipPackage(
++export function shouldSkipPackageReason(
+   { packageJson }: Package,
+   {
+     ignore,
+@@ -9,14 +9,28 @@ export function shouldSkipPackage(
+     ignore: PackageGroup;
+     allowPrivatePackages: boolean;
+   },
+-) {
++): "ignored" | "private" | "missing-version" | null {
+   if (ignore.includes(packageJson.name)) {
+-    return true;
++    return "ignored";
+   }
+ 
+   if (packageJson.private && !allowPrivatePackages) {
+-    return true;
++    return "private";
++  }
++
++  if (!packageJson.version) {
++    return "missing-version";
+   }
+ 
+-  return !packageJson.version;
++  return null;
++}
++
++export function shouldSkipPackage(
++  pkg: Package,
++  options: {
++    ignore: PackageGroup;
++    allowPrivatePackages: boolean;
++  },
++) {
++  return shouldSkipPackageReason(pkg, options) !== null;
+ }
+

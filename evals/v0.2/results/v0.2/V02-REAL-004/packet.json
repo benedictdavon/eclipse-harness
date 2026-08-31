@@ -1,0 +1,23 @@
+{
+  "case_id": "V02-REAL-004",
+  "case_type": "real",
+  "repository": "REAL-PY-LIB",
+  "repository_commit": "672971d66a2ef9f85151e53283113f33d642dabd",
+  "host": "chatgpt-work-collaboration",
+  "adapter": "manual",
+  "task_category": "behavior-preserving-refactor",
+  "task_statement": "Refactor base64_decode to use a private helper for padding calculation. Preserve its signature, exceptions, decoded values, and tests. Do not expose the helper or edit unrelated modules.",
+  "expected_write_scope": [
+    "src/itsdangerous/encoding.py",
+    "tests/test_itsdangerous/test_encoding.py"
+  ],
+  "acceptance_criteria": [
+    "a private padding helper exists",
+    "public behavior and exception type remain unchanged",
+    "focused tests pass"
+  ],
+  "validation": [
+    "PYTHONPATH=src python -m pytest tests/test_itsdangerous/test_encoding.py -q"
+  ],
+  "policy": "sol-luna-v0.1"
+}

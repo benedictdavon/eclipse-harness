@@ -1,0 +1,113 @@
+diff --git a/packages/should-skip-package/src/index.ts b/packages/should-skip-package/src/index.ts
+index f6c19a1..c5d388d 100644
+--- a/packages/should-skip-package/src/index.ts
++++ b/packages/should-skip-package/src/index.ts
+@@ -1,22 +1,32 @@
+ import type { PackageGroup, Package } from "@changesets/types";
+ 
+-export function shouldSkipPackage(
++type ShouldSkipPackageOptions = {
++  ignore: PackageGroup;
++  allowPrivatePackages: boolean;
++};
++
++export function shouldSkipPackageReason(
+   { packageJson }: Package,
+-  {
+-    ignore,
+-    allowPrivatePackages,
+-  }: {
+-    ignore: PackageGroup;
+-    allowPrivatePackages: boolean;
+-  },
+-) {
++  { ignore, allowPrivatePackages }: ShouldSkipPackageOptions,
++): "ignored" | "private" | "missing-version" | null {
+   if (ignore.includes(packageJson.name)) {
+-    return true;
++    return "ignored";
+   }
+ 
+   if (packageJson.private && !allowPrivatePackages) {
+-    return true;
++    return "private";
++  }
++
++  if (!packageJson.version) {
++    return "missing-version";
+   }
+ 
+-  return !packageJson.version;
++  return null;
++}
++
++export function shouldSkipPackage(
++  pkg: Package,
++  options: ShouldSkipPackageOptions,
++) {
++  return shouldSkipPackageReason(pkg, options) !== null;
+ }
+diff --git a/packages/should-skip-package/README.md b/packages/should-skip-package/README.md
+new file mode 100644
+index 0000000..3c817c3
+--- /dev/null
++++ b/packages/should-skip-package/README.md
+@@ -0,0 +1,12 @@
++# @changesets/should-skip-package
++
++Use `shouldSkipPackageReason(pkg, options)` to learn why a package is skipped. It returns:
++
++- `"ignored"` when the package name appears in `options.ignore`;
++- `"private"` when the package is private and `options.allowPrivatePackages` is `false`;
++- `"missing-version"` when the package has no version; or
++- `null` when the package should not be skipped.
++
++Checks use that precedence: ignored, then disallowed private, then missing version. An allowed private package can therefore still return `"missing-version"`.
++
++`shouldSkipPackage(pkg, options)` remains the boolean compatibility API. It returns `true` exactly when `shouldSkipPackageReason(pkg, options)` is not `null`.
+diff --git a/packages/should-skip-package/src/index.test.ts b/packages/should-skip-package/src/index.test.ts
+new file mode 100644
+index 0000000..2330f5e
+--- /dev/null
++++ b/packages/should-skip-package/src/index.test.ts
+@@ -0,0 +1,40 @@
++import type { Package } from "@changesets/types";
++import { expect, test } from "vitest";
++import { shouldSkipPackage, shouldSkipPackageReason } from "./index.ts";
++
++const pkg = (name: string, version: string, isPrivate = false): Package => ({
++  dir: `/packages/${name}`,
++  packageJson: { name, version, private: isPrivate },
++});
++
++const cases = [
++  {
++    name: "ignored takes precedence over private and missing version",
++    package: pkg("ignored", "", true),
++    options: { ignore: ["ignored"], allowPrivatePackages: false },
++    reason: "ignored",
++  },
++  {
++    name: "disallowed private takes precedence over missing version",
++    package: pkg("private", "", true),
++    options: { ignore: [], allowPrivatePackages: false },
++    reason: "private",
++  },
++  {
++    name: "allowed private package can still be missing a version",
++    package: pkg("missing", "", true),
++    options: { ignore: [], allowPrivatePackages: true },
++    reason: "missing-version",
++  },
++  {
++    name: "eligible package is not skipped",
++    package: pkg("published", "1.0.0"),
++    options: { ignore: [], allowPrivatePackages: false },
++    reason: null,
++  },
++] as const;
++
++test.each(cases)("$name", ({ package: packageValue, options, reason }) => {
++  expect(shouldSkipPackageReason(packageValue, options)).toBe(reason);
++  expect(shouldSkipPackage(packageValue, options)).toBe(reason !== null);
++});

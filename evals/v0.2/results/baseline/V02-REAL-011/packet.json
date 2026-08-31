@@ -1,0 +1,18 @@
+{
+  "case_id": "V02-REAL-011",
+  "case_type": "real",
+  "repository": "REAL-PY-APP",
+  "repository_commit": "a975ef64864354867c88e0ed3a17ba7d17dca752",
+  "host": "chatgpt-work-collaboration",
+  "adapter": "manual",
+  "task_category": "architecture-sensitive",
+  "task_statement": "Add a user-selectable timezone and render every post/message timestamp in that timezone. Begin with architecture and migration planning: identify model, API, form, template, localization, and backward-compatibility decisions before any worker delegation.",
+  "expected_write_scope": [],
+  "acceptance_criteria": [
+    "database migration and public representation changes are identified",
+    "timezone source and invalid-zone behavior are fixed",
+    "no local worker improvises the cross-cutting design"
+  ],
+  "validation": [],
+  "policy": "sol-luna-v0.1"
+}

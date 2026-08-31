@@ -1,0 +1,58 @@
+diff --git a/src/__init__.py b/src/__init__.py
+index 0033889..629962c 100644
+--- a/src/__init__.py
++++ b/src/__init__.py
+@@ -1,3 +1,3 @@
+-from .pricing import calculate_total
++from .pricing import calculate_total, format_total
+ 
+-__all__ = ["calculate_total"]
++__all__ = ["calculate_total", "format_total"]
+diff --git a/src/pricing.py b/src/pricing.py
+index 45473e4..cffb0fb 100644
+--- a/src/pricing.py
++++ b/src/pricing.py
+@@ -3,3 +3,10 @@ def calculate_total(amounts: list[int]) -> int:
+     if any(amount < 0 for amount in amounts):
+         raise ValueError("amounts must be non-negative")
+     return sum(amounts)
++
++
++def format_total(cents: int) -> str:
++    """Render an integer number of cents as USD with two decimals."""
++    sign = "-" if cents < 0 else ""
++    dollars, remainder = divmod(abs(cents), 100)
++    return f"${sign}{dollars}.{remainder:02d}"
+diff --git a/tests/test_pricing.py b/tests/test_pricing.py
+index f1fb9fe..067e219 100644
+--- a/tests/test_pricing.py
++++ b/tests/test_pricing.py
+@@ -1,6 +1,7 @@
+ import unittest
+ 
+-from src.pricing import calculate_total
++import src
++from src.pricing import calculate_total, format_total
+ 
+ 
+ class PricingTests(unittest.TestCase):
+@@ -11,6 +12,19 @@ class PricingTests(unittest.TestCase):
+         with self.assertRaises(ValueError):
+             calculate_total([100, -1])
+ 
++    def test_format_total_positive(self) -> None:
++        self.assertEqual(format_total(1234), "$12.34")
++
++    def test_format_total_zero(self) -> None:
++        self.assertEqual(format_total(0), "$0.00")
++
++    def test_format_total_negative(self) -> None:
++        self.assertEqual(format_total(-1234), "$-12.34")
++
++    def test_format_total_package_export(self) -> None:
++        self.assertEqual(src.format_total(1234), "$12.34")
++        self.assertIn("format_total", src.__all__)
++
+ 
+ if __name__ == "__main__":
+     unittest.main()

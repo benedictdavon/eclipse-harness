@@ -1,0 +1,49 @@
+diff --git a/app/models.py b/app/models.py
+index db447d8..64e544f 100644
+--- a/app/models.py
++++ b/app/models.py
+@@ -153,15 +153,16 @@ class User(PaginatedAPIMixin, UserMixin, db.Model):
+         query = self.following.select().where(User.id == user.id)
+         return db.session.scalar(query) is not None
+ 
+-    def followers_count(self):
++    def _relationship_count(self, source_select):
+         query = sa.select(sa.func.count()).select_from(
+-            self.followers.select().subquery())
++            source_select.subquery())
+         return db.session.scalar(query)
+ 
++    def followers_count(self):
++        return self._relationship_count(self.followers.select())
++
+     def following_count(self):
+-        query = sa.select(sa.func.count()).select_from(
+-            self.following.select().subquery())
+-        return db.session.scalar(query)
++        return self._relationship_count(self.following.select())
+ 
+     def following_posts(self):
+         Author = so.aliased(User)
+@@ -224,9 +225,7 @@ class User(PaginatedAPIMixin, UserMixin, db.Model):
+         return db.session.scalar(query)
+ 
+     def posts_count(self):
+-        query = sa.select(sa.func.count()).select_from(
+-            self.posts.select().subquery())
+-        return db.session.scalar(query)
++        return self._relationship_count(self.posts.select())
+ 
+     def to_dict(self, include_email=False):
+         data = {
+diff --git a/tests.py b/tests.py
+index 4ef9098..8ef0a72 100755
+--- a/tests.py
++++ b/tests.py
+@@ -83,6 +83,7 @@ class UserModelCase(unittest.TestCase):
+                   timestamp=now + timedelta(seconds=2))
+         db.session.add_all([p1, p2, p3, p4])
+         db.session.commit()
++        self.assertEqual(u1.posts_count(), 1)
+ 
+         # setup the followers
+         u1.follow(u2)  # john follows susan

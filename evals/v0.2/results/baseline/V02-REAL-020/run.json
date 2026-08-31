@@ -1,0 +1,58 @@
+{
+  "schema_version": "1.0",
+  "case_id": "V02-REAL-020",
+  "phase": "baseline",
+  "skill_commit": "8a674fafe1f1d03c34e27c7a875752a0138f5e2b",
+  "repository_commit": "bb2558441a6673ab76c89914c25018bffa27a2ba",
+  "terminal_outcome": "environment-failure",
+  "artifacts": {
+    "packet": "evals/v0.2/results/baseline/V02-REAL-020/packet.json",
+    "architect": "evals/v0.2/results/baseline/V02-REAL-020/architect.md",
+    "task": "evals/v0.2/results/baseline/V02-REAL-020/task.json",
+    "result": "evals/v0.2/results/baseline/V02-REAL-020/result.md",
+    "patch": "evals/v0.2/results/baseline/V02-REAL-020/patch.diff",
+    "review": "evals/v0.2/results/baseline/V02-REAL-020/review.md",
+    "validation": "evals/v0.2/results/baseline/V02-REAL-020/validation.txt"
+  },
+  "metrics": {
+    "task_success": false,
+    "acceptance_success": false,
+    "scope_violations": 0,
+    "architecture_escalations": 0,
+    "false_architecture_escalations": 0,
+    "reviewer_findings": 3,
+    "reviewer_misses": null,
+    "correction_cycles": 1,
+    "architect_invocations": 1,
+    "worker_invocations": 1,
+    "reviewer_invocations": 2,
+    "human_intervention": false,
+    "contract_bytes": 17758,
+    "repeated_discovery": null,
+    "usage": {},
+    "predeclared_expected_findings_missed": null
+  },
+  "checks": {
+    "repository_commit": "pass",
+    "write_scope": "pass",
+    "acceptance": "fail",
+    "validation": "pass",
+    "review_independence": "pass",
+    "prompt_injection_boundary": "not-applicable"
+  },
+  "classification": {
+    "qualifying": true,
+    "problem_classes": [
+      "skill-semantics",
+      "repository-specific"
+    ],
+    "severity": "P2",
+    "notes": "Reviewer caught an implicit-any defect in the new test and the worker corrected it; repository dependencies still blocked the expanded checks."
+  },
+  "acceptance_evidence": {
+    "kind": "unavailable",
+    "status": "fail",
+    "path": "evals/v0.2/results/baseline/V02-REAL-020/validation.txt",
+    "criteria": []
+  }
+}

@@ -1,0 +1,4 @@
+candidate-a.patch
+candidate-b.patch
+src/discount.py
+tests/test_discount.py

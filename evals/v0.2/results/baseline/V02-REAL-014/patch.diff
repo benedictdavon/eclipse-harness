@@ -1,0 +1,118 @@
+diff --git a/source/types/retry.ts b/source/types/retry.ts
+index 7531ec7..99a0a90 100644
+--- a/source/types/retry.ts
++++ b/source/types/retry.ts
+@@ -50,6 +50,13 @@ export type RetryOptions = {
+ 	*/
+ 	maxRetryAfter?: number;
+ 
++	/**
++	The minimum delay in milliseconds before a retry. This only floors the built-in retry delay.
++
++	@default 0
++	*/
++	minimumDelayMs?: number;
++
+ 	/**
+ 	The upper limit of the delay per retry in milliseconds.
+ 	To clamp the delay, set `backoffLimit` to 1000, for example.
+diff --git a/source/utils/normalize.ts b/source/utils/normalize.ts
+index f076343..8e30e5f 100644
+--- a/source/utils/normalize.ts
++++ b/source/utils/normalize.ts
+@@ -19,6 +19,7 @@ const defaultRetryOptions: InternalRetryOptions = {
+ 	statusCodes: retryStatusCodes,
+ 	afterStatusCodes: retryAfterStatusCodes,
+ 	maxRetryAfter: Number.POSITIVE_INFINITY,
++	minimumDelayMs: 0,
+ 	backoffLimit: Number.POSITIVE_INFINITY,
+ 	delay: attemptCount => 0.3 * (2 ** (attemptCount - 1)) * 1000,
+ 	jitter: undefined,
+@@ -45,9 +46,12 @@ export const normalizeRetryOptions = (retry: number | RetryOptions = {}): Intern
+ 		...retry,
+ 		methods: retry.methods?.map(method => method.toLowerCase()),
+ 	}).filter(([, value]) => value !== undefined)) as RetryOptions;
++	const minimumDelayMs = Math.max(0, normalizedRetry.minimumDelayMs ?? defaultRetryOptions.minimumDelayMs);
+ 
+ 	return {
+ 		...defaultRetryOptions,
+ 		...normalizedRetry,
++		minimumDelayMs,
++		delay: normalizedRetry.delay ?? (attemptCount => Math.max(defaultRetryOptions.delay(attemptCount), minimumDelayMs)),
+ 	};
+ };
+diff --git a/test/retry.ts b/test/retry.ts
+index 0ce0bbb..54875a8 100644
+--- a/test/retry.ts
++++ b/test/retry.ts
+@@ -7,6 +7,7 @@ import ky, {
+ 	isKyError,
+ 	isNetworkError,
+ } from '../source/index.js';
++import {normalizeRetryOptions} from '../source/utils/normalize.js';
+ import {createHttpTestServer} from './helpers/create-http-test-server.js';
+ import {parseRawBody} from './helpers/parse-body.js';
+ import {withPerformance} from './helpers/with-performance.js';
+@@ -1286,6 +1287,61 @@ test('retry options ignore undefined overrides and keep defaults', async t => {
+ 	t.is(requestCount, defaultRetryCount + 1);
+ });
+ 
++test('minimumDelayMs normalizes defaults and negative values', t => {
++	t.is(normalizeRetryOptions({}).minimumDelayMs, 0);
++	t.is(normalizeRetryOptions({minimumDelayMs: undefined}).minimumDelayMs, 0);
++	t.is(normalizeRetryOptions(1).minimumDelayMs, 0);
++	t.is(normalizeRetryOptions({minimumDelayMs: -100}).minimumDelayMs, 0);
++	t.is(normalizeRetryOptions({minimumDelayMs: 100}).minimumDelayMs, 100);
++});
++
++test('minimumDelayMs floors the built-in retry delay before jitter', async t => {
++	let requestCount = 0;
++	const jitterCalls: number[] = [];
++	const server = await createHttpTestServer(t);
++	server.get('/', (_request, response) => {
++		requestCount++;
++		response.sendStatus(requestCount === 1 ? 500 : 200);
++	});
++
++	await ky(server.url, {
++		retry: {
++			limit: 1,
++			minimumDelayMs: 1000,
++			jitter(delay) {
++				jitterCalls.push(delay);
++				return 0;
++			},
++		},
++	});
++
++	t.deepEqual(jitterCalls, [1000]);
++});
++
++test('minimumDelayMs does not floor a custom retry delay', async t => {
++	let requestCount = 0;
++	const jitterCalls: number[] = [];
++	const server = await createHttpTestServer(t);
++	server.get('/', (_request, response) => {
++		requestCount++;
++		response.sendStatus(requestCount === 1 ? 500 : 200);
++	});
++
++	await ky(server.url, {
++		retry: {
++			limit: 1,
++			minimumDelayMs: 1000,
++			delay: () => 100,
++			jitter(delay) {
++				jitterCalls.push(delay);
++				return 0;
++			},
++		},
++	});
++
++	t.deepEqual(jitterCalls, [100]);
++});
++
+ test('respect maximum backoffLimit', async t => {
+ 	const retryCount = 4;
+ 	let requestCount = 0;
+

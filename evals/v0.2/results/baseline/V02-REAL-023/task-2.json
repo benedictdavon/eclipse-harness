@@ -1,0 +1,218 @@
+{
+  "schema_version": "1.0",
+  "run_id": "V02-REAL-023",
+  "plan_revision": 1,
+  "plan_digest": "sha256:aeadfd362074d91a308f14247ef296f25b29cfbb135aa6afcf52ae65190de575",
+  "task_id": "V02-REAL-023-T2",
+  "parent_task_id": null,
+  "dependencies": [],
+  "objective": "Ensure and cover semantic time markup with the original date string as dateTime in basics/typescript-final, preserving visible formatting and public API.",
+  "rationale": "The pinned component already has the requested time/dateTime semantics. A focused test should lock that contract without unnecessary source churn, independently from the dashboard utility test task.",
+  "context_manifest": {
+    "schema_version": "1.0",
+    "summary": "The TypeScript-final Date default export accepts dateString, parses it for display, and already renders a time element with dateTime bound to the original string. This task verifies that state and adds focused semantic-markup coverage.",
+    "references": [
+      {
+        "path": "basics/typescript-final/components/date.tsx",
+        "symbol": "Date",
+        "purpose": "Production component to verify and, only if necessary, make conformant",
+        "digest": null,
+        "trust": "repository"
+      },
+      {
+        "path": "basics/typescript-final/package.json",
+        "symbol": "scripts and dependencies",
+        "purpose": "Confirms local date-fns/TypeScript toolchain and absence of a test framework",
+        "digest": null,
+        "trust": "project-config"
+      },
+      {
+        "path": "basics/typescript-final/tsconfig.json",
+        "symbol": null,
+        "purpose": "Type-checking configuration for this example",
+        "digest": null,
+        "trust": "project-config"
+      }
+    ],
+    "trusted_sources": [
+      "V02-REAL-023 acceptance packet",
+      "Eclipse architect plan revision 1"
+    ]
+  },
+  "decisions": {
+    "fixed": [
+      "The default export and exact { dateString: string } prop remain unchanged.",
+      "The rendered root remains a semantic time element with dateTime bound directly to the original dateString.",
+      "Visible text remains format(parseISO(dateString), 'LLLL d, yyyy').",
+      "The pinned source already conforms; leave date.tsx unchanged unless focused validation demonstrates a real mismatch.",
+      "Use dependency-free node:test source-contract coverage; do not add a test framework or package script."
+    ],
+    "assumptions": [
+      "The pinned checkout is clean at bb2558441a6673ab76c89914c25018bffa27a2ba.",
+      "A source-contract test is sufficient to detect removal of time, drift of the dateTime binding, or drift of the visible format without adding JSX test tooling.",
+      "The host will use a dedicated worktree if this task runs concurrently with V02-REAL-023-T1."
+    ]
+  },
+  "invariants": [
+    "Date remains a default export with one string prop named dateString.",
+    "dateTime uses the unformatted input string while the child text uses the existing human-readable format.",
+    "No write crosses out of the two owned component files.",
+    "No package, lockfile, generated output, dashboard example, or other basic example changes."
+  ],
+  "non_goals": [
+    "Changing date parsing, timezone behavior, or visible format",
+    "Changing the Date component API",
+    "Adding accessibility attributes beyond semantic time/dateTime markup",
+    "Adding a test runner or package script",
+    "Editing the dashboard example"
+  ],
+  "scope": {
+    "write_globs": [
+      "basics/typescript-final/components/date.tsx",
+      "basics/typescript-final/components/date.test.tsx"
+    ],
+    "read_globs": [
+      "basics/typescript-final/components/date.tsx",
+      "basics/typescript-final/package.json",
+      "basics/typescript-final/tsconfig.json"
+    ],
+    "forbidden_globs": [
+      ".git/**",
+      ".eclipse/**",
+      "**/package.json",
+      "**/*lock*",
+      "dashboard/**",
+      "seo/**",
+      "basics/dynamic-routes-*/**",
+      "basics/api-routes-*/**"
+    ],
+    "shared_interfaces": [
+      "default export Date({ dateString }: { dateString: string }) (signature is read-only)"
+    ],
+    "exclusive_resources": [
+      "basics/typescript-final/components/date.tsx",
+      "basics/typescript-final/components/date.test.tsx",
+      "basics/typescript-final/.next"
+    ],
+    "parallel_safe": true,
+    "isolation": "worktree"
+  },
+  "required_capabilities": [
+    "repository-read",
+    "scoped-write",
+    "react-typescript-review",
+    "node-test-authoring",
+    "node-test-execution",
+    "type-checking"
+  ],
+  "execution_profile": {
+    "role": "executor",
+    "capability_tier": "bounded-routine",
+    "cost_tier": "low",
+    "reasoning_effort": "high",
+    "preferred_model": "gpt-5.6-luna",
+    "fallback_profiles": [
+      "manual-bounded-worker"
+    ]
+  },
+  "implementation_instructions": [
+    "Confirm date.tsx already renders <time dateTime={dateString}> with format(date, 'LLLL d, yyyy') as its child; preserve the source unchanged when it conforms.",
+    "Add date.test.tsx with JS-compatible syntax using only node:test, node:assert/strict, and node:fs/URL primitives.",
+    "Assert the source retains a time element, binds dateTime directly to dateString, and retains the exact LLLL d, yyyy visible-text format. The test must fail if any of those semantics drift.",
+    "Do not alter the public prop, parser, formatter, configuration, manifests, lockfiles, dependencies, or generated files."
+  ],
+  "acceptance_criteria": [
+    {
+      "id": "AC-023-B1",
+      "statement": "Date renders an explicit semantic time element whose dateTime is the original dateString.",
+      "evidence_required": "Passing focused node:test assertions and direct source review of the time/dateTime binding."
+    },
+    {
+      "id": "AC-023-B2",
+      "statement": "Visible date text retains format(parseISO(dateString), 'LLLL d, yyyy') and the default-exported { dateString: string } API is unchanged.",
+      "evidence_required": "Passing source-contract assertion, TypeScript validation, and scoped diff review."
+    },
+    {
+      "id": "AC-023-B3",
+      "statement": "Changes remain within the TypeScript-final date component/test ownership and do not churn already-compliant production code.",
+      "evidence_required": "Exact changed-file list showing date.test.tsx and date.tsx only if a necessary conformance fix was made, plus clean scoped diff check."
+    }
+  ],
+  "validation": [
+    {
+      "command": "node --test basics/typescript-final/components/date.test.tsx",
+      "purpose": "Run focused semantic time/dateTime and visible-format coverage",
+      "mutating": false,
+      "required": true
+    },
+    {
+      "command": "pnpm --dir basics/typescript-final exec tsc --noEmit",
+      "purpose": "Type-check the component and new test in the owned example",
+      "mutating": false,
+      "required": true
+    },
+    {
+      "command": "node -e \"const fs=require('fs'); for (const p of ['basics/typescript-final/components/date.tsx','basics/typescript-final/components/date.test.tsx']) { if (!fs.readFileSync(p,'utf8').trim()) process.exit(1) }\"",
+      "purpose": "Verify this task's production target and focused test are non-empty",
+      "mutating": false,
+      "required": true
+    },
+    {
+      "command": "git diff --check -- basics/typescript-final/components/date.tsx basics/typescript-final/components/date.test.tsx",
+      "purpose": "Reject malformed whitespace in the owned patch",
+      "mutating": false,
+      "required": true
+    }
+  ],
+  "expected_evidence": [
+    "Exact changed-file list for the TypeScript-final date ownership",
+    "Focused node:test command and exit code",
+    "TypeScript and non-empty-file command exit codes",
+    "Direct source evidence for time, dateTime={dateString}, visible format, and unchanged prop signature",
+    "Criterion map for AC-023-B1 through AC-023-B3"
+  ],
+  "stop_conditions": [
+    "Completion requires a dependency, manifest, lockfile, generated file, network access, or write outside the two date component globs.",
+    "A request arises to change parsing, visible formatting, timezone semantics, or the public Date component API.",
+    "The already-compliant source would be edited only for stylistic churn rather than a demonstrated acceptance mismatch.",
+    "The host cannot provide a clean isolated worktree while parallel execution is requested; fall back to sequential execution.",
+    "The base revision, plan revision, or plan digest does not match this contract.",
+    "Existing dependencies required for type-checking are unavailable; report the environment blocker instead of installing them.",
+    "Any acceptance criterion lacks direct evidence after two bounded attempts."
+  ],
+  "risk": {
+    "level": "low",
+    "flags": [
+      "already-compliant-source",
+      "semantic-markup-contract",
+      "conditional-parallelism"
+    ]
+  },
+  "complexity": "bounded",
+  "budgets": {
+    "max_attempts": 2,
+    "max_review_rounds": 2
+  },
+  "authorization": {
+    "network": false,
+    "credentials": false,
+    "external_side_effects": false,
+    "destructive_actions": false,
+    "targets": []
+  },
+  "provenance": {
+    "base_revision": "bb2558441a6673ab76c89914c25018bffa27a2ba",
+    "created_by": "eclipse-architect",
+    "created_at": "2026-08-13T05:32:13Z",
+    "source_requirement_digest": "sha256:c0cb0c56899e0c1517242b51e72d1e80945c1503dae97fa7306499a3e7f1009b"
+  },
+  "metadata": {
+    "case_id": "V02-REAL-023",
+    "task_partition": "basics-typescript-final",
+    "policy": "sol-luna-v0.1",
+    "routing_verification": "policy-only; effective model unverified",
+    "parallel_peer": "V02-REAL-023-T1",
+    "integration_order": 2,
+    "supersedes": []
+  }
+}

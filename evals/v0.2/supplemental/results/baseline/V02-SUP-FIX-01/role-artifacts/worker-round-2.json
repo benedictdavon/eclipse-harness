@@ -1,0 +1,86 @@
+{
+  "attempt": 2,
+  "blockers": [
+    "Reviewer decision required."
+  ],
+  "commands": [
+    {
+      "command": "python -m unittest discover -s tests -v",
+      "exit_code": 1,
+      "outcome": "failed",
+      "purpose": "Frozen supplemental case validation.",
+      "summary": "Validation exited 1; full stdout/stderr is in validation-round-2.txt."
+    }
+  ],
+  "criteria_evidence": [
+    {
+      "criterion_id": "AC-1",
+      "evidence": "Candidate patch is subject to review; see validation-round-2.txt.",
+      "status": "unsatisfied"
+    },
+    {
+      "criterion_id": "AC-2",
+      "evidence": "Candidate patch is subject to review; see validation-round-2.txt.",
+      "status": "unsatisfied"
+    },
+    {
+      "criterion_id": "AC-3",
+      "evidence": "Candidate patch is subject to review; see validation-round-2.txt.",
+      "status": "unsatisfied"
+    }
+  ],
+  "decisions": [
+    "No scope expansion."
+  ],
+  "deviations": [],
+  "files_changed": [
+    "src/retry.py"
+  ],
+  "finished_at": "2026-08-28T00:00:00Z",
+  "git": {
+    "base_revision": "0000000000000000000000000000000000000000",
+    "changed_files_digest": "sha256:a5116ede7ae52fdc0c1d94ab46382467f02c20e504b0588e8e90cf479a1ea16f"
+  },
+  "implementation_summary": "Frozen candidate patch bound to its observed validation transcript.",
+  "metadata": {
+    "artifact_origin": "frozen-candidate-replay",
+    "candidate_state": "evals/v0.2/supplemental/candidates/V02-SUP-FIX-01/candidate-round-2.patch",
+    "declared_validation_command": "python -m unittest discover -s tests -v",
+    "patch_digest": "sha256:a5851f177eea134c62823f23c0af2143afed9528493692f38214ed868852f25c",
+    "patch_path": "evals/v0.2/supplemental/candidates/V02-SUP-FIX-01/candidate-round-2.patch",
+    "phase": "supplemental-baseline",
+    "skill_commit": "8a674fafe1f1d03c34e27c7a875752a0138f5e2b",
+    "validation_evidence": "evals/v0.2/supplemental/results/baseline/V02-SUP-FIX-01/role-artifacts/validation-round-2.txt"
+  },
+  "observed_risks": [
+    "Candidate may violate a frozen criterion."
+  ],
+  "plan_digest": "sha256:supplemental-v02-sup-fix-01-supplemental-baseline",
+  "plan_revision": 1,
+  "requested_escalation": {
+    "code": "REVIEW_BOUND",
+    "reason": "Two review rounds exhausted.",
+    "route_to": "architect"
+  },
+  "run_id": "V02-SUP-FIX-01-supplemental-baseline",
+  "schema_version": "1.0",
+  "started_at": "2026-08-28T00:00:00Z",
+  "status": "failed",
+  "task_contract_digest": "sha256:983f8174bff37e33b771d5cdda3abb84336eb1ba13ec5d4b05725e9cdd382d77",
+  "task_id": "V02-SUP-FIX-01.review-correction",
+  "unresolved_issues": [
+    "incorrect third retry value",
+    "missing upper-bound guard"
+  ],
+  "usage": {
+    "quality": "unavailable",
+    "source": "frozen supplemental host"
+  },
+  "worker_identity": {
+    "configured_model": null,
+    "effective_model": null,
+    "requested_model": null,
+    "role": "executor",
+    "verification": "unverified"
+  }
+}

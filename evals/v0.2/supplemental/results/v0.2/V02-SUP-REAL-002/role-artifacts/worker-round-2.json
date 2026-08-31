@@ -1,0 +1,76 @@
+{
+  "attempt": 2,
+  "blockers": [],
+  "commands": [
+    {
+      "command": "python evals/v0.2/supplemental/probe_real.py V02-SUP-REAL-002 <candidate-source-root>",
+      "exit_code": 0,
+      "outcome": "passed",
+      "purpose": "Frozen supplemental case validation.",
+      "summary": "Validation exited 0; full stdout/stderr is in validation-round-2.txt."
+    }
+  ],
+  "criteria_evidence": [
+    {
+      "criterion_id": "AC-1",
+      "evidence": "Final patch and validation transcript validation-round-2.txt.",
+      "status": "satisfied"
+    },
+    {
+      "criterion_id": "AC-2",
+      "evidence": "Final patch and validation transcript validation-round-2.txt.",
+      "status": "satisfied"
+    },
+    {
+      "criterion_id": "AC-3",
+      "evidence": "Final patch and validation transcript validation-round-2.txt.",
+      "status": "satisfied"
+    }
+  ],
+  "decisions": [
+    "No scope expansion."
+  ],
+  "deviations": [],
+  "files_changed": [
+    "src/itsdangerous/encoding.py",
+    "tests/test_itsdangerous/test_encoding.py"
+  ],
+  "finished_at": "2026-08-28T00:00:00Z",
+  "git": {
+    "base_revision": "672971d66a2ef9f85151e53283113f33d642dabd",
+    "changed_files_digest": "sha256:37922f04be8e235944cb6486c549e1ff3b79bb24089a62f5d8cd3038ad16f54e"
+  },
+  "implementation_summary": "Final frozen correction passed the exact declared validation command.",
+  "metadata": {
+    "artifact_origin": "frozen-candidate-replay",
+    "candidate_state": "evals/v0.2/supplemental/candidates/V02-SUP-REAL-002/final.patch",
+    "declared_validation_command": "python evals/v0.2/supplemental/probe_real.py V02-SUP-REAL-002 <candidate-source-root>",
+    "patch_digest": "sha256:893b4949615c249e8a0a8c58f7736bca961d99e19fb9e41d4be957d016bd685a",
+    "patch_path": "evals/v0.2/supplemental/candidates/V02-SUP-REAL-002/final.patch",
+    "phase": "supplemental-v0.2",
+    "skill_commit": "4438280c502e1e0d9e667e841206cc19b8e6521e",
+    "validation_evidence": "evals/v0.2/supplemental/results/v0.2/V02-SUP-REAL-002/role-artifacts/validation-round-2.txt"
+  },
+  "observed_risks": [],
+  "plan_digest": "sha256:supplemental-v02-sup-real-002-supplemental-v0.2",
+  "plan_revision": 1,
+  "requested_escalation": null,
+  "run_id": "V02-SUP-REAL-002-supplemental-v0.2",
+  "schema_version": "1.0",
+  "started_at": "2026-08-28T00:00:00Z",
+  "status": "complete",
+  "task_contract_digest": "sha256:c2c66724c409e6b37e6e6fc038782c173d6c51ef9984ac62415d1dbdd7f3f6b0",
+  "task_id": "V02-SUP-REAL-002.review-correction",
+  "unresolved_issues": [],
+  "usage": {
+    "quality": "unavailable",
+    "source": "frozen supplemental host"
+  },
+  "worker_identity": {
+    "configured_model": null,
+    "effective_model": null,
+    "requested_model": null,
+    "role": "executor",
+    "verification": "unverified"
+  }
+}

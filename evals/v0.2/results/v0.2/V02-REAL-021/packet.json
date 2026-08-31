@@ -1,0 +1,23 @@
+{
+  "case_id": "V02-REAL-021",
+  "case_type": "real",
+  "repository": "REAL-NEXT",
+  "repository_commit": "bb2558441a6673ab76c89914c25018bffa27a2ba",
+  "host": "chatgpt-work-collaboration",
+  "adapter": "manual",
+  "task_category": "bug-diagnosis-fix",
+  "task_statement": "generateYAxis returns topLabel = -Infinity for an empty revenue array. Return {yAxisLabels: ['$0K'], topLabel: 0} for empty input, preserve non-empty behavior, and add focused tests.",
+  "expected_write_scope": [
+    "dashboard/starter-example/app/lib/utils.ts",
+    "dashboard/starter-example/app/lib/utils.test.ts"
+  ],
+  "acceptance_criteria": [
+    "empty input returns the exact zero-axis value",
+    "non-empty labels remain unchanged",
+    "a focused regression test exists"
+  ],
+  "validation": [
+    "node -e \"const fs=require('fs'); for (const p of ['dashboard/starter-example/app/lib/utils.ts','dashboard/starter-example/app/lib/utils.test.ts']) { if (!fs.readFileSync(p,'utf8').trim()) process.exit(1) }\""
+  ],
+  "policy": "sol-luna-v0.1"
+}

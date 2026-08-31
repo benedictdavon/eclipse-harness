@@ -1,0 +1,26 @@
+{
+  "case_id": "V02-FIX-07A",
+  "family": "safe-parallelism",
+  "case_type": "controlled",
+  "repository": "fixtures/safe-parallelism",
+  "repository_commit": "fixture-v1",
+  "host": "chatgpt-work-collaboration",
+  "adapter": "manual",
+  "task_category": "parallelization-candidate",
+  "role_focus": "orchestrate",
+  "task_statement": "Add subject normalization in src/email.py with its tests, and phone normalization in src/sms.py with its tests. The modules have no shared interface or generated artifacts.",
+  "expected_write_scope": [
+    "src/email.py",
+    "tests/test_email.py",
+    "src/sms.py",
+    "tests/test_sms.py"
+  ],
+  "acceptance_criteria": [
+    "two independent contracts have disjoint ownership",
+    "the execution wave may contain both tasks"
+  ],
+  "validation": [
+    "python -m unittest discover -s tests -v"
+  ],
+  "policy": "sol-luna-v0.1"
+}

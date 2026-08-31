@@ -1,0 +1,66 @@
+{
+  "criteria_verdicts": [
+    {
+      "criterion_id": "AC-1",
+      "evidence": "Candidate requires disposition.",
+      "status": "unverified"
+    },
+    {
+      "criterion_id": "AC-2",
+      "evidence": "Candidate requires disposition.",
+      "status": "unverified"
+    },
+    {
+      "criterion_id": "AC-3",
+      "evidence": "Candidate requires disposition.",
+      "status": "unverified"
+    }
+  ],
+  "findings": [
+    {
+      "correction": "Provide only the bounded correction.",
+      "disposition": "worker",
+      "evidence": "incorrect third retry value",
+      "id": "F-ROUND-1",
+      "impact": "Frozen candidate cannot satisfy the task.",
+      "path": "evals/v0.2/supplemental/candidates/V02-SUP-FIX-01/candidate-round-1.patch",
+      "severity": "high",
+      "type": "acceptance-failure"
+    }
+  ],
+  "finished_at": "2026-08-28T00:00:00Z",
+  "metadata": {
+    "artifact_origin": "frozen-candidate-replay",
+    "bound_patch_digest": "sha256:3f1d983ddbfff55e0a34bcc27f3a9f46cb020feee71840ee07a42600508c37a0",
+    "bound_patch_path": "evals/v0.2/supplemental/candidates/V02-SUP-FIX-01/candidate-round-1.patch",
+    "candidate_state": "evals/v0.2/supplemental/candidates/V02-SUP-FIX-01/candidate-round-1.patch",
+    "predeclared_expected_findings": [
+      "incorrect third retry value"
+    ]
+  },
+  "outcome": "changes_requested",
+  "permissions": {
+    "desired": "read-only",
+    "effective": "unverified",
+    "enforcement": "manual frozen-evaluation host"
+  },
+  "plan_digest": "sha256:supplemental-v02-sup-fix-01-supplemental-baseline",
+  "plan_revision": 1,
+  "residual_risk": [
+    "Reviewer independence is unverified; only the fixed oracle is measured."
+  ],
+  "result_digest": "sha256:34890f9a64397a637ae14fade5ef2f0e5e6dd4df77e26673a5a961bdb2e3a140",
+  "review_round": 1,
+  "reviewer_identity": {
+    "effective_model": null,
+    "requested_model": null,
+    "role": "reviewer",
+    "verification": "unverified"
+  },
+  "run_id": "V02-SUP-FIX-01-supplemental-baseline",
+  "schema_version": "1.0",
+  "started_at": "2026-08-28T00:00:00Z",
+  "task_contract_digest": "sha256:983f8174bff37e33b771d5cdda3abb84336eb1ba13ec5d4b05725e9cdd382d77",
+  "task_id": "V02-SUP-FIX-01.review-correction",
+  "validation_summary": "Reviewed the named frozen candidate state and its bound worker result."
+}

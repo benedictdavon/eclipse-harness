@@ -1,0 +1,153 @@
+{
+  "acceptance_criteria": [
+    {
+      "evidence_required": "Bound patch, result, review, and validation evidence.",
+      "id": "AC-1",
+      "statement": "retry_delay returns int values"
+    },
+    {
+      "evidence_required": "Bound patch, result, review, and validation evidence.",
+      "id": "AC-2",
+      "statement": "attempts above 8 raise ValueError"
+    },
+    {
+      "evidence_required": "Bound patch, result, review, and validation evidence.",
+      "id": "AC-3",
+      "statement": "no third correction is requested"
+    }
+  ],
+  "authorization": {
+    "credentials": false,
+    "destructive_actions": false,
+    "external_side_effects": false,
+    "network": false,
+    "targets": []
+  },
+  "budgets": {
+    "max_attempts": 2,
+    "max_review_rounds": 2
+  },
+  "complexity": "bounded",
+  "context_manifest": {
+    "references": [
+      {
+        "digest": "sha256:3d8871331fd6540d8b2fbe80077991b28a1b2ec323b7134c067f1797d440b0bc",
+        "path": "evals/v0.2/supplemental/candidates/V02-SUP-FIX-02/candidate-round-1.patch",
+        "purpose": "Frozen candidate state",
+        "symbol": null,
+        "trust": "repository"
+      },
+      {
+        "digest": "sha256:5012b07df2d80ad26bc4721b30e076c2a1faa29109003c861d2b225f45596ea4",
+        "path": "evals/v0.2/supplemental/candidates/V02-SUP-FIX-02/candidate-round-2.patch",
+        "purpose": "Frozen candidate state",
+        "symbol": null,
+        "trust": "repository"
+      }
+    ],
+    "schema_version": "1.0",
+    "summary": "Review two supplied retry_delay corrections. The first violates the integer return invariant and the second weakens the upper-bound evidence. Reject both and escalate after the fixed two-round budget.",
+    "trusted_sources": [
+      "frozen supplemental case definition",
+      "Eclipse task contract"
+    ]
+  },
+  "decisions": {
+    "assumptions": [
+      "Names are non-empty strings."
+    ],
+    "fixed": [
+      "Use a pure Python function.",
+      "Do not add dependencies."
+    ]
+  },
+  "dependencies": [],
+  "execution_profile": {
+    "capability_tier": "bounded-routine",
+    "cost_tier": "low",
+    "fallback_profiles": [
+      "worker"
+    ],
+    "preferred_model": "gpt-5.6-luna",
+    "reasoning_effort": "medium",
+    "role": "executor"
+  },
+  "expected_evidence": [
+    "Two worker results",
+    "Two reviewer contracts",
+    "Validation artifact"
+  ],
+  "implementation_instructions": [
+    "Inspect exactly the supplied candidate states.",
+    "Do not issue a third correction."
+  ],
+  "invariants": [
+    "retry_delay returns int values",
+    "attempts above 8 raise ValueError",
+    "no third correction is requested"
+  ],
+  "metadata": {
+    "artifact_origin": "frozen-candidate-replay",
+    "frozen_case_id": "V02-SUP-FIX-02",
+    "frozen_repository_commit": "fixture-v1",
+    "frozen_task_statement": "Review two supplied retry_delay corrections. The first violates the integer return invariant and the second weakens the upper-bound evidence. Reject both and escalate after the fixed two-round budget.",
+    "frozen_validation_commands": [
+      "python -m unittest discover -s tests -v"
+    ],
+    "phase": "supplemental-baseline",
+    "skill_commit": "8a674fafe1f1d03c34e27c7a875752a0138f5e2b"
+  },
+  "non_goals": [
+    "Changing frozen case",
+    "A third review round"
+  ],
+  "objective": "Review two supplied retry_delay corrections. The first violates the integer return invariant and the second weakens the upper-bound evidence. Reject both and escalate after the fixed two-round budget.",
+  "parent_task_id": null,
+  "plan_digest": "sha256:supplemental-v02-sup-fix-02-supplemental-baseline",
+  "plan_revision": 1,
+  "provenance": {
+    "base_revision": "0000000000000000000000000000000000000000",
+    "created_at": "2026-08-28T00:00:00Z",
+    "created_by": "supplemental-evaluation-architect",
+    "source_requirement_digest": "sha256:supplemental-v02-sup-fix-02"
+  },
+  "rationale": "Frozen supplemental correction evaluation.",
+  "required_capabilities": [
+    "repository-read",
+    "scoped-write",
+    "test-execution"
+  ],
+  "risk": {
+    "flags": [],
+    "level": "low"
+  },
+  "run_id": "V02-SUP-FIX-02-supplemental-baseline",
+  "schema_version": "1.0",
+  "scope": {
+    "exclusive_resources": [],
+    "forbidden_globs": [
+      ".eclipse/**"
+    ],
+    "isolation": "manual",
+    "parallel_safe": false,
+    "read_globs": [
+      "**"
+    ],
+    "shared_interfaces": [],
+    "write_globs": [
+      "**"
+    ]
+  },
+  "stop_conditions": [
+    "Two review rounds are exhausted."
+  ],
+  "task_id": "V02-SUP-FIX-02.review-correction",
+  "validation": [
+    {
+      "command": "python -m unittest discover -s tests -v",
+      "mutating": false,
+      "purpose": "Frozen supplemental case validation.",
+      "required": true
+    }
+  ]
+}

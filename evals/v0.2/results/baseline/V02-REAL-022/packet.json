@@ -1,0 +1,23 @@
+{
+  "case_id": "V02-REAL-022",
+  "case_type": "real",
+  "repository": "REAL-NEXT",
+  "repository_commit": "bb2558441a6673ab76c89914c25018bffa27a2ba",
+  "host": "chatgpt-work-collaboration",
+  "adapter": "manual",
+  "task_category": "behavior-preserving-refactor",
+  "task_statement": "Refactor InvoiceStatus to use a typed status-to-style mapping while preserving the exact pending and paid labels, icons, classes, and exported component API. Keep the change local and add focused coverage that would detect class or label drift.",
+  "expected_write_scope": [
+    "dashboard/starter-example/app/ui/invoices/status.tsx",
+    "dashboard/starter-example/app/ui/invoices/status.test.tsx"
+  ],
+  "acceptance_criteria": [
+    "typed mapping replaces duplicated conditions",
+    "pending and paid output remains equivalent",
+    "no new status or public prop change"
+  ],
+  "validation": [
+    "node -e \"const fs=require('fs'); for (const p of ['dashboard/starter-example/app/ui/invoices/status.tsx','dashboard/starter-example/app/ui/invoices/status.test.tsx']) { if (!fs.readFileSync(p,'utf8').trim()) process.exit(1) }\""
+  ],
+  "policy": "sol-luna-v0.1"
+}

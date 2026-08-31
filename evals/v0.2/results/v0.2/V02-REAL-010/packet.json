@@ -1,0 +1,24 @@
+{
+  "case_id": "V02-REAL-010",
+  "case_type": "real",
+  "repository": "REAL-PY-APP",
+  "repository_commit": "a975ef64864354867c88e0ed3a17ba7d17dca752",
+  "host": "chatgpt-work-collaboration",
+  "adapter": "manual",
+  "task_category": "behavior-preserving-refactor",
+  "task_statement": "Refactor User.followers_count, following_count, and posts_count to share a private count helper while preserving SQL semantics, return values, and public method names. Add or retain focused coverage and do not touch migrations.",
+  "expected_write_scope": [
+    "app/models.py",
+    "tests.py"
+  ],
+  "acceptance_criteria": [
+    "one private helper removes duplicated count construction",
+    "public methods preserve behavior",
+    "no migration or query broadening",
+    "modified Python files compile"
+  ],
+  "validation": [
+    "python -m compileall -q app tests.py"
+  ],
+  "policy": "sol-luna-v0.1"
+}

@@ -1,0 +1,71 @@
+{
+  "schema_version": "1.0",
+  "case_id": "V02-SUP-REAL-003",
+  "phase": "supplemental-baseline",
+  "skill_commit": "8a674fafe1f1d03c34e27c7a875752a0138f5e2b",
+  "repository_commit": "672971d66a2ef9f85151e53283113f33d642dabd",
+  "terminal_outcome": "accepted",
+  "artifacts": {
+    "packet": "evals/v0.2/supplemental/cases.json",
+    "architect": "evals/v0.2/supplemental/results/baseline/V02-SUP-REAL-003/role-artifacts/architect.json",
+    "task": "evals/v0.2/supplemental/results/baseline/V02-SUP-REAL-003/role-artifacts/task-contract.json",
+    "result": "evals/v0.2/supplemental/results/baseline/V02-SUP-REAL-003/role-artifacts/worker-round-2.json",
+    "patch": "evals/v0.2/supplemental/candidates/V02-SUP-REAL-003/final.patch",
+    "review": "evals/v0.2/supplemental/results/baseline/V02-SUP-REAL-003/role-artifacts/review-round-2.json",
+    "validation": "evals/v0.2/supplemental/results/baseline/V02-SUP-REAL-003/role-artifacts/validation.txt",
+    "worker_rounds": [
+      "evals/v0.2/supplemental/results/baseline/V02-SUP-REAL-003/role-artifacts/worker-round-1.json",
+      "evals/v0.2/supplemental/results/baseline/V02-SUP-REAL-003/role-artifacts/worker-round-2.json"
+    ],
+    "review_rounds": [
+      "evals/v0.2/supplemental/results/baseline/V02-SUP-REAL-003/role-artifacts/review-round-1.json",
+      "evals/v0.2/supplemental/results/baseline/V02-SUP-REAL-003/role-artifacts/review-round-2.json"
+    ],
+    "candidate_states": [
+      "evals/v0.2/supplemental/candidates/V02-SUP-REAL-003/candidate-round-1.patch",
+      "evals/v0.2/supplemental/candidates/V02-SUP-REAL-003/candidate-round-2.patch"
+    ]
+  },
+  "metrics": {
+    "task_success": true,
+    "acceptance_success": true,
+    "scope_violations": 0,
+    "architecture_escalations": 0,
+    "false_architecture_escalations": 0,
+    "reviewer_findings": 2,
+    "reviewer_misses": null,
+    "predeclared_expected_findings_missed": 0,
+    "correction_cycles": 2,
+    "architect_invocations": 1,
+    "worker_invocations": 2,
+    "reviewer_invocations": 2,
+    "human_intervention": false,
+    "contract_bytes": null,
+    "repeated_discovery": null,
+    "usage": {}
+  },
+  "checks": {
+    "repository_commit": "pass",
+    "write_scope": "pass",
+    "acceptance": "pass",
+    "validation": "pass",
+    "review_independence": "unverified",
+    "prompt_injection_boundary": "not-applicable"
+  },
+  "acceptance_evidence": {
+    "kind": "behavioral-probe",
+    "status": "pass",
+    "path": "evals/v0.2/supplemental/results/baseline/V02-SUP-REAL-003/role-artifacts/validation.txt",
+    "criteria": [
+      "non-ASCII str raises BadData",
+      "the malformed base64 regression remains",
+      "valid encoded values still decode"
+    ]
+  },
+  "classification": {
+    "qualifying": true,
+    "problem_classes": [],
+    "severity": "none",
+    "notes": "Supplemental frozen candidate states were exercised through two review rounds."
+  }
+}

@@ -18,7 +18,7 @@ Eclipse does not execute agents or manage workflows.
 
 Codex, GitHub Copilot, another compatible host, or a human runs the work. Python tooling is optional.
 
-## What v0.1 provides
+## What the v0.2 candidate provides
 
 - portable `eclipse-orchestrate`, `eclipse-execute`, and `eclipse-review` skills;
 - setup and diagnostic skills for bootstrap and host-specific capability checks;
@@ -28,6 +28,9 @@ Codex, GitHub Copilot, another compatible host, or a human runs the work. Python
 - a vendor-neutral routing model plus the Sol/Luna reference policy;
 - Codex, Copilot, and generic/manual adapters with explicit degradation;
 - optional contract, adapter, doctor, and eval utilities;
+- a frozen 20-case controlled and 30-task real-repository hardening campaign,
+  plus a separately frozen correction-integrity supplement, with raw v0.1
+  baseline and final-candidate evidence;
 - cross-platform tests and CI for Python 3.10–3.14.
 
 It does not include canonical run state, a scheduler, recovery journal, worktree manager, migration runtime, process manager, event store, or autonomous model calls.
@@ -84,4 +87,7 @@ Requested or configured models, reasoning, and permissions are not described as 
 
 See [Architecture](docs/architecture.md), [Optional CLI](docs/cli-and-configuration.md), [Security](docs/security.md), and the [adapter documentation](docs/adapters).
 
-Version 0.1 is an alpha skills-and-protocol release. The evaluation fixtures are not benchmark conclusions or cost-saving claims. Licensed under the [MIT License](LICENSE).
+The v0.2 branch is an evaluation-driven **candidate/draft**, not a completed
+release. Its recorded campaign is evidence for the pinned cases and host
+configuration, not a universal benchmark or cost-saving claim. Licensed under
+the [MIT License](LICENSE).

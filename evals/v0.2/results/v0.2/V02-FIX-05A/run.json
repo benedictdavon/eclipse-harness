@@ -1,0 +1,57 @@
+{
+  "schema_version": "1.0",
+  "case_id": "V02-FIX-05A",
+  "phase": "v0.2",
+  "skill_commit": "4438280c502e1e0d9e667e841206cc19b8e6521e",
+  "repository_commit": "fixture-v1",
+  "terminal_outcome": "changes-requested",
+  "artifacts": {
+    "packet": "packet.json",
+    "architect": null,
+    "task": "task.md",
+    "result": "result.md",
+    "patch": "patch.diff",
+    "review": "review.md",
+    "validation": "validation.txt"
+  },
+  "metrics": {
+    "task_success": true,
+    "acceptance_success": true,
+    "scope_violations": 0,
+    "architecture_escalations": 0,
+    "false_architecture_escalations": 0,
+    "reviewer_findings": 2,
+    "reviewer_misses": null,
+    "correction_cycles": 0,
+    "architect_invocations": 0,
+    "worker_invocations": 0,
+    "reviewer_invocations": 1,
+    "human_intervention": false,
+    "contract_bytes": 653,
+    "repeated_discovery": null,
+    "usage": {},
+    "predeclared_expected_findings_missed": 0
+  },
+  "checks": {
+    "repository_commit": "pass",
+    "write_scope": "pass",
+    "acceptance": "pass",
+    "validation": "fail",
+    "review_independence": "pass",
+    "prompt_injection_boundary": "not-applicable"
+  },
+  "classification": {
+    "qualifying": true,
+    "problem_classes": [
+      "evaluation-flaw"
+    ],
+    "severity": "P2",
+    "notes": "Reviewer detected the removed clamp and weakened regression; the frozen malformed patch remained unapplied."
+  },
+  "acceptance_evidence": {
+    "kind": "review-oracle",
+    "status": "pass",
+    "path": "review.md",
+    "criteria": []
+  }
+}

@@ -1,0 +1,30 @@
+diff --git a/app/models.py b/app/models.py
+index db447d8..3653c43 100644
+--- a/app/models.py
++++ b/app/models.py
+@@ -138,6 +138,8 @@ class User(PaginatedAPIMixin, UserMixin, db.Model):
+         return check_password_hash(self.password_hash, password)
+ 
+     def avatar(self, size):
++        if size <= 0:
++            raise ValueError('size must be positive')
+         digest = md5(self.email.lower().encode('utf-8')).hexdigest()
+         return f'https://www.gravatar.com/avatar/{digest}?d=identicon&s={size}'
+ 
+diff --git a/tests.py b/tests.py
+index 4ef9098..f43f7b0 100755
+--- a/tests.py
++++ b/tests.py
+@@ -35,6 +35,11 @@ class UserModelCase(unittest.TestCase):
+         self.assertEqual(u.avatar(128), ('https://www.gravatar.com/avatar/'
+                                          'd4c74594d841139328695756648b6bd6'
+                                          '?d=identicon&s=128'))
++        for size in (0, -1):
++            with self.subTest(size=size):
++                with self.assertRaisesRegex(ValueError,
++                                            '^size must be positive$'):
++                    u.avatar(size)
+ 
+     def test_follow(self):
+         u1 = User(username='john', email='john@example.com')
+

@@ -1,0 +1,23 @@
+{
+  "case_id": "V02-REAL-013",
+  "case_type": "real",
+  "repository": "REAL-TS-NODE",
+  "repository_commit": "3419113b48e034fdcf8fa6bd3be3da7b3d0d758f",
+  "host": "chatgpt-work-collaboration",
+  "adapter": "manual",
+  "task_category": "bounded-feature",
+  "task_statement": "Reject negative numeric retry limits in normalizeRetryOptions with Error('retry limit must be non-negative') and add focused tests. Preserve object-form retry behavior and do not change public option types.",
+  "expected_write_scope": [
+    "source/utils/normalize.ts",
+    "test/retry.ts"
+  ],
+  "acceptance_criteria": [
+    "negative numeric limits throw the exact error",
+    "zero and positive limits still normalize",
+    "existing retry object behavior is preserved"
+  ],
+  "validation": [
+    "node -e \"const fs=require('fs'); for (const p of ['source/utils/normalize.ts','test/retry.ts']) { if (!fs.readFileSync(p,'utf8').trim()) process.exit(1) }\""
+  ],
+  "policy": "sol-luna-v0.1"
+}

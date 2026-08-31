@@ -1,0 +1,6 @@
+$ node -e "const fs=require('fs'); for (const p of ['packages/should-skip-package/src/index.ts','packages/should-skip-package/src/index.test.ts','packages/should-skip-package/README.md']) { if (!fs.readFileSync(p,'utf8').trim()) process.exit(1) }"
+exit_code: 0
+--- stdout ---
+
+--- stderr ---
+

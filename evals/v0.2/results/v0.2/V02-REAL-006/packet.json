@@ -1,0 +1,23 @@
+{
+  "case_id": "V02-REAL-006",
+  "case_type": "real",
+  "repository": "REAL-PY-LIB",
+  "repository_commit": "672971d66a2ef9f85151e53283113f33d642dabd",
+  "host": "chatgpt-work-collaboration",
+  "adapter": "manual",
+  "task_category": "parallelization-candidate",
+  "task_statement": "Plan and implement two independent changes: add one more int_to_bytes round-trip boundary test in tests/test_itsdangerous/test_encoding.py, and clarify the URL-safe alphabet paragraph in docs/encoding.rst without changing code behavior. Define ownership and decide whether they may share one execution wave.",
+  "expected_write_scope": [
+    "tests/test_itsdangerous/test_encoding.py",
+    "docs/encoding.rst"
+  ],
+  "acceptance_criteria": [
+    "contracts have disjoint write ownership",
+    "parallel execution is explicitly justified or conservatively serialized",
+    "test and documentation changes are both correct"
+  ],
+  "validation": [
+    "PYTHONPATH=src python -m pytest tests/test_itsdangerous/test_encoding.py -q"
+  ],
+  "policy": "sol-luna-v0.1"
+}

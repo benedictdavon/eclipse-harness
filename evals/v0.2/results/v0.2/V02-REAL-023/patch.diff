@@ -1,0 +1,35 @@
+diff --git a/basics/typescript-final/components/date.test.tsx b/basics/typescript-final/components/date.test.tsx
+new file mode 100644
+index 0000000..c759b96
+--- /dev/null
++++ b/basics/typescript-final/components/date.test.tsx
+@@ -0,0 +1,14 @@
++import assert from 'node:assert/strict';
++import test from 'node:test';
++import { renderToStaticMarkup } from 'react-dom/server';
++
++import Date from './date';
++
++test('renders the source date and formatted text in a time element', () => {
++  const markup = renderToStaticMarkup(<Date dateString="2020-01-02" />);
++
++  assert.match(
++    markup,
++    /^<time date[Tt]ime="2020-01-02">January 2, 2020<\/time>$/,
++  );
++});
+diff --git a/dashboard/starter-example/app/lib/utils.test.ts b/dashboard/starter-example/app/lib/utils.test.ts
+new file mode 100644
+index 0000000..f276ab3
+--- /dev/null
++++ b/dashboard/starter-example/app/lib/utils.test.ts
+@@ -0,0 +1,9 @@
++import assert from 'node:assert/strict';
++import test from 'node:test';
++
++import { generatePagination } from './utils';
++
++test('returns no pages when totalPages is zero', () => {
++  assert.deepEqual(generatePagination(1, 0), []);
++  assert.deepEqual(generatePagination(10, 0), []);
++});

@@ -1,0 +1,7 @@
+Combined case result. See `result-task1.md` and `result-task2.md` for the schema-valid task-specific Result Contracts and exact declared command evidence.
+
+The host supplied one checkout, so the two ownership-disjoint tasks were serialized in contract order (`task.json`, then `task-2.json`) with `actual_concurrency=false`. Task 1 added only `dashboard/starter-example/app/lib/utils.test.ts`; task 2 then added only `basics/typescript-final/components/date.test.tsx`. The final checkout contains exactly those two untracked files. Both read-only production targets, `dashboard/starter-example/app/lib/utils.ts` and `basics/typescript-final/components/date.tsx`, remain unchanged.
+
+After serial integration, both exact focused `node --test` commands passed again, both task-specific non-empty-file commands and both scoped `git diff --check` commands passed again, and the combined file-presence command exited 0 for the two tests plus the unchanged date component. Both exact `pnpm --dir ... exec tsc --noEmit` commands failed again before compilation: pnpm attempted dependency provisioning and could not create `/root/.local`. Installation, network access, pnpm-store changes, and scope expansion were not authorized, so both task results remain blocked with `ENV_FAILURE` despite passing behavioral/source-contract coverage.
+
+No network access, dependency installation, credentials, external side effects, destructive actions, descendant workers, or cross-task edits were used.

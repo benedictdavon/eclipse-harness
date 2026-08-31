@@ -1,0 +1,31 @@
+diff --git a/docs/encoding.rst b/docs/encoding.rst
+index 0c5a0e3..d5534d5 100644
+--- a/docs/encoding.rst
++++ b/docs/encoding.rst
+@@ -3,6 +3,11 @@
+ Encoding Utilities
+ ==================
+ 
++URL-safe Base64 uses the RFC 4648 64-character alphabet: ASCII letters and
++digits, with ``-`` and ``_`` in place of ``+`` and ``/``. The ``=`` character
++is padding, not part of that alphabet. ``base64_encode`` omits trailing padding,
++and ``base64_decode`` restores the padding needed for decoding.
++
+ .. autofunction:: base64_encode
+ 
+ .. autofunction:: base64_decode
+diff --git a/tests/test_itsdangerous/test_encoding.py b/tests/test_itsdangerous/test_encoding.py
+index 268367e..bf66776 100644
+--- a/tests/test_itsdangerous/test_encoding.py
++++ b/tests/test_itsdangerous/test_encoding.py
+@@ -28,7 +28,8 @@ def test_base64_bad():
+ 
+ 
+ @pytest.mark.parametrize(
+-    ("value", "expect"), ((0, b""), (192, b"\xc0"), (18446744073709551615, b"\xff" * 8))
++    ("value", "expect"),
++    ((0, b""), (192, b"\xc0"), (256, b"\x01\x00"), (18446744073709551615, b"\xff" * 8)),
+ )
+ def test_int_bytes(value, expect):
+     enc = int_to_bytes(value)
+

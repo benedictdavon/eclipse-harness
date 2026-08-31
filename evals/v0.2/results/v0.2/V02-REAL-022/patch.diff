@@ -1,0 +1,107 @@
+diff --git a/dashboard/starter-example/app/ui/invoices/status.tsx b/dashboard/starter-example/app/ui/invoices/status.tsx
+index 108bda5..989967f 100644
+--- a/dashboard/starter-example/app/ui/invoices/status.tsx
++++ b/dashboard/starter-example/app/ui/invoices/status.tsx
+@@ -1,27 +1,44 @@
+ import { CheckIcon, ClockIcon } from '@heroicons/react/24/outline';
+ import clsx from 'clsx';
+ 
++const statusConfig = {
++  pending: {
++    label: 'Pending',
++    pillClass: 'bg-gray-100 text-gray-500',
++    icon: ClockIcon,
++    iconClass: 'ml-1 w-4 text-gray-500',
++  },
++  paid: {
++    label: 'Paid',
++    pillClass: 'bg-green-500 text-white',
++    icon: CheckIcon,
++    iconClass: 'ml-1 w-4 text-white',
++  },
++} as const satisfies Record<
++  'pending' | 'paid',
++  {
++    label: string;
++    pillClass: string;
++    icon: typeof ClockIcon;
++    iconClass: string;
++  }
++>;
++
+ export default function InvoiceStatus({ status }: { status: string }) {
++  const config = statusConfig[status as keyof typeof statusConfig];
++  const Icon = config?.icon;
++
+   return (
+     <span
+       className={clsx(
+         'inline-flex items-center rounded-full px-2 py-1 text-xs',
+-        {
+-          'bg-gray-100 text-gray-500': status === 'pending',
+-          'bg-green-500 text-white': status === 'paid',
+-        },
++        config?.pillClass,
+       )}
+     >
+-      {status === 'pending' ? (
+-        <>
+-          Pending
+-          <ClockIcon className="ml-1 w-4 text-gray-500" />
+-        </>
+-      ) : null}
+-      {status === 'paid' ? (
++      {config && Icon ? (
+         <>
+-          Paid
+-          <CheckIcon className="ml-1 w-4 text-white" />
++          {config.label}
++          <Icon className={config.iconClass} />
+         </>
+       ) : null}
+     </span>
+diff --git a/dashboard/starter-example/app/ui/invoices/status.test.tsx b/dashboard/starter-example/app/ui/invoices/status.test.tsx
+new file mode 100644
+index 0000000..cc2d176
+--- /dev/null
++++ b/dashboard/starter-example/app/ui/invoices/status.test.tsx
+@@ -0,0 +1,39 @@
++import { CheckIcon, ClockIcon } from '@heroicons/react/24/outline';
++import assert from 'node:assert/strict';
++import test from 'node:test';
++import { renderToStaticMarkup } from 'react-dom/server';
++
++import InvoiceStatus from './status';
++
++const baseClass = 'inline-flex items-center rounded-full px-2 py-1 text-xs';
++
++test('preserves the exact pending rendering configuration', () => {
++  const actual = renderToStaticMarkup(<InvoiceStatus status="pending" />);
++  const expected = renderToStaticMarkup(
++    <span className={`${baseClass} bg-gray-100 text-gray-500`}>
++      Pending
++      <ClockIcon className="ml-1 w-4 text-gray-500" />
++    </span>,
++  );
++
++  assert.equal(actual, expected);
++});
++
++test('preserves the exact paid rendering configuration', () => {
++  const actual = renderToStaticMarkup(<InvoiceStatus status="paid" />);
++  const expected = renderToStaticMarkup(
++    <span className={`${baseClass} bg-green-500 text-white`}>
++      Paid
++      <CheckIcon className="ml-1 w-4 text-white" />
++    </span>,
++  );
++
++  assert.equal(actual, expected);
++});
++
++test('preserves an empty base pill for unsupported strings', () => {
++  assert.equal(
++    renderToStaticMarkup(<InvoiceStatus status="unsupported" />),
++    `<span class="${baseClass}"></span>`,
++  );
++});

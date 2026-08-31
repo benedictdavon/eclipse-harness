@@ -1,0 +1,8 @@
+$ node --experimental-strip-types evals/v0.2/probes/v02-real-014-minimum-delay.mjs <candidate-source-root>
+ECLIPSE_ACCEPTANCE_EVIDENCE: PASS
+exit_code: 0
+
+The probe imports the recorded candidate's `normalize.ts` with Node's native
+TypeScript stripping, supplies only its local `requestMethods` runtime constant,
+and asserts negative rejection plus the 500ms lower-bound behaviour. The exact
+candidate patch, repository pin, and probe source are preserved in this corpus.

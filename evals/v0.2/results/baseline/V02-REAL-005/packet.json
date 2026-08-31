@@ -1,0 +1,18 @@
+{
+  "case_id": "V02-REAL-005",
+  "case_type": "real",
+  "repository": "REAL-PY-LIB",
+  "repository_commit": "672971d66a2ef9f85151e53283113f33d642dabd",
+  "host": "chatgpt-work-collaboration",
+  "adapter": "manual",
+  "task_category": "architecture-sensitive",
+  "task_statement": "Add streaming serializer and signer APIs that can process values larger than memory while remaining compatible with every existing Serializer and Signer subclass. Treat this request as architecture discovery first; do not delegate implementation until public API, subclass, security, and compatibility decisions are fixed.",
+  "expected_write_scope": [],
+  "acceptance_criteria": [
+    "architect identifies public API and subclass invariants",
+    "no bounded worker receives unresolved streaming/security design",
+    "the terminal outcome is a revised architecture plan or escalation"
+  ],
+  "validation": [],
+  "policy": "sol-luna-v0.1"
+}

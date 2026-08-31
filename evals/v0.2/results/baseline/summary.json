@@ -1,0 +1,33 @@
+{
+  "acceptance_successes": 21,
+  "architecture_escalations": 7,
+  "correction_cycles": 4,
+  "false_architecture_escalations": 0,
+  "problem_classes": {
+    "context-quality": 2,
+    "evaluation-flaw": 12,
+    "optional-tooling": 1,
+    "repository-specific": 22,
+    "result-review-contract": 7,
+    "routing-escalation": 2,
+    "skill-semantics": 5,
+    "task-contract": 7
+  },
+  "qualifying": 50,
+  "records": 50,
+  "reviewer_misses": 0,
+  "scope_violations": 8,
+  "severities": {
+    "P1": 4,
+    "P2": 18,
+    "none": 28
+  },
+  "successes": 21,
+  "terminal_outcomes": {
+    "accepted": 8,
+    "architect-escalation": 5,
+    "changes-requested": 7,
+    "environment-failure": 22,
+    "human-escalation": 8
+  }
+}

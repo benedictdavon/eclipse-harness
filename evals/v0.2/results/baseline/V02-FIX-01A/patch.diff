@@ -1,0 +1,50 @@
+diff --git a/src/pricing.py b/src/pricing.py
+index 45473e4..423ce46 100644
+--- a/src/pricing.py
++++ b/src/pricing.py
+@@ -1,5 +1,8 @@
+-def calculate_total(amounts: list[int]) -> int:
+-    """Return the sum of non-negative integer amounts in cents."""
++def calculate_total(amounts: list[int], discount_percent: int = 0) -> int:
++    """Return the discounted sum of non-negative integer amounts in cents."""
++    if type(discount_percent) is not int or not 0 <= discount_percent <= 100:
++        raise ValueError("discount_percent must be an integer from 0 through 100")
+     if any(amount < 0 for amount in amounts):
+         raise ValueError("amounts must be non-negative")
+-    return sum(amounts)
++    subtotal = sum(amounts)
++    return subtotal * (100 - discount_percent) // 100
+diff --git a/tests/test_pricing.py b/tests/test_pricing.py
+index f1fb9fe..df465cf 100644
+--- a/tests/test_pricing.py
++++ b/tests/test_pricing.py
+@@ -11,6 +11,29 @@ class PricingTests(unittest.TestCase):
+         with self.assertRaises(ValueError):
+             calculate_total([100, -1])
+ 
++    def test_ten_percent_discount(self) -> None:
++        self.assertEqual(calculate_total([1000], 10), 900)
++
++    def test_default_discount_preserves_total(self) -> None:
++        self.assertEqual(calculate_total([100, 250]), 350)
++        self.assertEqual(calculate_total([100, 250], 0), 350)
++
++    def test_discount_boundaries(self) -> None:
++        self.assertEqual(calculate_total([1000], 0), 1000)
++        self.assertEqual(calculate_total([1000], 100), 0)
++
++    def test_out_of_range_discount_raises_value_error(self) -> None:
++        for discount_percent in (-1, 101):
++            with self.subTest(discount_percent=discount_percent):
++                with self.assertRaises(ValueError):
++                    calculate_total([1000], discount_percent)
++
++    def test_non_integer_discount_raises_value_error(self) -> None:
++        for discount_percent in (10.5, True):
++            with self.subTest(discount_percent=discount_percent):
++                with self.assertRaises(ValueError):
++                    calculate_total([1000], discount_percent)
++
+ 
+ if __name__ == "__main__":
+     unittest.main()

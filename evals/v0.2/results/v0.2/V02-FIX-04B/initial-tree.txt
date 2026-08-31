@@ -1,0 +1,4 @@
+candidate-a/result.json
+candidate-b/result.json
+src/calculator.py
+tests/test_calculator.py

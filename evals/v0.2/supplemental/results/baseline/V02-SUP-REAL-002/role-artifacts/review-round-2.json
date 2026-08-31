@@ -1,0 +1,61 @@
+{
+  "criteria_verdicts": [
+    {
+      "criterion_id": "AC-1",
+      "evidence": "Final probe evidence.",
+      "status": "satisfied"
+    },
+    {
+      "criterion_id": "AC-2",
+      "evidence": "Final probe evidence.",
+      "status": "satisfied"
+    },
+    {
+      "criterion_id": "AC-3",
+      "evidence": "Final probe evidence.",
+      "status": "satisfied"
+    }
+  ],
+  "findings": [],
+  "finished_at": "2026-08-28T00:00:00Z",
+  "metadata": {
+    "accepted_final_patch_path": "evals/v0.2/supplemental/candidates/V02-SUP-REAL-002/final.patch",
+    "artifact_origin": "frozen-candidate-replay",
+    "bound_patch_digest": "sha256:893b4949615c249e8a0a8c58f7736bca961d99e19fb9e41d4be957d016bd685a",
+    "bound_patch_path": "evals/v0.2/supplemental/candidates/V02-SUP-REAL-002/final.patch",
+    "candidate_state": "evals/v0.2/supplemental/candidates/V02-SUP-REAL-002/candidate-round-2.patch",
+    "evidence_status": "pass",
+    "final_state": "evals/v0.2/supplemental/candidates/V02-SUP-REAL-002/final.patch",
+    "predeclared_expected_findings": [
+      "wrong error message",
+      "weak exception assertion"
+    ],
+    "rejected_candidate_patch_digest": "sha256:43ae645908bd4341535979823e07591466da89ca780160b64fa7fa96d9a533a9",
+    "rejected_candidate_patch_path": "evals/v0.2/supplemental/candidates/V02-SUP-REAL-002/candidate-round-2.patch"
+  },
+  "outcome": "accepted",
+  "permissions": {
+    "desired": "read-only",
+    "effective": "unverified",
+    "enforcement": "manual frozen-evaluation host"
+  },
+  "plan_digest": "sha256:supplemental-v02-sup-real-002-supplemental-baseline",
+  "plan_revision": 1,
+  "residual_risk": [
+    "Reviewer independence is unverified; only the fixed oracle is measured."
+  ],
+  "result_digest": "sha256:2ed36b80827af464bbb6fa7c7897238e2c04510446a6ae1c907db17e32b9f82c",
+  "review_round": 2,
+  "reviewer_identity": {
+    "effective_model": null,
+    "requested_model": null,
+    "role": "reviewer",
+    "verification": "unverified"
+  },
+  "run_id": "V02-SUP-REAL-002-supplemental-baseline",
+  "schema_version": "1.0",
+  "started_at": "2026-08-28T00:00:00Z",
+  "task_contract_digest": "sha256:aac6d7330d2ee37838180953bc70880dbfc7dcfe0d6901a7e7ad5eefcb1d7ab0",
+  "task_id": "V02-SUP-REAL-002.review-correction",
+  "validation_summary": "Reviewed the named frozen candidate state and its bound worker result."
+}

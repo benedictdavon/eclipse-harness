@@ -1,0 +1,66 @@
+{
+  "criteria_verdicts": [
+    {
+      "criterion_id": "AC-1",
+      "evidence": "Candidate requires disposition.",
+      "status": "unverified"
+    },
+    {
+      "criterion_id": "AC-2",
+      "evidence": "Candidate requires disposition.",
+      "status": "unverified"
+    },
+    {
+      "criterion_id": "AC-3",
+      "evidence": "Candidate requires disposition.",
+      "status": "unverified"
+    }
+  ],
+  "findings": [
+    {
+      "correction": "Provide only the bounded correction.",
+      "disposition": "worker",
+      "evidence": "wrong error message",
+      "id": "F-ROUND-1",
+      "impact": "Frozen candidate cannot satisfy the task.",
+      "path": "evals/v0.2/supplemental/candidates/V02-SUP-REAL-001/candidate-round-1.patch",
+      "severity": "high",
+      "type": "acceptance-failure"
+    }
+  ],
+  "finished_at": "2026-08-28T00:00:00Z",
+  "metadata": {
+    "artifact_origin": "frozen-candidate-replay",
+    "bound_patch_digest": "sha256:f466aee96fbe5acac10159bd8ce35b92148923267edca1c1a42eb53cab9b46ae",
+    "bound_patch_path": "evals/v0.2/supplemental/candidates/V02-SUP-REAL-001/candidate-round-1.patch",
+    "candidate_state": "evals/v0.2/supplemental/candidates/V02-SUP-REAL-001/candidate-round-1.patch",
+    "predeclared_expected_findings": [
+      "wrong error message"
+    ]
+  },
+  "outcome": "changes_requested",
+  "permissions": {
+    "desired": "read-only",
+    "effective": "unverified",
+    "enforcement": "manual frozen-evaluation host"
+  },
+  "plan_digest": "sha256:supplemental-v02-sup-real-001-supplemental-baseline",
+  "plan_revision": 1,
+  "residual_risk": [
+    "Reviewer independence is unverified; only the fixed oracle is measured."
+  ],
+  "result_digest": "sha256:fecceb4910545f09a35c8dfec767dd13db531758592a67975fed96b26d497b3f",
+  "review_round": 1,
+  "reviewer_identity": {
+    "effective_model": null,
+    "requested_model": null,
+    "role": "reviewer",
+    "verification": "unverified"
+  },
+  "run_id": "V02-SUP-REAL-001-supplemental-baseline",
+  "schema_version": "1.0",
+  "started_at": "2026-08-28T00:00:00Z",
+  "task_contract_digest": "sha256:108df4d3115dd435e8e2cec1ac1067fcc683ea3cb986b806b7ed9febadd11dee",
+  "task_id": "V02-SUP-REAL-001.review-correction",
+  "validation_summary": "Reviewed the named frozen candidate state and its bound worker result."
+}

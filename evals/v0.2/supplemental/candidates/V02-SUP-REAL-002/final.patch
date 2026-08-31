@@ -1,0 +1,23 @@
+diff --git a/src/itsdangerous/encoding.py b/src/itsdangerous/encoding.py
+--- a/src/itsdangerous/encoding.py
++++ b/src/itsdangerous/encoding.py
+@@ -51,4 +51,7 @@ def int_to_bytes(num: int) -> bytes:
+ 
+ 
+ def bytes_to_int(bytestr: bytes) -> int:
++    if len(bytestr) > 8:
++        raise ValueError("bytestr must contain at most 8 bytes")
++
+     return _bytes_to_int(bytestr.rjust(8, b"\x00"))[0]
+diff --git a/tests/test_itsdangerous/test_encoding.py b/tests/test_itsdangerous/test_encoding.py
+--- a/tests/test_itsdangerous/test_encoding.py
++++ b/tests/test_itsdangerous/test_encoding.py
+@@ -35,3 +35,8 @@ def test_int_bytes(value, expect):
+     assert enc == expect
+     dec = bytes_to_int(enc)
+     assert dec == value
++
++
++def test_long_bytes_is_rejected():
++    with pytest.raises(ValueError, match="bytestr must contain at most 8 bytes"):
++        bytes_to_int(b"\xff" * 9)

@@ -1,0 +1,24 @@
+{
+  "case_id": "V02-REAL-012",
+  "case_type": "real",
+  "repository": "REAL-PY-APP",
+  "repository_commit": "a975ef64864354867c88e0ed3a17ba7d17dca752",
+  "host": "chatgpt-work-collaboration",
+  "adapter": "manual",
+  "task_category": "parallelization-candidate",
+  "task_statement": "Plan two independent changes: add avatar-size validation with tests in app/models.py and tests.py, and improve the 404 page copy in app/templates/errors/404.html. Define exact ownership and integration validation before deciding whether to run them concurrently.",
+  "expected_write_scope": [
+    "app/models.py",
+    "tests.py",
+    "app/templates/errors/404.html"
+  ],
+  "acceptance_criteria": [
+    "source/test and template tasks have disjoint ownership",
+    "parallel decision accounts for shared test environment but no shared files",
+    "both changes meet their criteria"
+  ],
+  "validation": [
+    "python -m compileall -q app tests.py"
+  ],
+  "policy": "sol-luna-v0.1"
+}

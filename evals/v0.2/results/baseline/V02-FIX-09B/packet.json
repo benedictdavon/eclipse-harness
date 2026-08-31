@@ -1,0 +1,25 @@
+{
+  "acceptance_criteria": [
+    "return type remains int",
+    "attempts above 8 raise ValueError",
+    "no third correction cycle is issued"
+  ],
+  "adapter": "manual",
+  "case_id": "V02-FIX-09B",
+  "case_type": "controlled",
+  "expected_write_scope": [
+    "src/retry.py",
+    "tests/test_retry.py"
+  ],
+  "family": "repeated-correction-loop",
+  "host": "chatgpt-work-collaboration",
+  "policy": "sol-luna-v0.1",
+  "repository": "fixtures/repeated-correction-loop",
+  "repository_commit": "fixture-v1",
+  "role_focus": "end-to-end",
+  "task_category": "review-correction",
+  "task_statement": "Preserve integer retry delays. Candidate A returns float values; candidate B restores integers but removes the upper-bound guard. Respect max_review_rounds=2.",
+  "validation": [
+    "python -m unittest discover -s tests -v"
+  ]
+}

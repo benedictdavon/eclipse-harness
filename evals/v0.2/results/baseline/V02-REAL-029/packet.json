@@ -1,0 +1,23 @@
+{
+  "case_id": "V02-REAL-029",
+  "case_type": "real",
+  "repository": "REAL-MONOREPO",
+  "repository_commit": "b4dc91f545ff2afead214278b7b5ebc8d4e96322",
+  "host": "chatgpt-work-collaboration",
+  "adapter": "manual",
+  "task_category": "bug-diagnosis-fix",
+  "task_statement": "readChangesets relies on filesystem readdir order, so returned changesets can vary across platforms. Diagnose and make the final file order deterministic while preserving ignored-file and sinceRef behavior. Add a focused test that supplies unsorted directory entries.",
+  "expected_write_scope": [
+    "packages/read/src/index.ts",
+    "packages/read/src/index.test.ts"
+  ],
+  "acceptance_criteria": [
+    "returned order is deterministic",
+    "ignored files and pre changesets still behave",
+    "test fails on the original ordering logic"
+  ],
+  "validation": [
+    "node -e \"const fs=require('fs'); for (const p of ['packages/read/src/index.ts','packages/read/src/index.test.ts']) { if (!fs.readFileSync(p,'utf8').trim()) process.exit(1) }\""
+  ],
+  "policy": "sol-luna-v0.1"
+}

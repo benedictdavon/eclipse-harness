@@ -1,0 +1,55 @@
+diff --git a/source/utils/normalize.ts b/source/utils/normalize.ts
+index f076343..47ec20e 100644
+--- a/source/utils/normalize.ts
++++ b/source/utils/normalize.ts
+@@ -11,6 +11,12 @@ const retryStatusCodes = [408, 413, 429, 500, 502, 503, 504];
+ 
+ const retryAfterStatusCodes = [413, 429, 503];
+ 
++const validateRetryOption = (value: unknown, option: 'methods' | 'statusCodes'): void => {
++	if (value && !Array.isArray(value)) {
++		throw new Error(`retry.${option} must be an array`);
++	}
++};
++
+ type InternalRetryOptions = Required<Omit<RetryOptions, 'shouldRetry'>> & Pick<RetryOptions, 'shouldRetry'>;
+ 
+ const defaultRetryOptions: InternalRetryOptions = {
+@@ -33,13 +39,8 @@ export const normalizeRetryOptions = (retry: number | RetryOptions = {}): Intern
+ 		};
+ 	}
+ 
+-	if (retry.methods && !Array.isArray(retry.methods)) {
+-		throw new Error('retry.methods must be an array');
+-	}
+-
+-	if (retry.statusCodes && !Array.isArray(retry.statusCodes)) {
+-		throw new Error('retry.statusCodes must be an array');
+-	}
++	validateRetryOption(retry.methods, 'methods');
++	validateRetryOption(retry.statusCodes, 'statusCodes');
+ 
+ 	const normalizedRetry = Object.fromEntries(Object.entries({
+ 		...retry,
+diff --git a/test/retry.ts b/test/retry.ts
+index 0ce0bbb..584f9ad 100644
+--- a/test/retry.ts
++++ b/test/retry.ts
+@@ -1251,7 +1251,7 @@ test('throws when retry.methods is not an array', async t => {
+ 				methods: 'get',
+ 			},
+ 		});
+-	});
++	}, {message: 'retry.methods must be an array'});
+ });
+ 
+ test('throws when retry.statusCodes is not an array', async t => {
+@@ -1264,7 +1264,7 @@ test('throws when retry.statusCodes is not an array', async t => {
+ 				statusCodes: 403,
+ 			},
+ 		});
+-	});
++	}, {message: 'retry.statusCodes must be an array'});
+ });
+ 
+ test('retry options ignore undefined overrides and keep defaults', async t => {

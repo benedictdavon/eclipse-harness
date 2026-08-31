@@ -1,0 +1,12 @@
+diff --git a/src/parser.py b/src/parser.py
+--- a/src/parser.py
++++ b/src/parser.py
+@@
+-    left, separator, right = value.partition("=")
++    left, separator, right = value.strip().partition("=")
+diff --git a/src/formatting.py b/src/formatting.py
+--- a/src/formatting.py
++++ b/src/formatting.py
+@@
+-    return f"{key}={value}"
++    return "{}={}".format(key, value)

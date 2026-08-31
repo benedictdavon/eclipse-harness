@@ -1,0 +1,4 @@
+packet.json
+src/protocol.py
+src/registry.py
+tests/test_registry.py

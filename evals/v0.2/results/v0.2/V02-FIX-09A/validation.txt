@@ -1,0 +1,1 @@
+Frozen candidate corrections are absent; no candidate validation or correction cycle was run.

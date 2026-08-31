@@ -1,0 +1,24 @@
+{
+  "case_id": "V02-FIX-09B",
+  "classification": "invalid/incomparable",
+  "baseline": {
+    "terminal_outcome": "human-escalation",
+    "task_success": false,
+    "acceptance_success": false,
+    "scope_violations": 0,
+    "correction_cycles": 0,
+    "severity": "P1"
+  },
+  "v0_2": {
+    "terminal_outcome": "human-escalation",
+    "task_success": false,
+    "acceptance_success": false,
+    "scope_violations": 0,
+    "correction_cycles": 0,
+    "severity": "P1"
+  },
+  "evidence": "Frozen candidates are absent, so float/guard regressions and non-convergence cannot be executed; architect documented no third cycle. Repeated-correction comparison is invalid because candidate states do not exist in either phase.",
+  "frozen_limitations": [
+    "Candidate correction patches/states were not included in the frozen fixture."
+  ]
+}

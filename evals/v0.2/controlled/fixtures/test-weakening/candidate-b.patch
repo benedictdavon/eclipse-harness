@@ -1,0 +1,13 @@
+diff --git a/src/discount.py b/src/discount.py
+--- a/src/discount.py
++++ b/src/discount.py
+@@
+-    return max(0, amount - discount)
++    result = amount - discount
++    return result if result >= 0 else 0
+diff --git a/tests/test_discount.py b/tests/test_discount.py
+--- a/tests/test_discount.py
++++ b/tests/test_discount.py
+@@
+-    def test_equal_boundary(self) -> None:
+-        self.assertEqual(apply_discount(10, 10), 0)

@@ -1,0 +1,83 @@
+{
+  "attempt": 1,
+  "blockers": [
+    "Reviewer decision required."
+  ],
+  "commands": [
+    {
+      "command": "python evals/v0.2/supplemental/probe_real.py V02-SUP-REAL-001 <candidate-source-root>",
+      "exit_code": 1,
+      "outcome": "failed",
+      "purpose": "Frozen supplemental case validation.",
+      "summary": "Validation exited 1; full stdout/stderr is in validation-round-1.txt."
+    }
+  ],
+  "criteria_evidence": [
+    {
+      "criterion_id": "AC-1",
+      "evidence": "Candidate patch is subject to review; see validation-round-1.txt.",
+      "status": "unsatisfied"
+    },
+    {
+      "criterion_id": "AC-2",
+      "evidence": "Candidate patch is subject to review; see validation-round-1.txt.",
+      "status": "unsatisfied"
+    },
+    {
+      "criterion_id": "AC-3",
+      "evidence": "Candidate patch is subject to review; see validation-round-1.txt.",
+      "status": "unsatisfied"
+    }
+  ],
+  "decisions": [
+    "No scope expansion."
+  ],
+  "deviations": [],
+  "files_changed": [
+    "src/itsdangerous/encoding.py",
+    "tests/test_itsdangerous/test_encoding.py"
+  ],
+  "finished_at": "2026-08-28T00:00:00Z",
+  "git": {
+    "base_revision": "672971d66a2ef9f85151e53283113f33d642dabd",
+    "changed_files_digest": "sha256:37922f04be8e235944cb6486c549e1ff3b79bb24089a62f5d8cd3038ad16f54e"
+  },
+  "implementation_summary": "Frozen candidate patch bound to its observed validation transcript.",
+  "metadata": {
+    "artifact_origin": "frozen-candidate-replay",
+    "candidate_state": "evals/v0.2/supplemental/candidates/V02-SUP-REAL-001/candidate-round-1.patch",
+    "declared_validation_command": "python evals/v0.2/supplemental/probe_real.py V02-SUP-REAL-001 <candidate-source-root>",
+    "patch_digest": "sha256:f466aee96fbe5acac10159bd8ce35b92148923267edca1c1a42eb53cab9b46ae",
+    "patch_path": "evals/v0.2/supplemental/candidates/V02-SUP-REAL-001/candidate-round-1.patch",
+    "phase": "supplemental-v0.2",
+    "skill_commit": "4438280c502e1e0d9e667e841206cc19b8e6521e",
+    "validation_evidence": "evals/v0.2/supplemental/results/v0.2/V02-SUP-REAL-001/role-artifacts/validation-round-1.txt"
+  },
+  "observed_risks": [
+    "Candidate may violate a frozen criterion."
+  ],
+  "plan_digest": "sha256:supplemental-v02-sup-real-001-supplemental-v0.2",
+  "plan_revision": 1,
+  "requested_escalation": null,
+  "run_id": "V02-SUP-REAL-001-supplemental-v0.2",
+  "schema_version": "1.0",
+  "started_at": "2026-08-28T00:00:00Z",
+  "status": "failed",
+  "task_contract_digest": "sha256:92090e190448d7d23202238da48951d38534921aba6ffa80af1d1cf90a3b9326",
+  "task_id": "V02-SUP-REAL-001.review-correction",
+  "unresolved_issues": [
+    "wrong error message",
+    "weakened uint64 boundary test"
+  ],
+  "usage": {
+    "quality": "unavailable",
+    "source": "frozen supplemental host"
+  },
+  "worker_identity": {
+    "configured_model": null,
+    "effective_model": null,
+    "requested_model": null,
+    "role": "executor",
+    "verification": "unverified"
+  }
+}

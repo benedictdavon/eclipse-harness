@@ -1,0 +1,4 @@
+command=node -e "const fs=require('fs'); for (const p of ['basics/typescript-final/lib/posts.ts','basics/typescript-final/posts/pre-rendering.md','basics/typescript-final/posts/ssg-ssr.md']) { if (!fs.readFileSync(p,'utf8').trim()) process.exit(1) }"
+exit_code=0
+
+

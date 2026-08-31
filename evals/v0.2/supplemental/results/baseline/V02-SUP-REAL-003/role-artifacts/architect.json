@@ -1,0 +1,14 @@
+{
+  "artifact_origin": "frozen-candidate-replay",
+  "candidate_states": [
+    "evals/v0.2/supplemental/candidates/V02-SUP-REAL-003/candidate-round-1.patch",
+    "evals/v0.2/supplemental/candidates/V02-SUP-REAL-003/candidate-round-2.patch"
+  ],
+  "decision": "task-ready",
+  "max_review_rounds": 2,
+  "role": "architect",
+  "run_id": "V02-SUP-REAL-003-supplemental-baseline",
+  "schema_version": "1.0",
+  "skill_commit": "8a674fafe1f1d03c34e27c7a875752a0138f5e2b",
+  "task_contract": "task-contract.json"
+}

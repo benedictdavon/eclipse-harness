@@ -1,0 +1,2 @@
+error: patch with only garbage at line 4
+host_candidate_validation_exit_code=128

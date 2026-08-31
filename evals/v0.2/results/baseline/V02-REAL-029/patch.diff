@@ -1,0 +1,66 @@
+diff --git a/packages/read/src/index.test.ts b/packages/read/src/index.test.ts
+index f8c9251..003ed60 100644
+--- a/packages/read/src/index.test.ts
++++ b/packages/read/src/index.test.ts
+@@ -3,7 +3,7 @@ import path from "node:path";
+ import { add } from "@changesets/git";
+ import { gitdir, silenceLogsInBlock, testdir } from "@changesets/test-utils";
+ import { writeChangeset } from "@changesets/write";
+-import { describe, expect, it } from "vitest";
++import { describe, expect, it, vi } from "vitest";
+ import { readChangesets as read } from "./index.ts";
+ 
+ silenceLogsInBlock();
+@@ -98,6 +98,38 @@ I'm amazed we needed to update the best package, because it was already the best
+     ]);
+   });
+ 
++  it("sorts root and pre changesets independent of directory order", async () => {
++    const changeset = `---
++"cool-package": patch
++---
++
++Sorted summary`;
++    const cwd = await testdir({
++      ".changeset/a-first.md": changeset,
++      ".changeset/z-last.md": changeset,
++      ".changeset/pre/a-prerelease.md": changeset,
++      ".changeset/pre/z-prerelease.md": changeset,
++      ".changeset/README.md": "Ignored documentation",
++    });
++    const readdir = vi
++      .spyOn(fs, "readdir")
++      .mockResolvedValueOnce(["z-last.md", "README.md", "a-first.md", "pre"])
++      .mockResolvedValueOnce(["z-prerelease.md", "a-prerelease.md"]);
++
++    try {
++      const changesets = await read(cwd);
++
++      expect(changesets.map((changeset) => changeset.id)).toEqual([
++        "a-first",
++        "pre/a-prerelease",
++        "pre/z-prerelease",
++        "z-last",
++      ]);
++    } finally {
++      readdir.mockRestore();
++    }
++  });
++
+   it("should return an empty array when no changesets are found", async () => {
+     const cwd = await testdir({});
+     await fs.mkdir(path.join(cwd, ".changeset"), { recursive: true });
+diff --git a/packages/read/src/index.ts b/packages/read/src/index.ts
+index 4ae549b..e1f6520 100644
+--- a/packages/read/src/index.ts
++++ b/packages/read/src/index.ts
+@@ -73,6 +73,8 @@ export async function readChangesets(
+     );
+   });
+ 
++  changesets.sort();
++
+   const changesetContents = changesets.map(async (file) => {
+     const changeset = await fs.readFile(path.join(changesetBase, file), "utf8");
+ 
+

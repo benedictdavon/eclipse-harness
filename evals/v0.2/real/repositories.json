@@ -1,0 +1,40 @@
+{
+  "schema_version": "1.0",
+  "repositories": [
+    {
+      "repo_id": "REAL-PY-LIB",
+      "url": "https://github.com/pallets/itsdangerous",
+      "commit": "672971d66a2ef9f85151e53283113f33d642dabd",
+      "archetype": ["small-python-library", "mature-oss"],
+      "checkout": "git clone --depth 1 https://github.com/pallets/itsdangerous.git && git checkout 672971d66a2ef9f85151e53283113f33d642dabd"
+    },
+    {
+      "repo_id": "REAL-PY-APP",
+      "url": "https://github.com/miguelgrinberg/microblog",
+      "commit": "a975ef64864354867c88e0ed3a17ba7d17dca752",
+      "archetype": ["medium-python-application", "legacy-single-application"],
+      "checkout": "git clone --depth 1 https://github.com/miguelgrinberg/microblog.git && git checkout a975ef64864354867c88e0ed3a17ba7d17dca752"
+    },
+    {
+      "repo_id": "REAL-TS-NODE",
+      "url": "https://github.com/sindresorhus/ky",
+      "commit": "3419113b48e034fdcf8fa6bd3be3da7b3d0d758f",
+      "archetype": ["typescript-node-library", "mature-oss"],
+      "checkout": "git clone --depth 1 https://github.com/sindresorhus/ky.git && git checkout 3419113b48e034fdcf8fa6bd3be3da7b3d0d758f"
+    },
+    {
+      "repo_id": "REAL-NEXT",
+      "url": "https://github.com/vercel/next-learn",
+      "commit": "bb2558441a6673ab76c89914c25018bffa27a2ba",
+      "archetype": ["react-next-frontend", "multi-example-repository"],
+      "checkout": "git clone --depth 1 https://github.com/vercel/next-learn.git && git checkout bb2558441a6673ab76c89914c25018bffa27a2ba"
+    },
+    {
+      "repo_id": "REAL-MONOREPO",
+      "url": "https://github.com/changesets/changesets",
+      "commit": "b4dc91f545ff2afead214278b7b5ebc8d4e96322",
+      "archetype": ["typescript-monorepo", "multi-package", "mature-oss"],
+      "checkout": "git clone --depth 1 https://github.com/changesets/changesets.git && git checkout b4dc91f545ff2afead214278b7b5ebc8d4e96322"
+    }
+  ]
+}

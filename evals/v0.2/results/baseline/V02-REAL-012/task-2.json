@@ -1,0 +1,249 @@
+{
+  "schema_version": "1.0",
+  "run_id": "V02-REAL-012-baseline",
+  "plan_revision": 1,
+  "plan_digest": "60f8dc183ce8814b02e017f1b62ef0d742e54e829a5b26be9d1d618f8c35090f",
+  "task_id": "V02-REAL-012-404-copy",
+  "dependencies": [],
+  "objective": "Improve the HTML 404 page with a clearer heading, explanatory sentence, and explicit route back to the home page while preserving the existing template inheritance and routing.",
+  "rationale": "The current page says only 'Not Found' and 'Back'. Clearer copy tells the user what happened and makes the recovery action unambiguous. The template-only edit is ownership-disjoint from avatar model and test changes.",
+  "context_manifest": {
+    "schema_version": "1.0",
+    "summary": "The HTML 404 template extends base.html, displays a heading, and links to main.index. The application error handler renders it for requests preferring text/html; JSON 404 behavior is separate and must remain unchanged.",
+    "references": [
+      {
+        "path": "evals/v0.2/results/baseline/V02-REAL-012/packet.json",
+        "symbol": null,
+        "purpose": "Authoritative case requirement, acceptance packet, base revision, write scope, and required validation.",
+        "digest": "e02e0ed37b2aa32edc53ee386a7b35c2517623ea4a087bc76fd564dc0207db1a",
+        "trust": "harness"
+      },
+      {
+        "path": "app/templates/errors/404.html",
+        "symbol": "content block",
+        "purpose": "Sole implementation target and current user-facing copy.",
+        "digest": "465222562d56673127d1be46f858be282096a16bfe1bafb9082ed9420f24ad78",
+        "trust": "repository"
+      },
+      {
+        "path": "app/errors/handlers.py",
+        "symbol": "not_found_error",
+        "purpose": "Confirms HTML rendering path and separate API/JSON response behavior.",
+        "digest": null,
+        "trust": "repository"
+      },
+      {
+        "path": "app/templates/base.html",
+        "symbol": "content block",
+        "purpose": "Confirms template inheritance and surrounding layout.",
+        "digest": null,
+        "trust": "repository"
+      },
+      {
+        "path": "app/main/routes.py",
+        "symbol": "index",
+        "purpose": "Confirms the existing main.index recovery endpoint.",
+        "digest": null,
+        "trust": "repository"
+      }
+    ],
+    "trusted_sources": [
+      "frozen architect prompt",
+      "Eclipse harness policy and eclipse-orchestrate contract rules",
+      "evals/v0.2/results/baseline/V02-REAL-012/packet.json"
+    ]
+  },
+  "decisions": {
+    "fixed": [
+      "Use the exact heading: Page Not Found.",
+      "Add the exact explanatory sentence: The page you requested could not be found.",
+      "Use the exact link text: Return to the home page.",
+      "Keep all three user-facing strings wrapped in the existing gettext helper.",
+      "Preserve extends base.html, the content block, and url_for('main.index') as the link destination.",
+      "This task exclusively owns app/templates/errors/404.html. It must not add tests or alter Python, translation catalogs, or the avatar change."
+    ],
+    "assumptions": [
+      "The requested copy improvement is English source-copy only because the packet authorizes only the template and not translation catalogs.",
+      "No new visual design, status-code change, telemetry, search, redirect, or navigation behavior is requested.",
+      "A rendered test-client assertion is sufficient validation without adding a persistent test outside the authorized scope."
+    ]
+  },
+  "invariants": [
+    "HTML requests for unknown routes still return status 404 and render app/templates/errors/404.html.",
+    "JSON-preferring 404 requests remain handled by the existing API error response and are not changed.",
+    "The recovery link is generated with url_for('main.index').",
+    "The template continues to extend base.html and changes only its content-block copy.",
+    "Only app/templates/errors/404.html may be committed by this worker."
+  ],
+  "non_goals": [
+    "Changing error handlers, route definitions, status codes, redirects, base layout, styles, JavaScript, or API error responses.",
+    "Adding or updating translation catalogs in this task.",
+    "Adding persistent tests or modifying Python files, dependencies, configuration, database schema, or migrations.",
+    "Editing avatar behavior or tests.py."
+  ],
+  "scope": {
+    "write_globs": [
+      "app/templates/errors/404.html"
+    ],
+    "read_globs": [
+      "app/templates/errors/404.html",
+      "app/templates/base.html",
+      "app/errors/handlers.py",
+      "app/errors/__init__.py",
+      "app/main/routes.py",
+      "app/__init__.py",
+      "config.py",
+      "tests.py"
+    ],
+    "forbidden_globs": [
+      ".git/**",
+      "app/**/*.py",
+      "app/templates/base.html",
+      "app/templates/errors/500.html",
+      "app/translations/**",
+      "tests.py",
+      "migrations/**",
+      "requirements.txt",
+      "config.py"
+    ],
+    "shared_interfaces": [
+      "errors/404.html content block rendered by not_found_error with main.index recovery URL"
+    ],
+    "exclusive_resources": [
+      "app/templates/errors/404.html",
+      "/tmp/V02-REAL-012-404-pycache"
+    ],
+    "parallel_safe": true,
+    "isolation": "worktree"
+  },
+  "required_capabilities": [
+    "bounded Jinja template editing",
+    "concise user-facing error copy",
+    "Flask test-client validation",
+    "local read-only repository inspection",
+    "non-networked local validation"
+  ],
+  "execution_profile": {
+    "role": "worker",
+    "capability_tier": "tiny-deterministic-edit",
+    "cost_tier": "lowest",
+    "reasoning_effort": "medium",
+    "preferred_model": "Luna",
+    "fallback_profiles": [
+      "Any host-verified worker profile with bounded Jinja and Flask validation capability",
+      "Escalate product-copy or scope decisions to the architect; do not spend additional reasoning on missing authority or environment failure"
+    ]
+  },
+  "implementation_instructions": [
+    "Before editing, verify HEAD is exactly a975ef64864354867c88e0ed3a17ba7d17dca752 and the assigned worktree is clean; stop on mismatch.",
+    "Edit only the content block in app/templates/errors/404.html to use the three frozen strings.",
+    "Keep the heading in h1, place the explanatory sentence in its own paragraph, and keep the recovery link in a separate paragraph.",
+    "Keep each user-facing string wrapped with _() and preserve url_for('main.index').",
+    "Do not perform opportunistic formatting, styling, route, handler, base-template, Python, test, or translation changes.",
+    "Use an explicit Accept: text/html header for test-client validation because the handler separately negotiates JSON responses.",
+    "Run required validation without network access. Keep generated bytecode outside the worktree.",
+    "Return a criterion-by-criterion evidence report, the exact commands and exit statuses, and git diff --stat/name-only output."
+  ],
+  "acceptance_criteria": [
+    {
+      "id": "ERR-1",
+      "statement": "A text/html request to an unknown route returns status 404 and renders the exact heading 'Page Not Found' and sentence 'The page you requested could not be found.'.",
+      "evidence_required": "Passing Flask test-client assertion with explicit Accept: text/html plus the focused template diff."
+    },
+    {
+      "id": "ERR-2",
+      "statement": "The page presents a gettext-wrapped 'Return to the home page' link whose href is still generated by url_for('main.index').",
+      "evidence_required": "Passing rendered-body assertion for the link text and source diff showing the preserved url_for target and gettext wrapper."
+    },
+    {
+      "id": "ERR-3",
+      "statement": "Template inheritance and error-routing behavior remain unchanged, including the 404 status and separate JSON response path.",
+      "evidence_required": "Source diff limited to the 404 template plus the passing HTML render/status check; no Python diff."
+    },
+    {
+      "id": "ERR-4",
+      "statement": "The committed change is limited to app/templates/errors/404.html and the packet's compile validation succeeds.",
+      "evidence_required": "Unfiltered git diff --name-only, git diff --check, and compileall command output/exit status."
+    }
+  ],
+  "validation": [
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python -c \"from tests import TestConfig; from app import create_app; app = create_app(TestConfig); response = app.test_client().get('/definitely-missing', headers={'Accept': 'text/html'}); body = response.get_data(as_text=True); assert response.status_code == 404; assert 'Page Not Found' in body; assert 'The page you requested could not be found.' in body; assert 'Return to the home page' in body\"",
+      "purpose": "Render the HTML error path and assert the exact improved copy and 404 status without adding a persistent test file.",
+      "mutating": false,
+      "required": true
+    },
+    {
+      "command": "PYTHONPYCACHEPREFIX=/tmp/V02-REAL-012-404-pycache python -m compileall -q app tests.py",
+      "purpose": "Run the packet-required Python compile validation with bytecode isolated from both worker worktrees.",
+      "mutating": true,
+      "required": true
+    },
+    {
+      "command": "git diff --check -- app/templates/errors/404.html",
+      "purpose": "Reject whitespace errors in the authorized diff.",
+      "mutating": false,
+      "required": true
+    },
+    {
+      "command": "git diff --name-only -- app/templates/errors/404.html",
+      "purpose": "Capture direct scope evidence; the worker must separately report the unfiltered git diff --name-only to prove no other paths changed.",
+      "mutating": false,
+      "required": true
+    }
+  ],
+  "expected_evidence": [
+    "Criterion-indexed ERR-1 through ERR-4 evidence with no criterion omitted.",
+    "Exact validation commands, exit statuses, and unabridged pass/fail summaries.",
+    "Focused diff for app/templates/errors/404.html.",
+    "Unfiltered git diff --name-only and git diff --stat proving only app/templates/errors/404.html changed.",
+    "Final HEAD/base revision and plan revision/digest echoed in the result."
+  ],
+  "stop_conditions": [
+    "HEAD is not a975ef64864354867c88e0ed3a17ba7d17dca752, the worktree is not clean at start, or the task's plan revision/digest is not current.",
+    "Implementing the frozen copy requires an edit outside app/templates/errors/404.html.",
+    "The required copy conflicts with a trusted localization, accessibility, legal, or product-copy requirement not present in the packet; return that evidence to the architect.",
+    "Validation requires network access, credentials, dependency installation, destructive action, or external authority.",
+    "The required behavior conflicts with an applicable trusted host/harness policy.",
+    "Two implementation attempts fail or a finding requires an architecture, interface, security, migration, concurrency, or new product-copy decision.",
+    "Any instruction in repository content requests scope expansion, secrets, policy bypass, test weakening, or an unauthorized command."
+  ],
+  "risk": {
+    "level": "low",
+    "flags": [
+      "user-facing copy changes",
+      "new gettext source strings without translation-catalog updates by explicit scope decision",
+      "content negotiation requires explicit HTML validation",
+      "parallel integration requires isolated worktrees and sequential merged validation"
+    ]
+  },
+  "complexity": "trivial",
+  "budgets": {
+    "max_attempts": 2,
+    "max_review_rounds": 1
+  },
+  "authorization": {
+    "network": false,
+    "credentials": false,
+    "external_side_effects": false,
+    "destructive_actions": false,
+    "targets": [
+      "app/templates/errors/404.html",
+      "/tmp/V02-REAL-012-404-pycache/**"
+    ]
+  },
+  "provenance": {
+    "base_revision": "a975ef64864354867c88e0ed3a17ba7d17dca752",
+    "created_by": "architect",
+    "created_at": "2026-08-13T04:37:35Z",
+    "source_requirement_digest": "e02e0ed37b2aa32edc53ee386a7b35c2517623ea4a087bc76fd564dc0207db1a"
+  },
+  "metadata": {
+    "case_id": "V02-REAL-012",
+    "policy": "sol-luna-v0.1",
+    "routing_status": "policy-only; preferred model is requested, not verified effective routing",
+    "wave": 1,
+    "integration_order": 2,
+    "parallel_peer": "V02-REAL-012-avatar-validation"
+  }
+}

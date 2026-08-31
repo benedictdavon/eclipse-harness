@@ -1,0 +1,6 @@
+round=1
+command=PYTHONPATH=src python -m pytest tests/test_itsdangerous/test_encoding.py -q
+exit_code=1
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python: No module named pytest
+

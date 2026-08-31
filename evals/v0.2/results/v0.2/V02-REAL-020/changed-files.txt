@@ -1,0 +1,4 @@
+dashboard/starter-example/app/lib/definitions.ts
+dashboard/starter-example/app/lib/placeholder-data.ts
+dashboard/starter-example/app/ui/invoices/status.tsx
+dashboard/starter-example/app/ui/invoices/status.test.tsx

@@ -1,0 +1,25 @@
+{
+  "case_id": "V02-FIX-07B",
+  "family": "safe-parallelism",
+  "case_type": "controlled",
+  "repository": "fixtures/safe-parallelism",
+  "repository_commit": "fixture-v1",
+  "host": "chatgpt-work-collaboration",
+  "adapter": "manual",
+  "task_category": "parallelization-candidate",
+  "role_focus": "orchestrate",
+  "task_statement": "Add an email-domain helper and separately document SMS country-code behavior. Keep the source and documentation work in independent contracts.",
+  "expected_write_scope": [
+    "src/email.py",
+    "tests/test_email.py",
+    "docs/sms.md"
+  ],
+  "acceptance_criteria": [
+    "ownership is disjoint",
+    "no false dependency is introduced"
+  ],
+  "validation": [
+    "python -m unittest tests.test_email -v"
+  ],
+  "policy": "sol-luna-v0.1"
+}

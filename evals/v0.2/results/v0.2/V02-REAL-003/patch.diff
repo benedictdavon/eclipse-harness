@@ -1,0 +1,38 @@
+diff --git a/src/itsdangerous/encoding.py b/src/itsdangerous/encoding.py
+index f5ca80f..5273dc8 100644
+--- a/src/itsdangerous/encoding.py
++++ b/src/itsdangerous/encoding.py
+@@ -29,10 +29,9 @@ def base64_decode(string: str | bytes) -> bytes:
+     """Base64 decode a URL-safe string of bytes or text. The result is
+     bytes.
+     """
+-    string = want_bytes(string, encoding="ascii", errors="ignore")
+-    string += b"=" * (-len(string) % 4)
+-
+     try:
++        string = want_bytes(string, encoding="ascii")
++        string += b"=" * (-len(string) % 4)
+         return base64.urlsafe_b64decode(string)
+     except (TypeError, ValueError) as e:
+         raise BadData("Invalid base64-encoded data") from e
+diff --git a/tests/test_itsdangerous/test_encoding.py b/tests/test_itsdangerous/test_encoding.py
+index 268367e..c34f006 100644
+--- a/tests/test_itsdangerous/test_encoding.py
++++ b/tests/test_itsdangerous/test_encoding.py
+@@ -27,6 +27,16 @@ def test_base64_bad():
+         base64_decode("12345")
+ 
+ 
++def test_base64_non_ascii_text_bad():
++    with pytest.raises(BadData):
++        base64_decode("dGVzdA無")
++
++
++@pytest.mark.parametrize("value", ("dGVzdA", b"dGVzdA"))
++def test_base64_decode_valid_input_forms(value):
++    assert base64_decode(value) == b"test"
++
++
+ @pytest.mark.parametrize(
+     ("value", "expect"), ((0, b""), (192, b"\xc0"), (18446744073709551615, b"\xff" * 8))
+ )

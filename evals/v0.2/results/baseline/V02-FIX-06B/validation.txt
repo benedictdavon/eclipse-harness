@@ -1,0 +1,2 @@
+host_patch_apply_exit_code=128
+host_candidate_validation_exit_code=127

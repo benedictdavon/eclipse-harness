@@ -1,0 +1,40 @@
+diff --git a/source/utils/options.ts b/source/utils/options.ts
+index 9468804..2ce5b6b 100644
+--- a/source/utils/options.ts
++++ b/source/utils/options.ts
+@@ -31,6 +31,10 @@ export const hasSearchParameters = (search: SearchParamsOption): boolean => {
+ 		return false;
+ 	}
+ 
++	if (search === null) {
++		return false;
++	}
++
+ 	// The `typeof array` still gives "object", so we need different checking for array.
+ 	if (Array.isArray(search)) {
+ 		return search.length > 0;
+diff --git a/test/main.ts b/test/main.ts
+index 346b8de..ade4d5e 100644
+--- a/test/main.ts
++++ b/test/main.ts
+@@ -11,6 +11,7 @@ import ky, {
+ 	replaceOption,
+ 	type StandardSchemaV1,
+ } from '../source/index.js';
++import {hasSearchParameters} from '../source/utils/options.js';
+ import {createHttpTestServer} from './helpers/create-http-test-server.js';
+ import {parseRawBody} from './helpers/parse-body.js';
+ 
+@@ -1194,6 +1195,11 @@ test('searchParams option', async t => {
+ 	t.is(await ky(server.url, {searchParams: customStringParameters}).text(), customStringParameters);
+ });
+ 
++test('hasSearchParameters handles untyped null input', t => {
++	t.false(hasSearchParameters(null as never));
++	t.true(hasSearchParameters('0'));
++});
++
+ test('searchParams option with undefined values', async t => {
+ 	const server = await createHttpTestServer(t);
+ 
+

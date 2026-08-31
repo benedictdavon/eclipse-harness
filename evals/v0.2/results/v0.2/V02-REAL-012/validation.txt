@@ -1,0 +1,4 @@
+$ python -m compileall -q app tests.py
+exit_code: 0
+stdout: (empty)
+stderr: (empty)

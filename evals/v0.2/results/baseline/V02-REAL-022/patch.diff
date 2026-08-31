@@ -1,0 +1,69 @@
+diff --git a/dashboard/starter-example/app/ui/invoices/status.tsx b/dashboard/starter-example/app/ui/invoices/status.tsx
+index 108bda5..b6198ad 100644
+--- a/dashboard/starter-example/app/ui/invoices/status.tsx
++++ b/dashboard/starter-example/app/ui/invoices/status.tsx
+@@ -1,27 +1,50 @@
+ import { CheckIcon, ClockIcon } from '@heroicons/react/24/outline';
+ import clsx from 'clsx';
+ 
++type InvoiceStatusKey = 'pending' | 'paid';
++
++type StatusPresentation = {
++  label: string;
++  pillClasses: string;
++  icon: typeof ClockIcon;
++  iconClasses: string;
++};
++
++const statusPresentation: Record<InvoiceStatusKey, StatusPresentation> = {
++  pending: {
++    label: 'Pending',
++    pillClasses: 'bg-gray-100 text-gray-500',
++    icon: ClockIcon,
++    iconClasses: 'ml-1 w-4 text-gray-500',
++  },
++  paid: {
++    label: 'Paid',
++    pillClasses: 'bg-green-500 text-white',
++    icon: CheckIcon,
++    iconClasses: 'ml-1 w-4 text-white',
++  },
++};
++
+ export default function InvoiceStatus({ status }: { status: string }) {
++  const presentation = Object.prototype.hasOwnProperty.call(
++    statusPresentation,
++    status,
++  )
++    ? statusPresentation[status as InvoiceStatusKey]
++    : undefined;
++  const StatusIcon = presentation?.icon;
++
+   return (
+     <span
+       className={clsx(
+         'inline-flex items-center rounded-full px-2 py-1 text-xs',
+-        {
+-          'bg-gray-100 text-gray-500': status === 'pending',
+-          'bg-green-500 text-white': status === 'paid',
+-        },
++        presentation?.pillClasses,
+       )}
+     >
+-      {status === 'pending' ? (
+-        <>
+-          Pending
+-          <ClockIcon className="ml-1 w-4 text-gray-500" />
+-        </>
+-      ) : null}
+-      {status === 'paid' ? (
++      {presentation && StatusIcon ? (
+         <>
+-          Paid
+-          <CheckIcon className="ml-1 w-4 text-white" />
++          {presentation.label}
++          <StatusIcon className={presentation.iconClasses} />
+         </>
+       ) : null}
+     </span>
+

@@ -1,0 +1,18 @@
+diff --git a/README.md b/README.md
+--- a/README.md
++++ b/README.md
+@@
+ `parse_pair` parses the first `=` separator and preserves the remaining value.
++Whitespace around the complete input is ignored.
+diff --git a/pyproject.toml b/pyproject.toml
+--- a/pyproject.toml
++++ b/pyproject.toml
+@@
+ requires-python = ">=3.10"
++dependencies = ["fast-parser"]
+diff --git a/src/parser.py b/src/parser.py
+--- a/src/parser.py
++++ b/src/parser.py
+@@
+-    left, separator, right = value.partition("=")
++    left, separator, right = value.strip().partition("=")

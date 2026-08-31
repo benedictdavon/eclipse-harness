@@ -1,0 +1,26 @@
+{
+  "acceptance_criteria": [
+    "format_total(1234) returns '$12.34'",
+    "zero and negative values are covered",
+    "existing calculation behavior remains unchanged"
+  ],
+  "adapter": "manual",
+  "case_id": "V02-FIX-01B",
+  "case_type": "controlled",
+  "expected_write_scope": [
+    "src/pricing.py",
+    "src/__init__.py",
+    "tests/test_pricing.py"
+  ],
+  "family": "bounded-implementation",
+  "host": "chatgpt-work-collaboration",
+  "policy": "sol-luna-v0.1",
+  "repository": "fixtures/bounded-implementation",
+  "repository_commit": "fixture-v1",
+  "role_focus": "end-to-end",
+  "task_category": "multi-file-feature",
+  "task_statement": "Add a format_total helper that renders integer cents as USD with two decimals. Export it from src/__init__.py and test positive, zero, and negative values. Preserve calculate_total and do not add localization support.",
+  "validation": [
+    "python -m unittest discover -s tests -v"
+  ]
+}

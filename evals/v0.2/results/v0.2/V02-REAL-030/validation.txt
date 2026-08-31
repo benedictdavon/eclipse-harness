@@ -1,0 +1,1 @@
+No candidate or implementation validation was run. Host inspection confirmed the pinned commit, clean status, and absent candidate diff.

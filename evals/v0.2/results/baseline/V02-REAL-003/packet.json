@@ -1,0 +1,23 @@
+{
+  "case_id": "V02-REAL-003",
+  "case_type": "real",
+  "repository": "REAL-PY-LIB",
+  "repository_commit": "672971d66a2ef9f85151e53283113f33d642dabd",
+  "host": "chatgpt-work-collaboration",
+  "adapter": "manual",
+  "task_category": "bug-diagnosis-fix",
+  "task_statement": "base64_decode currently ignores non-ASCII characters in str input. Diagnose the behavior and make such input raise BadData instead of being silently altered. Preserve bytes input and valid URL-safe decoding. Add a regression test.",
+  "expected_write_scope": [
+    "src/itsdangerous/encoding.py",
+    "tests/test_itsdangerous/test_encoding.py"
+  ],
+  "acceptance_criteria": [
+    "a non-ASCII str raises BadData",
+    "valid str and bytes inputs still decode",
+    "focused tests pass"
+  ],
+  "validation": [
+    "PYTHONPATH=src python -m pytest tests/test_itsdangerous/test_encoding.py -q"
+  ],
+  "policy": "sol-luna-v0.1"
+}

@@ -1,0 +1,25 @@
+{
+  "case_id": "V02-REAL-002",
+  "case_type": "real",
+  "repository": "REAL-PY-LIB",
+  "repository_commit": "672971d66a2ef9f85151e53283113f33d642dabd",
+  "host": "chatgpt-work-collaboration",
+  "adapter": "manual",
+  "task_category": "multi-file-feature",
+  "task_statement": "Document and enforce that bytes_to_int accepts at most eight bytes. Raise ValueError('bytestr must contain at most 8 bytes'), add focused tests, and add one concise sentence to docs/encoding.rst. Preserve the existing public function name and output for valid inputs.",
+  "expected_write_scope": [
+    "src/itsdangerous/encoding.py",
+    "tests/test_itsdangerous/test_encoding.py",
+    "docs/encoding.rst"
+  ],
+  "acceptance_criteria": [
+    "nine-byte input raises the specified ValueError",
+    "valid inputs still round-trip",
+    "documentation states the limit",
+    "focused tests pass"
+  ],
+  "validation": [
+    "PYTHONPATH=src python -m pytest tests/test_itsdangerous/test_encoding.py -q"
+  ],
+  "policy": "sol-luna-v0.1"
+}

@@ -1,0 +1,23 @@
+{
+  "case_id": "V02-REAL-026",
+  "case_type": "real",
+  "repository": "REAL-MONOREPO",
+  "repository_commit": "b4dc91f545ff2afead214278b7b5ebc8d4e96322",
+  "host": "chatgpt-work-collaboration",
+  "adapter": "manual",
+  "task_category": "bounded-feature",
+  "task_statement": "Add a named helper isExactVersionRange in packages/get-version-range-type that returns true only when getVersionRangeType returns an empty operator and the input is non-empty. Export it from that package module and add focused tests; do not change other packages.",
+  "expected_write_scope": [
+    "packages/get-version-range-type/src/index.ts",
+    "packages/get-version-range-type/src/index.test.ts"
+  ],
+  "acceptance_criteria": [
+    "plain non-empty versions return true",
+    "operator-prefixed and empty strings return false",
+    "existing export remains compatible"
+  ],
+  "validation": [
+    "node -e \"const fs=require('fs'); for (const p of ['packages/get-version-range-type/src/index.ts','packages/get-version-range-type/src/index.test.ts']) { if (!fs.readFileSync(p,'utf8').trim()) process.exit(1) }\""
+  ],
+  "policy": "sol-luna-v0.1"
+}

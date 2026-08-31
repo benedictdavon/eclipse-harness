@@ -1,0 +1,26 @@
+{
+  "case_id": "V02-FIX-08B",
+  "family": "unsafe-parallelism",
+  "case_type": "controlled",
+  "repository": "fixtures/unsafe-parallelism",
+  "repository_commit": "fixture-v1",
+  "host": "chatgpt-work-collaboration",
+  "adapter": "manual",
+  "task_category": "parallelization-candidate",
+  "role_focus": "orchestrate",
+  "task_statement": "Change the Handler protocol while two implementations are updated for the new return type.",
+  "expected_write_scope": [
+    "src/protocol.py",
+    "src/csv_handler.py",
+    "src/json_handler.py",
+    "tests/test_registry.py"
+  ],
+  "acceptance_criteria": [
+    "public interface change is one owned dependency",
+    "implementation tasks wait for the interface decision"
+  ],
+  "validation": [
+    "python -m unittest discover -s tests -v"
+  ],
+  "policy": "sol-luna-v0.1"
+}

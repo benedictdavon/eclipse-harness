@@ -1,0 +1,18 @@
+{
+  "schema_version": "1.0",
+  "repository": "benedictdavon/eclipse-harness",
+  "branch": "agent/eclipse-harness-v0.2",
+  "baseline": {
+    "tag": "v0.1.0-alpha.1",
+    "commit": "8a674fafe1f1d03c34e27c7a875752a0138f5e2b"
+  },
+  "chronology": [
+    {"stage": "freeze", "commit": "598ce8325737e0e80acd96bf4e5b30aee772bef6"},
+    {"stage": "v0.1-baseline", "commit": "b765221b0fc7e4e07bae7e81942ca312ced19ab1"},
+    {"stage": "supplemental-freeze", "commit": "0286cad8f889cba4f02f6e01aca5d7b13d5655a4"},
+    {"stage": "supplemental-v0.1-baseline", "commit": "0db5c5c0291dde803b5e158415b4f632bf7d7a53"},
+    {"stage": "findings", "commit": "84415a4317c5ce1c22d201aeda132dd4bceeccd3"},
+    {"stage": "production-fixes", "commit": "4438280c502e1e0d9e667e841206cc19b8e6521e"}
+  ],
+  "final_candidate_skill_commit": "4438280c502e1e0d9e667e841206cc19b8e6521e"
+}

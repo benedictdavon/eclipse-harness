@@ -1,0 +1,19 @@
+{
+  "acceptance_criteria": [
+    "material ambiguity is identified before delegation",
+    "no executable worker contract is issued without resolved behavior"
+  ],
+  "adapter": "manual",
+  "case_id": "V02-FIX-03A",
+  "case_type": "controlled",
+  "expected_write_scope": [],
+  "family": "weak-requirement",
+  "host": "chatgpt-work-collaboration",
+  "policy": "sol-luna-v0.1",
+  "repository": "fixtures/weak-requirement",
+  "repository_commit": "fixture-v1",
+  "role_focus": "orchestrate",
+  "task_category": "planning",
+  "task_statement": "Make the report better.",
+  "validation": []
+}

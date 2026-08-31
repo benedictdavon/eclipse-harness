@@ -1,0 +1,41 @@
+diff --git a/packages/get-version-range-type/src/index.test.ts b/packages/get-version-range-type/src/index.test.ts
+index 84c84d4..90f0ca4 100644
+--- a/packages/get-version-range-type/src/index.test.ts
++++ b/packages/get-version-range-type/src/index.test.ts
+@@ -1,5 +1,5 @@
+ import { expect, test } from "vitest";
+-import { getVersionRangeType } from "./index.ts";
++import getVersionRangeTypeDefault, { getVersionRangeType } from "./index.ts";
+ 
+ test.each([
+   ["^1.0.0", "^"],
+@@ -8,6 +8,11 @@ test.each([
+   ["<=1.0.0", "<="],
+   [">1.0.0", ">"],
+   ["1.0.0", ""],
++  ["<1.0.0", "<"],
+ ])('getVersionRangeType should return "%s" if passed "%s"', (input, output) => {
+   expect(getVersionRangeType(input)).toEqual(output);
+ });
++
++test("default export aliases getVersionRangeType", () => {
++  expect(getVersionRangeTypeDefault).toBe(getVersionRangeType);
++});
+diff --git a/packages/get-version-range-type/src/index.ts b/packages/get-version-range-type/src/index.ts
+index 374664a..bc9aec3 100644
+--- a/packages/get-version-range-type/src/index.ts
++++ b/packages/get-version-range-type/src/index.ts
+@@ -1,10 +1,11 @@
+ export function getVersionRangeType(
+   versionRange: string,
+-): "^" | "~" | ">=" | "<=" | ">" | "" {
++): "^" | "~" | ">=" | "<=" | ">" | "<" | "" {
+   if (versionRange.charAt(0) === "^") return "^";
+   if (versionRange.charAt(0) === "~") return "~";
+   if (versionRange.startsWith(">=")) return ">=";
+   if (versionRange.startsWith("<=")) return "<=";
++  if (versionRange.charAt(0) === "<") return "<";
+   if (versionRange.charAt(0) === ">") return ">";
+   return "";
+ }
+

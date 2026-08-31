@@ -1,0 +1,2 @@
+ M docs/encoding.rst
+ M tests/test_itsdangerous/test_encoding.py

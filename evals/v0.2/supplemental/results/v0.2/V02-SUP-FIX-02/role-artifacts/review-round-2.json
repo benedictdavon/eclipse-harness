@@ -1,0 +1,68 @@
+{
+  "criteria_verdicts": [
+    {
+      "criterion_id": "AC-1",
+      "evidence": "Candidate requires disposition.",
+      "status": "unverified"
+    },
+    {
+      "criterion_id": "AC-2",
+      "evidence": "Candidate requires disposition.",
+      "status": "unverified"
+    },
+    {
+      "criterion_id": "AC-3",
+      "evidence": "Candidate requires disposition.",
+      "status": "unverified"
+    }
+  ],
+  "findings": [
+    {
+      "correction": "Provide only the bounded correction.",
+      "disposition": "architect",
+      "evidence": "removed upper-bound test",
+      "id": "F-ROUND-2",
+      "impact": "Frozen candidate cannot satisfy the task.",
+      "path": "evals/v0.2/supplemental/candidates/V02-SUP-FIX-02/candidate-round-2.patch",
+      "severity": "high",
+      "type": "acceptance-failure"
+    }
+  ],
+  "finished_at": "2026-08-28T00:00:00Z",
+  "metadata": {
+    "artifact_origin": "frozen-candidate-replay",
+    "bound_patch_digest": "sha256:5012b07df2d80ad26bc4721b30e076c2a1faa29109003c861d2b225f45596ea4",
+    "bound_patch_path": "evals/v0.2/supplemental/candidates/V02-SUP-FIX-02/candidate-round-2.patch",
+    "candidate_state": "evals/v0.2/supplemental/candidates/V02-SUP-FIX-02/candidate-round-2.patch",
+    "evidence_status": "pass",
+    "final_state": null,
+    "predeclared_expected_findings": [
+      "removed upper-bound test"
+    ]
+  },
+  "outcome": "escalated",
+  "permissions": {
+    "desired": "read-only",
+    "effective": "unverified",
+    "enforcement": "manual frozen-evaluation host"
+  },
+  "plan_digest": "sha256:supplemental-v02-sup-fix-02-supplemental-v0.2",
+  "plan_revision": 1,
+  "residual_risk": [
+    "Reviewer independence is unverified; only the fixed oracle is measured."
+  ],
+  "result_digest": "sha256:6879bf951f1e014adf7e9ca12e996eebc6de8c530871cead9e732fc8c1778a84",
+  "review_round": 2,
+  "reviewer_identity": {
+    "effective_model": null,
+    "requested_model": null,
+    "role": "reviewer",
+    "verification": "unverified"
+  },
+  "run_id": "V02-SUP-FIX-02-supplemental-v0.2",
+  "schema_version": "1.0",
+  "started_at": "2026-08-28T00:00:00Z",
+  "task_contract_digest": "sha256:9c2221ae49aa6599d5fe8acbb8b2f36bf9ddfeae015d25572bd3be126463fe24",
+  "task_id": "V02-SUP-FIX-02.review-correction",
+  "validation_summary": "Reviewed the named frozen candidate state and its bound worker result."
+}
