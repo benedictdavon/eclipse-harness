@@ -46,10 +46,15 @@ def _artifact_reports_pass(path: Path, kind: str) -> bool:
         return False
 
     if kind == "behavioral-probe":
+        # A marker without a successful process status is just an unsupported
+        # claim, and a zero status without the probe's marker does not identify
+        # which acceptance evidence passed.  Require both signals.
         return bool(
             re.search(r"ECLIPSE_ACCEPTANCE_EVIDENCE:\s*PASS", text)
-            or re.search(r"host_validation_exit_code\s*=\s*0", text)
-            or re.search(r"(?m)^exit_code:\s*0\s*$", text)
+            and (
+                re.search(r"host_validation_exit_code\s*=\s*0", text)
+                or re.search(r"(?m)^exit_code:\s*0\s*$", text)
+            )
         )
     if kind == "review-oracle":
         try:

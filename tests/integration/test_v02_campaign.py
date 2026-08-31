@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import Any
 
 import jsonschema
+import pytest
 
 from eclipse_harness.contracts import (
     ResultContract,
@@ -17,6 +18,7 @@ from eclipse_harness.contracts import (
     validate_result_against_task,
     validate_review_against_result,
 )
+from eclipse_harness.jsonutil import digest_json
 from tools.score_v02_campaign import observed_success, summarize
 
 ROOT = Path(__file__).parents[2]
@@ -104,6 +106,52 @@ def _supplemental_runs(phase: str) -> dict[str, dict[str, Any]]:
     return {path.parent.name: _load(path) for path in paths}
 
 
+def _patch_files(path: Path) -> list[str]:
+    """Return the exact repository paths changed by a frozen unified patch."""
+
+    values = [
+        before if after == "/dev/null" else after
+        for before, after in re.findall(
+            r"^diff --git a/(.+?) b/(.+?)$", path.read_text(encoding="utf-8"), re.MULTILINE
+        )
+    ]
+    assert values and len(values) == len(set(values))
+    return sorted(values)
+
+
+def _patch_digest(path: Path) -> str:
+    return "sha256:" + hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def _assert_supplemental_task_binding(task: dict[str, Any], case: dict[str, Any]) -> None:
+    """Fail closed when a stored task drifts from its frozen case definition."""
+
+    if task["objective"] != case["task_statement"]:
+        raise AssertionError("task objective differs from frozen task_statement")
+    if [item["statement"] for item in task["acceptance_criteria"]] != case[
+        "acceptance_criteria"
+    ]:
+        raise AssertionError("task acceptance criteria differ from frozen case")
+    if [item["command"] for item in task["validation"]] != case["validation"]:
+        raise AssertionError("task validation commands differ from frozen case")
+
+
+def _assert_supplemental_result_binding(
+    result: dict[str, Any], *, root: Path
+) -> None:
+    """Fail closed when result file/digest claims are not bound to its patch."""
+
+    metadata = result["metadata"]
+    patch_path = root / metadata["patch_path"]
+    expected_files = _patch_files(patch_path)
+    if result["files_changed"] != expected_files:
+        raise AssertionError("result files_changed differs from its bound patch")
+    if result["git"]["changed_files_digest"] != digest_json(expected_files):
+        raise AssertionError("result changed-files digest differs from its bound patch")
+    if metadata["patch_digest"] != _patch_digest(patch_path):
+        raise AssertionError("result patch digest differs from its bound patch")
+
+
 def test_v02_both_campaign_phases_preserve_every_case() -> None:
     frozen_ids = {
         case["case_id"]
@@ -139,8 +187,8 @@ def test_v02_before_after_outcomes_are_recomputed_from_raw_evidence() -> None:
     totals = summarize(ROOT)
     assert totals["baseline"]["runs"] == 50
     assert totals["v0.2"]["runs"] == 50
-    assert totals["baseline"]["evidence_supported_successes"] == 3
-    assert totals["v0.2"]["evidence_supported_successes"] == 5
+    assert totals["baseline"].get("evidence_supported_successes", 0) == 0
+    assert totals["v0.2"]["evidence_supported_successes"] == 3
 
 
 def test_v02_real_rerun_does_not_invent_unavailable_measurements() -> None:
@@ -202,7 +250,7 @@ def test_v02_acceptance_score_uses_raw_evidence_not_recorded_booleans() -> None:
     assert observed_success(ROOT, record, record_path)
     assert observed_success(ROOT, mutated, record_path)
     totals = summarize(ROOT)["v0.2"]
-    assert totals["evidence_supported_successes"] == 5
+    assert totals["evidence_supported_successes"] == 3
     assert totals["structural_only"] == 18
     assert totals["inconclusive_acceptance"] == 21
 
@@ -239,6 +287,19 @@ def test_v02_scorer_rejects_an_adversarial_record_artifact_mismatch(
     assert not observed_success(ROOT, mismatched, record_path)
 
 
+def test_v02_behavioral_probe_requires_marker_and_zero_exit_code(
+    tmp_path: Path,
+) -> None:
+    record_path = EVAL_ROOT / "results/v0.2/V02-REAL-014/run.json"
+    record = _load(record_path)
+    marker_only = tmp_path / "marker-only.txt"
+    marker_only.write_text("ECLIPSE_ACCEPTANCE_EVIDENCE: PASS\n", encoding="utf-8")
+    mismatched = deepcopy(record)
+    mismatched["acceptance_evidence"]["path"] = str(marker_only)
+
+    assert not observed_success(ROOT, mismatched, record_path)
+
+
 def test_v02_supplemental_campaign_exercises_correction_cases() -> None:
     cases = _load(EVAL_ROOT / "supplemental/cases.json")["cases"]
     baseline = _supplemental_runs("baseline")
@@ -266,6 +327,7 @@ def test_v02_supplemental_campaign_exercises_correction_cases() -> None:
             assert len(artifacts["worker_rounds"]) == 2
             assert len(artifacts["review_rounds"]) == 2
             task = TaskContract.from_dict(_load(ROOT / artifacts["task"]))
+            _assert_supplemental_task_binding(task.data, case)
             workers = [
                 ResultContract.from_dict(_load(ROOT / path))
                 for path in artifacts["worker_rounds"]
@@ -275,12 +337,53 @@ def test_v02_supplemental_campaign_exercises_correction_cases() -> None:
                 for path in artifacts["review_rounds"]
             ]
             for worker, review in zip(workers, reviews, strict=True):
+                _assert_supplemental_result_binding(worker.data, root=ROOT)
+                transcript = ROOT / worker.data["metadata"]["validation_evidence"]
+                evidence = transcript.read_text(encoding="utf-8")
+                command = worker.data["commands"][0]
+                assert f"declared_command: {command['command']}" in evidence
+                assert "stdout:" in evidence and "stderr:" in evidence
+                expected_exit = (
+                    f"exit_code: {command['exit_code']}"
+                    if command["exit_code"] is not None
+                    else "exit_code: unavailable"
+                )
+                assert expected_exit in evidence
                 validate_result_against_task(worker, task)
                 validate_review_against_result(review, worker, task)
             assert all(
                 _load(ROOT / path)["review_round"] == round_number
                 for round_number, path in enumerate(artifacts["review_rounds"], start=1)
             )
+
+
+def test_v02_supplemental_task_binding_rejects_frozen_case_drift() -> None:
+    case = _load(EVAL_ROOT / "supplemental/cases.json")["cases"][0]
+    task = _load(
+        EVAL_ROOT
+        / "supplemental/results/v0.2/V02-SUP-FIX-01/role-artifacts/task-contract.json"
+    )
+    task["validation"][0]["command"] = "python -m unittest"
+
+    with pytest.raises(AssertionError, match="validation commands"):
+        _assert_supplemental_task_binding(task, case)
+
+
+def test_v02_supplemental_result_binding_rejects_patch_file_or_digest_drift() -> None:
+    result = _load(
+        EVAL_ROOT
+        / "supplemental/results/v0.2/V02-SUP-REAL-001/role-artifacts/worker-round-1.json"
+    )
+    wrong_files = deepcopy(result)
+    wrong_files["files_changed"] = ["README.md"]
+    wrong_files["git"]["changed_files_digest"] = digest_json(["README.md"])
+    with pytest.raises(AssertionError, match="files_changed"):
+        _assert_supplemental_result_binding(wrong_files, root=ROOT)
+
+    wrong_digest = deepcopy(result)
+    wrong_digest["git"]["changed_files_digest"] = digest_json([])
+    with pytest.raises(AssertionError, match="changed-files digest"):
+        _assert_supplemental_result_binding(wrong_digest, root=ROOT)
 
 
 def test_v02_selected_real_contract_handoffs_validate_semantically() -> None:

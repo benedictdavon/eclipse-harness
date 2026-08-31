@@ -1,17 +1,17 @@
 {
   "acceptance_criteria": [
     {
-      "evidence_required": "Bound role artifact and validation evidence.",
+      "evidence_required": "Bound patch, result, review, and validation evidence.",
       "id": "AC-1",
       "statement": "negative input raises the exact ValueError"
     },
     {
-      "evidence_required": "Bound role artifact and validation evidence.",
+      "evidence_required": "Bound patch, result, review, and validation evidence.",
       "id": "AC-2",
       "statement": "the uint64 boundary test remains"
     },
     {
-      "evidence_required": "Bound role artifact and validation evidence.",
+      "evidence_required": "Bound patch, result, review, and validation evidence.",
       "id": "AC-3",
       "statement": "both candidate defects are identified before acceptance"
     }
@@ -31,24 +31,31 @@
   "context_manifest": {
     "references": [
       {
-        "digest": null,
+        "digest": "sha256:f466aee96fbe5acac10159bd8ce35b92148923267edca1c1a42eb53cab9b46ae",
         "path": "evals/v0.2/supplemental/candidates/V02-SUP-REAL-001/candidate-round-1.patch",
         "purpose": "Frozen candidate state",
         "symbol": null,
         "trust": "repository"
       },
       {
-        "digest": null,
+        "digest": "sha256:b764ff7aa226b2a140407f696f41b2e5d40ca3b907bb8d71cdef9c50d6e5a594",
         "path": "evals/v0.2/supplemental/candidates/V02-SUP-REAL-001/candidate-round-2.patch",
         "purpose": "Frozen candidate state",
+        "symbol": null,
+        "trust": "repository"
+      },
+      {
+        "digest": "sha256:52db2dbfbcaf1af15e5be543ae090ec6484b09ec7ac8a789a1edd5b6cbce0085",
+        "path": "evals/v0.2/supplemental/candidates/V02-SUP-REAL-001/final.patch",
+        "purpose": "Frozen final correction",
         "symbol": null,
         "trust": "repository"
       }
     ],
     "schema_version": "1.0",
-    "summary": "Two frozen candidate states with a two-review-round bound.",
+    "summary": "Review two supplied candidate patches for int_to_bytes. The final correction must reject negative values with exactly ValueError('num must be non-negative') while preserving the uint64 boundary regression. At most two review rounds are available.",
     "trusted_sources": [
-      "user requirement",
+      "frozen supplemental case definition",
       "Eclipse task contract"
     ]
   },
@@ -88,6 +95,12 @@
   ],
   "metadata": {
     "artifact_origin": "frozen-candidate-replay",
+    "frozen_case_id": "V02-SUP-REAL-001",
+    "frozen_repository_commit": "672971d66a2ef9f85151e53283113f33d642dabd",
+    "frozen_task_statement": "Review two supplied candidate patches for int_to_bytes. The final correction must reject negative values with exactly ValueError('num must be non-negative') while preserving the uint64 boundary regression. At most two review rounds are available.",
+    "frozen_validation_commands": [
+      "python evals/v0.2/supplemental/probe_real.py V02-SUP-REAL-001 <candidate-source-root>"
+    ],
     "phase": "supplemental-baseline",
     "skill_commit": "8a674fafe1f1d03c34e27c7a875752a0138f5e2b"
   },
@@ -138,9 +151,9 @@
   "task_id": "V02-SUP-REAL-001.review-correction",
   "validation": [
     {
-      "command": "python -m unittest",
+      "command": "python evals/v0.2/supplemental/probe_real.py V02-SUP-REAL-001 <candidate-source-root>",
       "mutating": false,
-      "purpose": "Bounded supplemental validation",
+      "purpose": "Frozen supplemental case validation.",
       "required": true
     }
   ]

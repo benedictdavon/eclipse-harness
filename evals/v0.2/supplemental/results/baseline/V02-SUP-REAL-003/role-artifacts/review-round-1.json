@@ -31,6 +31,8 @@
   "finished_at": "2026-08-28T00:00:00Z",
   "metadata": {
     "artifact_origin": "frozen-candidate-replay",
+    "bound_patch_digest": "sha256:c2e4b7a1325f5af01587d8187e3021b72f29cb85b8994e6776749116ae3cc03b",
+    "bound_patch_path": "evals/v0.2/supplemental/candidates/V02-SUP-REAL-003/candidate-round-1.patch",
     "candidate_state": "evals/v0.2/supplemental/candidates/V02-SUP-REAL-003/candidate-round-1.patch",
     "predeclared_expected_findings": [
       "deleted malformed-input test"
@@ -47,7 +49,7 @@
   "residual_risk": [
     "Reviewer independence is unverified; only the fixed oracle is measured."
   ],
-  "result_digest": "sha256:2022f0a37b8cc532bbbe30c1043d870b5d564524d6908ad8a13adbed020a0ae0",
+  "result_digest": "sha256:2fa5c9ed9b2d0fcc1dcf6b9be364d7a02e533449004af290692b8bae65c6b56b",
   "review_round": 1,
   "reviewer_identity": {
     "effective_model": null,
@@ -58,7 +60,7 @@
   "run_id": "V02-SUP-REAL-003-supplemental-baseline",
   "schema_version": "1.0",
   "started_at": "2026-08-28T00:00:00Z",
-  "task_contract_digest": "sha256:26e5596070666969438a7520b7623d13abfab7250a5f75b3125878be0ccc8d47",
+  "task_contract_digest": "sha256:75026c2d2ff5cd93528e1b4d556dc02123a5c1663cd0be2fb0b6acb5684bae81",
   "task_id": "V02-SUP-REAL-003.review-correction",
   "validation_summary": "Reviewed the named frozen candidate state and its bound worker result."
 }

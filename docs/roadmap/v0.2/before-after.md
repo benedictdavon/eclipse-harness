@@ -26,8 +26,8 @@ recorded evidence artifact. It intentionally ignores the legacy
 | Measure | v0.1 baseline | final candidate | Change |
 |---|---:|---:|---:|
 | Executed terminal records | 55 | 55 | 0 |
-| Evidence-supported outcomes | 8 | 10 | +2 |
-| Original campaign, evidence-supported | 3/50 | 5/50 | +2 |
+| Evidence-supported outcomes | 5 | 8 | +3 |
+| Original campaign, evidence-supported | 0/50 | 3/50 | +3 |
 | Supplemental correction cases | 5/5 | 5/5 | 0 |
 | Structural-only real acceptance claims | 4 | 18 | +14 classified inconclusive |
 | Acceptance evidence unavailable/inconclusive | 5 | 21 | +16 classified honestly |

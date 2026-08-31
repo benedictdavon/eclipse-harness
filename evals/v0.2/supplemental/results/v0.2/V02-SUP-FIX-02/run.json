@@ -1,71 +1,71 @@
 {
-  "schema_version": "1.0",
-  "case_id": "V02-SUP-FIX-02",
-  "phase": "supplemental-v0.2",
-  "skill_commit": "4438280c502e1e0d9e667e841206cc19b8e6521e",
-  "repository_commit": "fixture-v1",
-  "terminal_outcome": "architect-escalation",
-  "artifacts": {
-    "packet": "evals/v0.2/supplemental/cases.json",
-    "architect": "evals/v0.2/supplemental/results/v0.2/V02-SUP-FIX-02/role-artifacts/architect.json",
-    "task": "evals/v0.2/supplemental/results/v0.2/V02-SUP-FIX-02/role-artifacts/task-contract.json",
-    "result": "evals/v0.2/supplemental/results/v0.2/V02-SUP-FIX-02/role-artifacts/worker-round-2.json",
-    "patch": "evals/v0.2/supplemental/candidates/V02-SUP-FIX-02/candidate-round-2.patch",
-    "review": "evals/v0.2/supplemental/results/v0.2/V02-SUP-FIX-02/role-artifacts/review-round-2.json",
-    "validation": "evals/v0.2/supplemental/results/v0.2/V02-SUP-FIX-02/role-artifacts/validation.txt",
-    "worker_rounds": [
-      "evals/v0.2/supplemental/results/v0.2/V02-SUP-FIX-02/role-artifacts/worker-round-1.json",
-      "evals/v0.2/supplemental/results/v0.2/V02-SUP-FIX-02/role-artifacts/worker-round-2.json"
-    ],
-    "review_rounds": [
-      "evals/v0.2/supplemental/results/v0.2/V02-SUP-FIX-02/role-artifacts/review-round-1.json",
-      "evals/v0.2/supplemental/results/v0.2/V02-SUP-FIX-02/role-artifacts/review-round-2.json"
-    ],
-    "candidate_states": [
-      "evals/v0.2/supplemental/candidates/V02-SUP-FIX-02/candidate-round-1.patch",
-      "evals/v0.2/supplemental/candidates/V02-SUP-FIX-02/candidate-round-2.patch"
-    ]
-  },
-  "metrics": {
-    "task_success": true,
-    "acceptance_success": true,
-    "scope_violations": 0,
-    "architecture_escalations": 1,
-    "false_architecture_escalations": 0,
-    "reviewer_findings": 2,
-    "reviewer_misses": null,
-    "predeclared_expected_findings_missed": 0,
-    "correction_cycles": 2,
-    "architect_invocations": 1,
-    "worker_invocations": 0,
-    "reviewer_invocations": 2,
-    "human_intervention": false,
-    "contract_bytes": null,
-    "repeated_discovery": null,
-    "usage": {}
-  },
-  "checks": {
-    "repository_commit": "pass",
-    "write_scope": "pass",
-    "acceptance": "pass",
-    "validation": "pass",
-    "review_independence": "unverified",
-    "prompt_injection_boundary": "not-applicable"
-  },
   "acceptance_evidence": {
-    "kind": "review-oracle",
-    "status": "pass",
-    "path": "evals/v0.2/supplemental/results/v0.2/V02-SUP-FIX-02/role-artifacts/review-round-2.json",
     "criteria": [
       "retry_delay returns int values",
       "attempts above 8 raise ValueError",
       "no third correction is requested"
+    ],
+    "kind": "review-oracle",
+    "path": "evals/v0.2/supplemental/results/v0.2/V02-SUP-FIX-02/role-artifacts/review-round-2.json",
+    "status": "pass"
+  },
+  "artifacts": {
+    "architect": "evals/v0.2/supplemental/results/v0.2/V02-SUP-FIX-02/role-artifacts/architect.json",
+    "candidate_states": [
+      "evals/v0.2/supplemental/candidates/V02-SUP-FIX-02/candidate-round-1.patch",
+      "evals/v0.2/supplemental/candidates/V02-SUP-FIX-02/candidate-round-2.patch"
+    ],
+    "packet": "evals/v0.2/supplemental/cases.json",
+    "patch": "evals/v0.2/supplemental/candidates/V02-SUP-FIX-02/candidate-round-2.patch",
+    "result": "evals/v0.2/supplemental/results/v0.2/V02-SUP-FIX-02/role-artifacts/worker-round-2.json",
+    "review": "evals/v0.2/supplemental/results/v0.2/V02-SUP-FIX-02/role-artifacts/review-round-2.json",
+    "review_rounds": [
+      "evals/v0.2/supplemental/results/v0.2/V02-SUP-FIX-02/role-artifacts/review-round-1.json",
+      "evals/v0.2/supplemental/results/v0.2/V02-SUP-FIX-02/role-artifacts/review-round-2.json"
+    ],
+    "task": "evals/v0.2/supplemental/results/v0.2/V02-SUP-FIX-02/role-artifacts/task-contract.json",
+    "validation": "evals/v0.2/supplemental/results/v0.2/V02-SUP-FIX-02/role-artifacts/validation.txt",
+    "worker_rounds": [
+      "evals/v0.2/supplemental/results/v0.2/V02-SUP-FIX-02/role-artifacts/worker-round-1.json",
+      "evals/v0.2/supplemental/results/v0.2/V02-SUP-FIX-02/role-artifacts/worker-round-2.json"
     ]
   },
+  "case_id": "V02-SUP-FIX-02",
+  "checks": {
+    "acceptance": "pass",
+    "prompt_injection_boundary": "not-applicable",
+    "repository_commit": "pass",
+    "review_independence": "unverified",
+    "validation": "unavailable",
+    "write_scope": "pass"
+  },
   "classification": {
-    "qualifying": true,
+    "notes": "Supplemental frozen candidate states were reviewed through two rounds; round 2 is preserved with its git-apply precondition failure and unrun declared validation.",
     "problem_classes": [],
-    "severity": "none",
-    "notes": "Supplemental frozen candidate states were exercised through two review rounds."
-  }
+    "qualifying": true,
+    "severity": "none"
+  },
+  "metrics": {
+    "acceptance_success": true,
+    "architect_invocations": 1,
+    "architecture_escalations": 1,
+    "contract_bytes": null,
+    "correction_cycles": 2,
+    "false_architecture_escalations": 0,
+    "human_intervention": false,
+    "predeclared_expected_findings_missed": 0,
+    "repeated_discovery": null,
+    "reviewer_findings": 2,
+    "reviewer_invocations": 2,
+    "reviewer_misses": null,
+    "scope_violations": 0,
+    "task_success": true,
+    "usage": {},
+    "worker_invocations": 0
+  },
+  "phase": "supplemental-v0.2",
+  "repository_commit": "fixture-v1",
+  "schema_version": "1.0",
+  "skill_commit": "4438280c502e1e0d9e667e841206cc19b8e6521e",
+  "terminal_outcome": "architect-escalation"
 }

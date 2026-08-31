@@ -1,15 +1,15 @@
 {
   "attempt": 2,
   "blockers": [
-    "Reviewer decision required."
+    "Frozen patch did not apply; declared validation was not run."
   ],
   "commands": [
     {
-      "command": "python -m unittest",
+      "command": "python -m unittest discover -s tests -v",
       "exit_code": null,
       "outcome": "not-run",
-      "purpose": "Bounded supplemental validation",
-      "summary": "Awaiting reviewer result."
+      "purpose": "Frozen supplemental case validation.",
+      "summary": "Frozen patch did not apply; declared validation was not run."
     }
   ],
   "criteria_evidence": [
@@ -33,18 +33,24 @@
     "No scope expansion."
   ],
   "deviations": [],
-  "files_changed": [],
+  "files_changed": [
+    "tests/test_retry.py"
+  ],
   "finished_at": "2026-08-28T00:00:00Z",
   "git": {
     "base_revision": "0000000000000000000000000000000000000000",
-    "changed_files_digest": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    "changed_files_digest": "sha256:d81dd957be59f1c37501516ac2eca28114ef45a2410f234377fe805557feda17"
   },
   "implementation_summary": "Frozen candidate submitted for bounded review.",
   "metadata": {
     "artifact_origin": "frozen-candidate-replay",
     "candidate_state": "evals/v0.2/supplemental/candidates/V02-SUP-FIX-02/candidate-round-2.patch",
+    "declared_validation_command": "python -m unittest discover -s tests -v",
+    "patch_digest": "sha256:5012b07df2d80ad26bc4721b30e076c2a1faa29109003c861d2b225f45596ea4",
+    "patch_path": "evals/v0.2/supplemental/candidates/V02-SUP-FIX-02/candidate-round-2.patch",
     "phase": "supplemental-baseline",
-    "skill_commit": "8a674fafe1f1d03c34e27c7a875752a0138f5e2b"
+    "skill_commit": "8a674fafe1f1d03c34e27c7a875752a0138f5e2b",
+    "validation_evidence": "evals/v0.2/supplemental/results/baseline/V02-SUP-FIX-02/role-artifacts/validation-round-2.txt"
   },
   "observed_risks": [
     "Candidate may violate a frozen criterion."
@@ -52,15 +58,15 @@
   "plan_digest": "sha256:supplemental-v02-sup-fix-02-supplemental-baseline",
   "plan_revision": 1,
   "requested_escalation": {
-    "code": "REVIEW_BOUND",
-    "reason": "Two review rounds exhausted.",
+    "code": "PATCH_NOT_APPLICABLE",
+    "reason": "Frozen patch did not apply; declared validation was not run.",
     "route_to": "architect"
   },
   "run_id": "V02-SUP-FIX-02-supplemental-baseline",
   "schema_version": "1.0",
   "started_at": "2026-08-28T00:00:00Z",
-  "status": "escalated",
-  "task_contract_digest": "sha256:df837baf344a24abae918267a0bfe03b8caa77949fc67055fa45f251cfefb454",
+  "status": "blocked",
+  "task_contract_digest": "sha256:e8ff48ad19b52b7907520c1be61b4e590fddd16e13ff74cdcdcae911ecda9287",
   "task_id": "V02-SUP-FIX-02.review-correction",
   "unresolved_issues": [
     "float return",

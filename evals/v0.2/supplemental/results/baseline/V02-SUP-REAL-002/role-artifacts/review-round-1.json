@@ -31,6 +31,8 @@
   "finished_at": "2026-08-28T00:00:00Z",
   "metadata": {
     "artifact_origin": "frozen-candidate-replay",
+    "bound_patch_digest": "sha256:96e3df8a9680cd927ecc175937e7349359b6b17fecc0da3d76edd8068f969f10",
+    "bound_patch_path": "evals/v0.2/supplemental/candidates/V02-SUP-REAL-002/candidate-round-1.patch",
     "candidate_state": "evals/v0.2/supplemental/candidates/V02-SUP-REAL-002/candidate-round-1.patch",
     "predeclared_expected_findings": [
       "silent truncation"
@@ -47,7 +49,7 @@
   "residual_risk": [
     "Reviewer independence is unverified; only the fixed oracle is measured."
   ],
-  "result_digest": "sha256:303da457a1d2807d42f9bfbe988061d591a08be32c5d2af0dada67e46463dbf7",
+  "result_digest": "sha256:a5aefeb330ed96371c7bcf19cfc19e81bcf07a98bafef217e43da8a35f16268d",
   "review_round": 1,
   "reviewer_identity": {
     "effective_model": null,
@@ -58,7 +60,7 @@
   "run_id": "V02-SUP-REAL-002-supplemental-baseline",
   "schema_version": "1.0",
   "started_at": "2026-08-28T00:00:00Z",
-  "task_contract_digest": "sha256:06ba265dbb78aba1ed919ed612b3b8c3edfc10426f4ce3f5e8f78e5f5fad7b88",
+  "task_contract_digest": "sha256:aac6d7330d2ee37838180953bc70880dbfc7dcfe0d6901a7e7ad5eefcb1d7ab0",
   "task_id": "V02-SUP-REAL-002.review-correction",
   "validation_summary": "Reviewed the named frozen candidate state and its bound worker result."
 }

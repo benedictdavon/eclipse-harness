@@ -1,17 +1,17 @@
 {
   "acceptance_criteria": [
     {
-      "evidence_required": "Bound role artifact and validation evidence.",
+      "evidence_required": "Bound patch, result, review, and validation evidence.",
       "id": "AC-1",
       "statement": "non-ASCII str raises BadData"
     },
     {
-      "evidence_required": "Bound role artifact and validation evidence.",
+      "evidence_required": "Bound patch, result, review, and validation evidence.",
       "id": "AC-2",
       "statement": "the malformed base64 regression remains"
     },
     {
-      "evidence_required": "Bound role artifact and validation evidence.",
+      "evidence_required": "Bound patch, result, review, and validation evidence.",
       "id": "AC-3",
       "statement": "valid encoded values still decode"
     }
@@ -31,24 +31,31 @@
   "context_manifest": {
     "references": [
       {
-        "digest": null,
+        "digest": "sha256:c2e4b7a1325f5af01587d8187e3021b72f29cb85b8994e6776749116ae3cc03b",
         "path": "evals/v0.2/supplemental/candidates/V02-SUP-REAL-003/candidate-round-1.patch",
         "purpose": "Frozen candidate state",
         "symbol": null,
         "trust": "repository"
       },
       {
-        "digest": null,
+        "digest": "sha256:89d15e0b09b5889549667bc795b14b46de1ecbf6740d03a3aa3e7fdd039517ec",
         "path": "evals/v0.2/supplemental/candidates/V02-SUP-REAL-003/candidate-round-2.patch",
         "purpose": "Frozen candidate state",
+        "symbol": null,
+        "trust": "repository"
+      },
+      {
+        "digest": "sha256:82bb792e595b86bd4a2e819cb70cbb2b417faa4a716a27f6583e85e9c33efff3",
+        "path": "evals/v0.2/supplemental/candidates/V02-SUP-REAL-003/final.patch",
+        "purpose": "Frozen final correction",
         "symbol": null,
         "trust": "repository"
       }
     ],
     "schema_version": "1.0",
-    "summary": "Two frozen candidate states with a two-review-round bound.",
+    "summary": "Review two supplied candidate patches for base64_decode. The final correction must raise BadData for non-ASCII str input while preserving valid string and bytes decoding. Reject the deleted regression and the leaked UnicodeEncodeError before accepting a bounded correction.",
     "trusted_sources": [
-      "user requirement",
+      "frozen supplemental case definition",
       "Eclipse task contract"
     ]
   },
@@ -88,6 +95,12 @@
   ],
   "metadata": {
     "artifact_origin": "frozen-candidate-replay",
+    "frozen_case_id": "V02-SUP-REAL-003",
+    "frozen_repository_commit": "672971d66a2ef9f85151e53283113f33d642dabd",
+    "frozen_task_statement": "Review two supplied candidate patches for base64_decode. The final correction must raise BadData for non-ASCII str input while preserving valid string and bytes decoding. Reject the deleted regression and the leaked UnicodeEncodeError before accepting a bounded correction.",
+    "frozen_validation_commands": [
+      "python evals/v0.2/supplemental/probe_real.py V02-SUP-REAL-003 <candidate-source-root>"
+    ],
     "phase": "supplemental-v0.2",
     "skill_commit": "4438280c502e1e0d9e667e841206cc19b8e6521e"
   },
@@ -138,9 +151,9 @@
   "task_id": "V02-SUP-REAL-003.review-correction",
   "validation": [
     {
-      "command": "python -m unittest",
+      "command": "python evals/v0.2/supplemental/probe_real.py V02-SUP-REAL-003 <candidate-source-root>",
       "mutating": false,
-      "purpose": "Bounded supplemental validation",
+      "purpose": "Frozen supplemental case validation.",
       "required": true
     }
   ]

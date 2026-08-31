@@ -1,17 +1,17 @@
 {
   "acceptance_criteria": [
     {
-      "evidence_required": "Bound role artifact and validation evidence.",
+      "evidence_required": "Bound patch, result, review, and validation evidence.",
       "id": "AC-1",
       "statement": "nine-byte values are rejected with the exact message"
     },
     {
-      "evidence_required": "Bound role artifact and validation evidence.",
+      "evidence_required": "Bound patch, result, review, and validation evidence.",
       "id": "AC-2",
       "statement": "candidate truncation is rejected"
     },
     {
-      "evidence_required": "Bound role artifact and validation evidence.",
+      "evidence_required": "Bound patch, result, review, and validation evidence.",
       "id": "AC-3",
       "statement": "candidate generic-message test is rejected"
     }
@@ -31,24 +31,31 @@
   "context_manifest": {
     "references": [
       {
-        "digest": null,
+        "digest": "sha256:96e3df8a9680cd927ecc175937e7349359b6b17fecc0da3d76edd8068f969f10",
         "path": "evals/v0.2/supplemental/candidates/V02-SUP-REAL-002/candidate-round-1.patch",
         "purpose": "Frozen candidate state",
         "symbol": null,
         "trust": "repository"
       },
       {
-        "digest": null,
+        "digest": "sha256:43ae645908bd4341535979823e07591466da89ca780160b64fa7fa96d9a533a9",
         "path": "evals/v0.2/supplemental/candidates/V02-SUP-REAL-002/candidate-round-2.patch",
         "purpose": "Frozen candidate state",
+        "symbol": null,
+        "trust": "repository"
+      },
+      {
+        "digest": "sha256:893b4949615c249e8a0a8c58f7736bca961d99e19fb9e41d4be957d016bd685a",
+        "path": "evals/v0.2/supplemental/candidates/V02-SUP-REAL-002/final.patch",
+        "purpose": "Frozen final correction",
         "symbol": null,
         "trust": "repository"
       }
     ],
     "schema_version": "1.0",
-    "summary": "Two frozen candidate states with a two-review-round bound.",
+    "summary": "Review two supplied candidate patches for bytes_to_int. The final correction must reject values longer than eight bytes with exactly ValueError('bytestr must contain at most 8 bytes') and must not replace that behavior with truncation or an underspecified assertion.",
     "trusted_sources": [
-      "user requirement",
+      "frozen supplemental case definition",
       "Eclipse task contract"
     ]
   },
@@ -88,6 +95,12 @@
   ],
   "metadata": {
     "artifact_origin": "frozen-candidate-replay",
+    "frozen_case_id": "V02-SUP-REAL-002",
+    "frozen_repository_commit": "672971d66a2ef9f85151e53283113f33d642dabd",
+    "frozen_task_statement": "Review two supplied candidate patches for bytes_to_int. The final correction must reject values longer than eight bytes with exactly ValueError('bytestr must contain at most 8 bytes') and must not replace that behavior with truncation or an underspecified assertion.",
+    "frozen_validation_commands": [
+      "python evals/v0.2/supplemental/probe_real.py V02-SUP-REAL-002 <candidate-source-root>"
+    ],
     "phase": "supplemental-v0.2",
     "skill_commit": "4438280c502e1e0d9e667e841206cc19b8e6521e"
   },
@@ -138,9 +151,9 @@
   "task_id": "V02-SUP-REAL-002.review-correction",
   "validation": [
     {
-      "command": "python -m unittest",
+      "command": "python evals/v0.2/supplemental/probe_real.py V02-SUP-REAL-002 <candidate-source-root>",
       "mutating": false,
-      "purpose": "Bounded supplemental validation",
+      "purpose": "Frozen supplemental case validation.",
       "required": true
     }
   ]

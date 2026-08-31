@@ -5,27 +5,27 @@
   ],
   "commands": [
     {
-      "command": "python -m unittest",
-      "exit_code": null,
-      "outcome": "not-run",
-      "purpose": "Bounded supplemental validation",
-      "summary": "Awaiting reviewer result."
+      "command": "python -m unittest discover -s tests -v",
+      "exit_code": 0,
+      "outcome": "passed",
+      "purpose": "Frozen supplemental case validation.",
+      "summary": "Validation exited 0; full stdout/stderr is in validation-round-1.txt."
     }
   ],
   "criteria_evidence": [
     {
       "criterion_id": "AC-1",
-      "evidence": "Candidate under review.",
+      "evidence": "Candidate patch is subject to review; see validation-round-1.txt.",
       "status": "unsatisfied"
     },
     {
       "criterion_id": "AC-2",
-      "evidence": "Candidate under review.",
+      "evidence": "Candidate patch is subject to review; see validation-round-1.txt.",
       "status": "unsatisfied"
     },
     {
       "criterion_id": "AC-3",
-      "evidence": "Candidate under review.",
+      "evidence": "Candidate patch is subject to review; see validation-round-1.txt.",
       "status": "unsatisfied"
     }
   ],
@@ -33,18 +33,24 @@
     "No scope expansion."
   ],
   "deviations": [],
-  "files_changed": [],
+  "files_changed": [
+    "src/retry.py"
+  ],
   "finished_at": "2026-08-28T00:00:00Z",
   "git": {
     "base_revision": "0000000000000000000000000000000000000000",
-    "changed_files_digest": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    "changed_files_digest": "sha256:a5116ede7ae52fdc0c1d94ab46382467f02c20e504b0588e8e90cf479a1ea16f"
   },
-  "implementation_summary": "Frozen candidate submitted for bounded review.",
+  "implementation_summary": "Frozen candidate patch bound to its observed validation transcript.",
   "metadata": {
     "artifact_origin": "frozen-candidate-replay",
     "candidate_state": "evals/v0.2/supplemental/candidates/V02-SUP-FIX-02/candidate-round-1.patch",
+    "declared_validation_command": "python -m unittest discover -s tests -v",
+    "patch_digest": "sha256:3d8871331fd6540d8b2fbe80077991b28a1b2ec323b7134c067f1797d440b0bc",
+    "patch_path": "evals/v0.2/supplemental/candidates/V02-SUP-FIX-02/candidate-round-1.patch",
     "phase": "supplemental-v0.2",
-    "skill_commit": "4438280c502e1e0d9e667e841206cc19b8e6521e"
+    "skill_commit": "4438280c502e1e0d9e667e841206cc19b8e6521e",
+    "validation_evidence": "evals/v0.2/supplemental/results/v0.2/V02-SUP-FIX-02/role-artifacts/validation-round-1.txt"
   },
   "observed_risks": [
     "Candidate may violate a frozen criterion."
@@ -56,7 +62,7 @@
   "schema_version": "1.0",
   "started_at": "2026-08-28T00:00:00Z",
   "status": "failed",
-  "task_contract_digest": "sha256:0e8aa0d03fb2811a04495eb6558da21a0d4205f1284c547ae6554bf628af8c6f",
+  "task_contract_digest": "sha256:9c2221ae49aa6599d5fe8acbb8b2f36bf9ddfeae015d25572bd3be126463fe24",
   "task_id": "V02-SUP-FIX-02.review-correction",
   "unresolved_issues": [
     "float return",

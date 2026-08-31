@@ -1,17 +1,17 @@
 {
   "acceptance_criteria": [
     {
-      "evidence_required": "Bound role artifact and validation evidence.",
+      "evidence_required": "Bound patch, result, review, and validation evidence.",
       "id": "AC-1",
       "statement": "attempt 3 returns 4"
     },
     {
-      "evidence_required": "Bound role artifact and validation evidence.",
+      "evidence_required": "Bound patch, result, review, and validation evidence.",
       "id": "AC-2",
       "statement": "attempts above 8 raise ValueError"
     },
     {
-      "evidence_required": "Bound role artifact and validation evidence.",
+      "evidence_required": "Bound patch, result, review, and validation evidence.",
       "id": "AC-3",
       "statement": "two rejected corrections produce a bounded escalation"
     }
@@ -31,14 +31,14 @@
   "context_manifest": {
     "references": [
       {
-        "digest": null,
+        "digest": "sha256:3f1d983ddbfff55e0a34bcc27f3a9f46cb020feee71840ee07a42600508c37a0",
         "path": "evals/v0.2/supplemental/candidates/V02-SUP-FIX-01/candidate-round-1.patch",
         "purpose": "Frozen candidate state",
         "symbol": null,
         "trust": "repository"
       },
       {
-        "digest": null,
+        "digest": "sha256:a5851f177eea134c62823f23c0af2143afed9528493692f38214ed868852f25c",
         "path": "evals/v0.2/supplemental/candidates/V02-SUP-FIX-01/candidate-round-2.patch",
         "purpose": "Frozen candidate state",
         "symbol": null,
@@ -46,9 +46,9 @@
       }
     ],
     "schema_version": "1.0",
-    "summary": "Two frozen candidate states with a two-review-round bound.",
+    "summary": "Review two supplied retry_delay corrections. Each leaves a distinct required invariant broken. Reject each bounded candidate and escalate to the architect after the second rejected correction; do not issue a third worker attempt.",
     "trusted_sources": [
-      "user requirement",
+      "frozen supplemental case definition",
       "Eclipse task contract"
     ]
   },
@@ -88,6 +88,12 @@
   ],
   "metadata": {
     "artifact_origin": "frozen-candidate-replay",
+    "frozen_case_id": "V02-SUP-FIX-01",
+    "frozen_repository_commit": "fixture-v1",
+    "frozen_task_statement": "Review two supplied retry_delay corrections. Each leaves a distinct required invariant broken. Reject each bounded candidate and escalate to the architect after the second rejected correction; do not issue a third worker attempt.",
+    "frozen_validation_commands": [
+      "python -m unittest discover -s tests -v"
+    ],
     "phase": "supplemental-baseline",
     "skill_commit": "8a674fafe1f1d03c34e27c7a875752a0138f5e2b"
   },
@@ -138,9 +144,9 @@
   "task_id": "V02-SUP-FIX-01.review-correction",
   "validation": [
     {
-      "command": "python -m unittest",
+      "command": "python -m unittest discover -s tests -v",
       "mutating": false,
-      "purpose": "Bounded supplemental validation",
+      "purpose": "Frozen supplemental case validation.",
       "required": true
     }
   ]

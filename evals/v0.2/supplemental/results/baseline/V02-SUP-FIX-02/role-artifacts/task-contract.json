@@ -1,17 +1,17 @@
 {
   "acceptance_criteria": [
     {
-      "evidence_required": "Bound role artifact and validation evidence.",
+      "evidence_required": "Bound patch, result, review, and validation evidence.",
       "id": "AC-1",
       "statement": "retry_delay returns int values"
     },
     {
-      "evidence_required": "Bound role artifact and validation evidence.",
+      "evidence_required": "Bound patch, result, review, and validation evidence.",
       "id": "AC-2",
       "statement": "attempts above 8 raise ValueError"
     },
     {
-      "evidence_required": "Bound role artifact and validation evidence.",
+      "evidence_required": "Bound patch, result, review, and validation evidence.",
       "id": "AC-3",
       "statement": "no third correction is requested"
     }
@@ -31,14 +31,14 @@
   "context_manifest": {
     "references": [
       {
-        "digest": null,
+        "digest": "sha256:3d8871331fd6540d8b2fbe80077991b28a1b2ec323b7134c067f1797d440b0bc",
         "path": "evals/v0.2/supplemental/candidates/V02-SUP-FIX-02/candidate-round-1.patch",
         "purpose": "Frozen candidate state",
         "symbol": null,
         "trust": "repository"
       },
       {
-        "digest": null,
+        "digest": "sha256:5012b07df2d80ad26bc4721b30e076c2a1faa29109003c861d2b225f45596ea4",
         "path": "evals/v0.2/supplemental/candidates/V02-SUP-FIX-02/candidate-round-2.patch",
         "purpose": "Frozen candidate state",
         "symbol": null,
@@ -46,9 +46,9 @@
       }
     ],
     "schema_version": "1.0",
-    "summary": "Two frozen candidate states with a two-review-round bound.",
+    "summary": "Review two supplied retry_delay corrections. The first violates the integer return invariant and the second weakens the upper-bound evidence. Reject both and escalate after the fixed two-round budget.",
     "trusted_sources": [
-      "user requirement",
+      "frozen supplemental case definition",
       "Eclipse task contract"
     ]
   },
@@ -88,6 +88,12 @@
   ],
   "metadata": {
     "artifact_origin": "frozen-candidate-replay",
+    "frozen_case_id": "V02-SUP-FIX-02",
+    "frozen_repository_commit": "fixture-v1",
+    "frozen_task_statement": "Review two supplied retry_delay corrections. The first violates the integer return invariant and the second weakens the upper-bound evidence. Reject both and escalate after the fixed two-round budget.",
+    "frozen_validation_commands": [
+      "python -m unittest discover -s tests -v"
+    ],
     "phase": "supplemental-baseline",
     "skill_commit": "8a674fafe1f1d03c34e27c7a875752a0138f5e2b"
   },
@@ -138,9 +144,9 @@
   "task_id": "V02-SUP-FIX-02.review-correction",
   "validation": [
     {
-      "command": "python -m unittest",
+      "command": "python -m unittest discover -s tests -v",
       "mutating": false,
-      "purpose": "Bounded supplemental validation",
+      "purpose": "Frozen supplemental case validation.",
       "required": true
     }
   ]

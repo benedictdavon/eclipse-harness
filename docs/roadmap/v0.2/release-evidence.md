@@ -40,14 +40,16 @@ records. The three real supplemental cases bring the valid real-run total to
 `tools/score_v02_campaign.py` derives its aggregate from terminal state,
 authorization/acceptance checks, and evidence artifacts. It does not trust
 pre-populated task or acceptance success booleans. Across the combined corpus,
-evidence-supported outcomes rise from 8/55 on v0.1 to 10/55 on the final
+evidence-supported outcomes rise from 5/55 on v0.1 to 8/55 on the final
 candidate. The 18 structural-only and 21 unavailable/inconclusive final
 acceptance claims are not counted as behavioral successes. `V02-REAL-014` has
 a dependency-free Node behavioral probe; other file-existence/compile-only
 claims are scored conservatively.
 
 Every one of the 110 `run.json` records is validated by the run-record JSON
-Schema in the test suite. Unknown reviewer misses are `null` because reviewer
+Schema in the test suite. Supplemental task contracts, patch-bound worker
+results, changed-file digests, and validation transcripts are checked against
+the frozen cases and patches. Unknown reviewer misses are `null` because reviewer
 independence is unverified. The narrower
 `predeclared_expected_findings_missed` is zero only for cases with a fixed
 oracle.
@@ -69,6 +71,7 @@ not a merge or release declaration.
 The final local gate records the complete unit/integration/E2E suite, Ruff,
 strict Mypy, JSON Schema and skill validation, security authorization tests,
 adapter drift, self-check, packaging/resource audit, and clean-wheel bootstrap.
-The prior GitHub Actions matrix for this draft was green; this rewritten
-history will receive a fresh CI run and its observed outcome belongs in the PR
-checks, not in a fabricated release claim.
+GitHub Actions run `33408359270` completed successfully for this draft after
+the prior evidence hardening commit. Any later evidence-repair commit receives
+its own PR check; the observed outcome belongs in the PR checks, not in a
+fabricated release claim.
