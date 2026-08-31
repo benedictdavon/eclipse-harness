@@ -71,7 +71,7 @@ not a merge or release declaration.
 The final local gate records the complete unit/integration/E2E suite, Ruff,
 strict Mypy, JSON Schema and skill validation, security authorization tests,
 adapter drift, self-check, packaging/resource audit, and clean-wheel bootstrap.
-GitHub Actions run `33408359270` completed successfully for this draft after
-the prior evidence hardening commit. Any later evidence-repair commit receives
-its own PR check; the observed outcome belongs in the PR checks, not in a
-fabricated release claim.
+GitHub Actions run `33411078132` completed successfully for this draft after
+the supplemental-evidence binding repair. Any later evidence-only documentation
+commit receives its own PR check; the observed outcome belongs in the PR checks,
+not in a fabricated release claim.
