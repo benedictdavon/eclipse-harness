@@ -1,93 +1,157 @@
 # Eclipse Harness
 
-Eclipse Harness is a skills-first toolkit for architect–worker–reviewer coding workflows. It turns decisions into bounded task contracts, requires evidence from implementation, and gives an independent reviewer a precise acceptance packet.
+Coding work becomes difficult to review when tasks are ambiguous, dependencies
+are missed, or two workers modify overlapping files. Eclipse provides a
+skills-first protocol and optional Python validators for defining bounded task
+contracts, checking dependency and write conflicts, and reviewing evidence.
 
-The name comes from the original Sol + Luna idea: spend scarce reasoning on architecture and review, then delegate bounded implementation economically. Sol/Luna is a reference policy, not a dependency of the protocol.
+The host or user runs the agents and owns filesystem mutation, tools, Git, and
+permissions. Eclipse does not execute agents, schedule a workflow, or provide
+a sandbox.
 
-## Product boundary
+## A small validation walkthrough
 
-Eclipse does not execute agents or manage workflows.
-
-| Eclipse owns | The host owns |
-|---|---|
-| Role and delegation guidance | Model execution and agent spawning |
-| Task, context, result, and review contracts | Filesystem mutation and tools |
-| Routing and escalation policy | Git branches, worktrees, and integration |
-| Dependency/write-scope guidance | Sandboxing, permissions, and scheduling |
-| Review semantics and eval cases | Persistence of workflow status |
-
-Codex, GitHub Copilot, another compatible host, or a human runs the work. Python tooling is optional.
-
-## What the v0.2 candidate provides
-
-- portable `eclipse-orchestrate`, `eclipse-execute`, and `eclipse-review` skills;
-- setup and diagnostic skills for bootstrap and host-specific capability checks;
-- versioned task, context, result, review, role-policy, capability, and evaluation schemas;
-- structured stale-plan binding, criterion evidence, command evidence, findings, and escalation semantics;
-- dependency-DAG validation and ownership-safe execution-wave guidance;
-- a vendor-neutral routing model plus the Sol/Luna reference policy;
-- Codex, Copilot, and generic/manual adapters with explicit degradation;
-- optional contract, adapter, doctor, and eval utilities;
-- a frozen 20-case controlled and 30-task real-repository hardening campaign,
-  plus a separately frozen correction-integrity supplement, with raw v0.1
-  baseline and final-candidate evidence;
-- cross-platform tests and CI for Python 3.10–3.14.
-
-It does not include canonical run state, a scheduler, recovery journal, worktree manager, migration runtime, process manager, event store, or autonomous model calls.
-
-## Use the skills without Python
-
-1. Make `.agents/skills` available to the host.
-2. Invoke `eclipse-orchestrate` with the requirement. It returns task contracts and execution waves.
-3. Give one current task contract and its referenced context to an implementation worker following `eclipse-execute`.
-4. Give the requirement, current plan, task, result, actual diff, and host-observed validation to an independent reviewer following `eclipse-review`.
-5. Route bounded findings back to a worker, architectural findings to the architect, and new authority or destructive actions to a human.
-
-The contract examples in [`examples/contracts`](examples/contracts) are usable as templates. The normative field semantics live in [`protocol`](protocol).
-
-## Optional Python tools
-
-Python 3.10 or later is needed only for the optional CLI:
+The repository includes a complete task contract. After installing the
+candidate checkout, validate it:
 
 ```bash
-python -m pip install eclipse-harness
+eclipse validate examples/contracts/task.json --kind task
 ```
 
-From a checkout:
+Observed output on the audited revision:
+
+```text
+valid: True
+kind: task
+schema_version: 1.0
+digest: sha256:3a1651d398a73caf883c2e9ea7ecaa784918f7ad42be89292b04a6ea3cbb40d1
+```
+
+The strict Python API rejects two tasks that may write the same path. This
+uses the same task fixture and demonstrates the conservative conflict policy:
+
+```bash
+python - <<'PY'
+import copy
+import json
+from pathlib import Path
+
+from eclipse_harness.concurrency import assert_parallel_safe
+from eclipse_harness.contracts import TaskContract
+from eclipse_harness.errors import ConcurrencyError
+
+source = json.loads(Path("examples/contracts/task.json").read_text())
+tasks = []
+for task_id in ("T-A", "T-B"):
+    value = copy.deepcopy(source)
+    value["task_id"] = task_id
+    value["scope"]["write_globs"] = ["src/shared/**"]
+    tasks.append(TaskContract.from_dict(value))
+
+try:
+    assert_parallel_safe(tasks)
+except ConcurrencyError as error:
+    print(f"rejected: {error}")
+else:
+    raise SystemExit("expected write conflict")
+PY
+```
+
+Observed output:
+
+```text
+rejected: T-A/T-B write-overlap: 'src/shared/**' may overlap 'src/shared/**'
+```
+
+For a non-strict scheduling recommendation, `eclipse check-concurrency`
+validates a dependency DAG and serializes conflicting tasks into safe waves.
+It calculates guidance; it does not dispatch those tasks.
+
+## What is included
+
+- typed task, context, result, review, routing, and capability contracts;
+- JSON Schemas plus Python-level cross-contract validation;
+- dependency-DAG checks and conservative glob/shared-resource conflict checks;
+- Codex, Copilot, and manual adapters with explicit degradation;
+- optional CLI checks for contracts, adapters, host diagnostics, and recorded
+  evaluation cases;
+- portable skills for orchestration, bounded execution, review, bootstrap, and
+  diagnostics;
+- a frozen v0.2 controlled/real-repository campaign with raw evidence retained
+  under `evals/`.
+
+The package contains no canonical run database, scheduler, worktree manager,
+recovery journal, autonomous model calls, or provider executor. Modules such as
+`state.py` and `process.py` are small optional helpers: they validate
+transitions or run a bounded subprocess when called by a host; they do not own
+workflow state or agent execution.
+
+## Install the candidate checkout
+
+The current repository is the **0.2.0 candidate/draft**. The audited source
+revision is not presented as a published stable distribution, so install this
+checkout when reproducing the commands above:
 
 ```bash
 python -m pip install -e ".[dev]"
 ```
 
-Useful checks:
+The repository also retains the `v0.1.0-alpha.1` tag as historical release
+context. Do not infer that a `pip install eclipse-harness` command resolves the
+candidate described here.
+
+## Optional CLI
 
 ```bash
 eclipse validate examples/contracts/task.json --kind task
 eclipse validate examples/contracts/result.json --kind result \
   --task examples/contracts/task.json
-eclipse check-concurrency path/to/T001.json path/to/T002.json
+eclipse check-concurrency examples/contracts/task.json
 eclipse adapters generate --host all --dry-run
 eclipse --json doctor
+eclipse eval run examples/evaluation/suite.json \
+  --outcomes examples/evaluation/recorded-outcomes.json \
+  --output evaluation-results/example.json
 ```
 
-`eclipse init` copies packaged skills without overwriting existing skill directories. None of these commands owns execution or workflow state.
+The global `--json` flag precedes the subcommand. `eclipse init` installs
+packaged skills without overwriting existing skill directories. The host still
+owns current plan state, dispatch, retries, recovery, and permission
+enforcement.
 
-## Portability
+## Product boundary
 
-| Capability | Codex CLI/app | GitHub Copilot | Manual/other |
-|---|---|---|---|
-| Core skills | `.agents/skills` | `.agents/skills` | Copy/read directly |
-| Native role wrappers | `.codex/agents/*.toml` | `.github/agents/*.agent.md` | Not required |
-| Per-role model intent | Configurable | Host/account dependent | External decision |
-| Effective model proof | Host-observed only | Host-observed only | Usually unavailable |
-| Reviewer read-only intent | Configured; host may override | Read/search tool intent; enforcement varies | Process policy |
-| Contract workflow | Full | Full | Full |
+| Eclipse provides | Host or user provides |
+|---|---|
+| Role guidance and protocol semantics | Model calls and agent spawning |
+| Task/result/review contracts | Filesystem writes and command execution |
+| Dependency and write-conflict guidance | Branches, worktrees, merges, and Git |
+| Adapter configuration as intent | Effective model, sandbox, and permission proof |
+| Review and escalation semantics | Scheduling, cancellation, retries, and recovery |
 
-Requested or configured models, reasoning, and permissions are not described as effective unless trustworthy host metadata proves them.
+Conflict detection deliberately favors safety: prefix-based glob analysis can
+produce false positives and cannot prove semantic independence. It is a
+validation/guidance layer, not operating-system isolation. Likewise, declared
+read-only intent and adapter settings are not proof of host enforcement.
 
-See [Architecture](docs/architecture.md), [Optional CLI](docs/cli-and-configuration.md), [Security](docs/security.md), and the [adapter documentation](docs/adapters).
+## Architecture and evaluation
 
-The v0.2 branch is an evaluation-driven **candidate/draft**, not a completed
-release. Its recorded campaign is evidence for the pinned cases and host
-configuration, not a universal benchmark or cost-saving claim. Licensed under
-the [MIT License](LICENSE).
+Read [Architecture](docs/architecture.md) for the ownership model and
+[Optional CLI](docs/cli-and-configuration.md) for the command surface. The
+[evaluation methodology](docs/evaluation.md) explains the frozen cases and
+recorded outcomes; those fixtures are evidence for the recorded inputs and
+host configuration, not a universal benchmark, cost-saving claim, or live
+agent comparison. Usage is labeled measured, estimated, or unavailable.
+
+## Candidate status and limitations
+
+The v0.2 branch is an evaluation-driven candidate/draft, not a completed
+release. Core tests, lint, type checks, and package-build results are recorded
+from the audited Linux/Python 3.12 checkout. The full GitHub Actions matrix
+across Linux, Windows, macOS, and Python 3.10–3.14 is configured in
+`.github/workflows/ci.yml`, but a local pass is not a claim that every hosted
+matrix job currently passes.
+
+See [Known limitations](docs/limitations.md), the [security notes](docs/security.md),
+and the [adapter documentation](docs/adapters). Licensed under the [MIT
+License](LICENSE).
